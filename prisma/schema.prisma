@@ -1,0 +1,462 @@
+// forenix-oss — unified Prisma schema.
+//
+// This file is a clean merge of:
+//   _argus/prisma/schema.prisma     (OSINT side)
+//   _forenix/prisma/schema.prisma   (Forensics side)
+//
+// Merge rules (see CLAUDE.md):
+//   * Argus keeps: Investigation, Finding, EntityRelation, Monitor,
+//                  MonitorRun, PipelineSchedule, Verification, Annotation
+//   * ForenX keeps: Case, Evidence, EvidenceCommit, Branch,
+//                   MergeRequest, AgentTask, Agent, AgentAssignment,
+//                   CaseAssignment, CaseMetric, Comment
+//   * Shared:  User (ForenX), Entity (Argus only — kept as-is),
+//              Report (carries `source` discriminator),
+//              AuditLog (ForenX wins — includes hash chain fields).
+//   * Bridges: Investigation.caseId, Finding.evidenceId.
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ───────────────────────── Users ─────────────────────────
+// SOURCE: forenix
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  role      String   @default("investigator") // admin, investigator, analyst, viewer
+  avatar    String?
+  status    String   @default("online")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  caseAssignments   CaseAssignment[]
+  comments          Comment[]
+  reviewedMRs       MergeRequest[]
+  auditLogs         AuditLog[]
+  createdReports    Report[]
+}
+
+// ───────────────────────── Investigations (Argus) ────────
+// SOURCE: argus  (with new bridge column `caseId`)
+model Investigation {
+  id             String   @id @default(cuid())
+  title          String
+  target         String
+  targetType     String   // person, organization, domain, ip, username, phone, image, compound
+  objective      String
+  status         String   @default("draft") // draft, running, in_progress, complete, paused, archived
+  priority       String   @default("medium")
+  pipelineConfig String   @default("{}")     // JSON
+  tags           String   @default("")       // CSV
+  notes          String   @default("[]")     // JSON array
+  createdBy      String   @default("analyst")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  // BRIDGE: filled when an investigation graduates into a forensic case.
+  caseId  String?
+  case    Case?    @relation(fields: [caseId], references: [id], onDelete: SetNull)
+
+  findings    Finding[]
+  entities    EntityRelation[]
+  monitors    Monitor[]
+  auditLogs   AuditLog[]
+  reports     Report[]
+  schedules   PipelineSchedule[]
+}
+
+// SOURCE: argus  (with new bridge column `evidenceId`)
+model Finding {
+  id              String   @id @default(cuid())
+  investigationId String
+  category        String   // identity, infrastructure, financial, social, geo, relationships, media
+  title           String
+  description     String   @default("")
+  confidence      String   @default("unverified")
+  sourceType      String   @default("agent")
+  sourceName      String   @default("")
+  evidenceRefs    String   @default("[]")
+  rawData         String   @default("{}")
+  agentGroup      String   @default("")
+  reasoningTrace  String   @default("")
+  priority        String   @default("medium")
+  verified        Boolean  @default(false)
+  verifiedBy      String?
+  timestamp       DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // BRIDGE: filled when an OSINT finding becomes forensic evidence.
+  evidenceId String?
+  evidence   Evidence? @relation(fields: [evidenceId], references: [id], onDelete: SetNull)
+
+  investigation Investigation @relation(fields: [investigationId], references: [id], onDelete: Cascade)
+  annotations   Annotation[]
+}
+
+// SOURCE: argus
+model Annotation {
+  id        String   @id @default(cuid())
+  findingId String
+  content   String
+  author    String   @default("analyst")
+  type      String   @default("comment")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  finding   Finding  @relation(fields: [findingId], references: [id], onDelete: Cascade)
+}
+
+// SOURCE: argus
+model Entity {
+  id         String   @id @default(cuid())
+  name       String
+  type       String   // person, organization, domain, ip, location, account, email, phone
+  properties String   @default("{}")
+  source     String   @default("")
+  verified   Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  fromRelations EntityRelation[] @relation("FromEntity")
+  toRelations   EntityRelation[] @relation("ToEntity")
+}
+
+// SOURCE: argus
+model EntityRelation {
+  id              String   @id @default(cuid())
+  fromEntityId    String
+  toEntityId      String
+  relationType    String
+  source          String   @default("")
+  confidence      String   @default("unverified")
+  properties      String   @default("{}")
+  investigationId String?
+  createdAt       DateTime @default(now())
+
+  fromEntity    Entity         @relation("FromEntity", fields: [fromEntityId], references: [id], onDelete: Cascade)
+  toEntity      Entity         @relation("ToEntity",   fields: [toEntityId],   references: [id], onDelete: Cascade)
+  investigation Investigation? @relation(fields: [investigationId], references: [id], onDelete: SetNull)
+}
+
+// SOURCE: argus
+model Monitor {
+  id              String   @id @default(cuid())
+  investigationId String?
+  target          String
+  targetType      String
+  cadence         String   @default("weekly")
+  alertConfig     String   @default("{}")
+  status          String   @default("active")
+  lastRunAt       DateTime?
+  nextRunAt       DateTime?
+  deltaFindings   String   @default("[]")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  investigation Investigation? @relation(fields: [investigationId], references: [id], onDelete: SetNull)
+  runs          MonitorRun[]
+}
+
+// SOURCE: argus
+model MonitorRun {
+  id            String    @id @default(cuid())
+  monitorId     String
+  status        String    @default("running")
+  result        String?
+  findingsCount Int       @default(0)
+  startedAt     DateTime  @default(now())
+  completedAt   DateTime?
+
+  monitor Monitor @relation(fields: [monitorId], references: [id], onDelete: Cascade)
+}
+
+// SOURCE: argus
+model Verification {
+  id              String   @id @default(cuid())
+  investigationId String?
+  claim           String
+  claimType       String   // text, image, document, identity
+  verdict         String   @default("pending")
+  subClaims       String   @default("[]")
+  evidenceChain   String   @default("[]")
+  reasoningTrace  String   @default("")
+  createdBy       String   @default("analyst")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// SOURCE: argus
+model PipelineSchedule {
+  id              String   @id @default(cuid())
+  investigationId String
+  interval        String   // hourly, daily, weekly, monthly
+  agentGroups     String   // JSON array of agent groups
+  isActive        Boolean  @default(true)
+  lastRunAt       DateTime?
+  nextRunAt       DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  investigation Investigation @relation(fields: [investigationId], references: [id], onDelete: Cascade)
+}
+
+// ───────────────────────── Cases (ForenX) ────────────────
+// SOURCE: forenix
+model Case {
+  id          String    @id @default(cuid())
+  title       String
+  description String
+  status      String    @default("open")     // open, investigating, closed, archived
+  priority    String    @default("medium")
+  caseNumber  String    @unique
+  repository  String    @default("main")
+  storyPoints Int       @default(0)
+  velocity    Float     @default(0)
+  progress    Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  closedAt    DateTime?
+
+  evidence       Evidence[]
+  branches       Branch[]
+  mergeRequests  MergeRequest[]
+  agents         AgentAssignment[]
+  metrics        CaseMetric[]
+  auditLogs      AuditLog[]
+  assignments    CaseAssignment[]
+  reports        Report[]
+  investigations Investigation[]
+}
+
+// SOURCE: forenix
+model Evidence {
+  id          String   @id @default(cuid())
+  caseId      String
+  name        String
+  type        String
+  size        BigInt   @default(0)
+  hash        String
+  hashAlgo    String   @default("SHA-256")
+  mimeType    String?
+  description String?
+  tags        String   @default("")
+  status      String   @default("collected") // collected, verified, sealed
+  source      String?
+  storyPoints Int      @default(0)
+  metadata    String   @default("{}")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  case      Case             @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  commits   EvidenceCommit[]
+  comments  Comment[]
+  findings  Finding[]
+}
+
+// SOURCE: forenix
+model EvidenceCommit {
+  id           String   @id @default(cuid())
+  evidenceId   String
+  branchId     String
+  parentHash   String?
+  commitHash   String
+  message      String
+  authorId     String
+  changeType   String   @default("add")
+  diffSummary  String   @default("")
+  storyPoints  Int      @default(0)
+  verified     Boolean  @default(false)
+  verifiedBy   String?
+  verifiedAt   DateTime?
+  createdAt    DateTime @default(now())
+
+  evidence Evidence @relation(fields: [evidenceId], references: [id], onDelete: Cascade)
+  branch   Branch   @relation(fields: [branchId],   references: [id], onDelete: Cascade)
+}
+
+// SOURCE: forenix
+model Branch {
+  id           String   @id @default(cuid())
+  caseId       String
+  name         String
+  description  String?
+  parentHash   String?
+  headHash     String?
+  parentBranch String?
+  status       String   @default("active")
+  isMain       Boolean  @default(false)
+  storyPoints  Int      @default(0)
+  color        String   @default("#10b981")
+  createdAt    DateTime @default(now())
+  mergedAt     DateTime?
+
+  case    Case             @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  commits EvidenceCommit[]
+  merges  MergeRequest[]
+}
+
+// SOURCE: forenix
+model MergeRequest {
+  id          String   @id @default(cuid())
+  caseId      String
+  branchId    String
+  title       String
+  description String?
+  status      String   @default("open") // open, merged, closed
+  storyPoints Int      @default(0)
+  reviewerId  String?
+  authorId    String
+  createdAt   DateTime @default(now())
+  mergedAt    DateTime?
+
+  case     Case      @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  branch   Branch    @relation(fields: [branchId], references: [id], onDelete: Cascade)
+  reviewer User?     @relation(fields: [reviewerId], references: [id])
+  comments Comment[]
+}
+
+// SOURCE: forenix
+model Agent {
+  id          String   @id @default(cuid())
+  name        String
+  type        String
+  model       String   @default("local-llm")
+  status      String   @default("idle") // idle, busy, error
+  description String?
+  config      String   @default("{}")
+  lastActive  DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  assignments AgentAssignment[]
+  tasks       AgentTask[]
+}
+
+// SOURCE: forenix
+model AgentAssignment {
+  id        String   @id @default(cuid())
+  agentId   String
+  caseId    String
+  role      String   @default("analyst")
+  createdAt DateTime @default(now())
+
+  agent Agent @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  case  Case  @relation(fields: [caseId],  references: [id], onDelete: Cascade)
+}
+
+// SOURCE: forenix
+model AgentTask {
+  id          String   @id @default(cuid())
+  agentId     String
+  type        String
+  status      String   @default("pending") // pending, running, completed, failed
+  input       String   @default("{}")
+  output      String?
+  confidence  Float    @default(0)
+  error       String?
+  startedAt   DateTime?
+  completedAt DateTime?
+  createdAt   DateTime @default(now())
+
+  agent Agent @relation(fields: [agentId], references: [id], onDelete: Cascade)
+}
+
+// SOURCE: forenix
+model Comment {
+  id             String   @id @default(cuid())
+  authorId       String
+  content        String
+  evidenceId     String?
+  mergeRequestId String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  author       User?         @relation(fields: [authorId], references: [id])
+  evidence     Evidence?     @relation(fields: [evidenceId], references: [id], onDelete: Cascade)
+  mergeRequest MergeRequest? @relation(fields: [mergeRequestId], references: [id], onDelete: Cascade)
+}
+
+// SOURCE: forenix
+model CaseAssignment {
+  id        String   @id @default(cuid())
+  caseId    String
+  userId    String
+  role      String   @default("investigator")
+  createdAt DateTime @default(now())
+
+  case Case @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// SOURCE: forenix
+model CaseMetric {
+  id         String   @id @default(cuid())
+  caseId     String
+  metric     String
+  value      Float
+  unit       String   @default("")
+  recordedAt DateTime @default(now())
+
+  case Case @relation(fields: [caseId], references: [id], onDelete: Cascade)
+}
+
+// ───────────────────────── Reports (merged) ───────────────
+// Carries a `source` discriminator so both OSINT and forensic
+// reports live in one model. Argus's `sections` JSON and ForenX's
+// `content` markdown are both first-class fields.
+model Report {
+  id              String   @id @default(cuid())
+  title           String
+  source          String   // "investigation" | "case"
+  type            String   @default("summary")     // summary, technical, executive
+  status          String   @default("draft")       // draft, published, archived
+  /// JSON array of ReportSection objects (Argus style).
+  sections        String   @default("[]")
+  /// Markdown content (ForenX style); generally set when source = "case".
+  content         String   @default("")
+  findingCount    Int      @default(0)
+  commitHash      String?
+  generatedBy     String?
+  generatedById   String?
+
+  investigationId String?
+  caseId          String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  investigation Investigation? @relation(fields: [investigationId], references: [id], onDelete: Cascade)
+  case          Case?          @relation(fields: [caseId],          references: [id], onDelete: Cascade)
+  generator     User?          @relation(fields: [generatedById],   references: [id])
+}
+
+// ───────────────────────── AuditLog (hash chain) ─────────
+// SOURCE: forenix  (ForenX wins — it has the hash chain. Argus's
+// investigation-scoped audit log is preserved via the optional
+// investigationId column.)
+model AuditLog {
+  id              String   @id @default(cuid())
+  userId          String?
+  caseId          String?
+  investigationId String?
+  action          String
+  entity          String
+  entityId        String?
+  details         String   @default("{}")
+  hash            String?
+  prevHash        String?
+  createdAt       DateTime @default(now())
+
+  user          User?          @relation(fields: [userId],          references: [id])
+  case          Case?          @relation(fields: [caseId],          references: [id], onDelete: Cascade)
+  investigation Investigation? @relation(fields: [investigationId], references: [id], onDelete: SetNull)
+}
