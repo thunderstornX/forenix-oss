@@ -1,0 +1,92 @@
+@import "tailwindcss";
+
+:root {
+  --background: #050608;
+  --background-elev: #0b0e13;
+  --background-elev-2: #11151c;
+  --foreground: #e9ecf2;
+  --foreground-muted: #9aa3b2;
+  --border: rgba(255, 255, 255, 0.06);
+  --border-strong: rgba(255, 255, 255, 0.12);
+  --accent: #14b8a6;        /* teal — Argus */
+  --accent-soft: rgba(20, 184, 166, 0.12);
+  --accent-strong: #2dd4bf;
+  --forensic: #34d399;      /* green — ForenX */
+  --warn: #f59e0b;
+  --danger: #ef4444;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-background-elev: var(--background-elev);
+  --color-background-elev-2: var(--background-elev-2);
+  --color-foreground: var(--foreground);
+  --color-foreground-muted: var(--foreground-muted);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-strong: var(--accent-strong);
+  --color-forensic: var(--forensic);
+  --color-warn: var(--warn);
+  --color-danger: var(--danger);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+html, body {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+body {
+  font-family: var(--font-sans), system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Glassmorphism card — translucent surface over the dark background.
+   Used for sidebar, dashboard widgets, evidence tiles. */
+.glass {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0.01));
+  border: 1px solid var(--border);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.glass-strong {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.015));
+  border: 1px solid var(--border-strong);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+/* Accent glow used on hash-chain rows + active nav items. */
+.forensic-glow {
+  box-shadow:
+    0 0 0 1px rgba(20, 184, 166, 0.25),
+    0 0 24px -4px rgba(20, 184, 166, 0.35);
+}
+
+/* Chain line — drawn under timeline / commit lists to suggest a
+   ledger. */
+.chain-line {
+  background: linear-gradient(180deg, transparent 0%, var(--border-strong) 12%, var(--border-strong) 88%, transparent 100%);
+}
+
+/* Monospace hash display — truncates to first 12 chars by default. */
+.hash {
+  font-family: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.78rem;
+  color: var(--foreground-muted);
+  letter-spacing: 0.02em;
+}
+
+/* Scrollbar (WebKit) — slim, teal accent on hover. */
+*::-webkit-scrollbar { width: 10px; height: 10px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 6px;
+}
+*::-webkit-scrollbar-thumb:hover { background: var(--accent-soft); }
