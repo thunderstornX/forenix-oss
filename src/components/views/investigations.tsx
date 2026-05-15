@@ -5,18 +5,26 @@ import { Plus, Telescope, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { useCreateInvestigation, useInvestigations } from "@/lib/hooks";
+import { useUI } from "@/lib/store";
 import { cn, relTime } from "@/lib/utils";
 
+import { InvestigationDetail } from "./investigation-detail";
 import { ViewShell } from "./view-shell";
 
 export function InvestigationsView() {
   const list = useInvestigations();
   const create = useCreateInvestigation();
+  const activeId = useUI((s) => s.activeInvestigationId);
+  const setActive = useUI((s) => s.setActiveInvestigation);
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [target, setTarget] = useState("");
   const [targetType, setTargetType] = useState("domain");
   const [objective, setObjective] = useState("");
+
+  if (activeId) {
+    return <InvestigationDetail investigationId={activeId} />;
+  }
 
   const items = list.data?.data ?? [];
 
@@ -124,7 +132,11 @@ export function InvestigationsView() {
           </thead>
           <tbody className="text-[13px] text-[var(--foreground)]">
             {items.map((i) => (
-              <tr key={i.id} className="border-b border-[var(--border)] last:border-0 hover:bg-[var(--background-elev)]">
+              <tr
+                key={i.id}
+                onClick={() => setActive(i.id)}
+                className="cursor-pointer border-b border-[var(--border)] last:border-0 hover:bg-[var(--background-elev)]"
+              >
                 <td className="px-4 py-2.5">
                   <div className="flex items-center gap-2">
                     <Telescope className="h-3.5 w-3.5 text-[var(--accent)]" />

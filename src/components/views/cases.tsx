@@ -5,17 +5,25 @@ import { Plus, Folders, Loader2, GitBranch, Archive } from "lucide-react";
 import { toast } from "sonner";
 
 import { useCases, useCreateCase } from "@/lib/hooks";
+import { useUI } from "@/lib/store";
 import { cn, relTime } from "@/lib/utils";
 
+import { CaseDetail } from "./case-detail";
 import { ViewShell } from "./view-shell";
 
 export function CasesView() {
   const list = useCases();
   const create = useCreateCase();
+  const activeId = useUI((s) => s.activeCaseId);
+  const setActive = useUI((s) => s.setActiveCase);
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [priority, setPriority] = useState("medium");
+
+  if (activeId) {
+    return <CaseDetail caseId={activeId} />;
+  }
 
   const items = list.data?.data ?? [];
 
@@ -98,7 +106,11 @@ export function CasesView() {
 
       <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
         {items.map((c) => (
-          <article key={c.id} className="glass rounded-lg p-4">
+          <article
+            key={c.id}
+            onClick={() => setActive(c.id)}
+            className="glass cursor-pointer rounded-lg p-4 transition-colors hover:border-[var(--forensic)] hover:bg-[var(--background-elev)]"
+          >
             <header className="flex items-start justify-between gap-3">
               <div className="min-w-0">
                 <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.18em] text-[var(--foreground-muted)]">
