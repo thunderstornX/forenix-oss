@@ -46,6 +46,7 @@ export default [
         globalThis: "readonly",
         RequestInit: "readonly",
         Headers: "readonly",
+        URLSearchParams: "readonly",
       },
     },
     plugins: {

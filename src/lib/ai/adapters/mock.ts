@@ -64,7 +64,11 @@ function hash32(s: string): number {
 function rng(seed: string) {
   let s = hash32(seed) || 1;
   return () => {
-    s = (Math.imul(s, 16807) + 0) % 2147483647;
+    // Park-Miller LCG. Math.imul returns a signed int32, so a naive
+    // modulo can leak negative values — coerce to unsigned via >>> 0
+    // before doing the modulo, then divide.
+    const next = (Math.imul(s, 48271) >>> 0) % 2147483647;
+    s = next || 1;
     return s / 2147483647;
   };
 }
