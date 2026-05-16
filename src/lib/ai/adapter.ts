@@ -18,8 +18,12 @@ import { MockAdapter } from "./adapters/mock";
 import { OllamaAdapter } from "./adapters/ollama";
 import { GLMAdapter } from "./adapters/glm";
 import { ClaudeAdapter } from "./adapters/claude";
+import { OpenRouterAdapter } from "./adapters/openrouter";
+import { NVIDIAAdapter } from "./adapters/nvidia";
 
-const VALID: ReadonlySet<AdapterName> = new Set(["mock", "ollama", "glm", "claude"]);
+const VALID: ReadonlySet<AdapterName> = new Set([
+  "mock", "ollama", "glm", "claude", "openrouter", "nvidia",
+]);
 
 function resolveAdapterName(): AdapterName {
   const raw = (process.env.AI_ADAPTER ?? "mock").toLowerCase() as AdapterName;
@@ -45,14 +49,12 @@ export function getAdapter(force?: AdapterName): AIAdapter {
 
 function construct(name: AdapterName): AIAdapter {
   switch (name) {
-    case "mock":
-      return new MockAdapter();
-    case "ollama":
-      return new OllamaAdapter();
-    case "glm":
-      return new GLMAdapter();
-    case "claude":
-      return new ClaudeAdapter();
+    case "mock":       return new MockAdapter();
+    case "ollama":     return new OllamaAdapter();
+    case "glm":        return new GLMAdapter();
+    case "claude":     return new ClaudeAdapter();
+    case "openrouter": return new OpenRouterAdapter();
+    case "nvidia":     return new NVIDIAAdapter();
   }
 }
 

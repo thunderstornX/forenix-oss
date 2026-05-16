@@ -102,7 +102,13 @@ export interface InvestigationContext {
   status: string;
 }
 
-export type AdapterName = "mock" | "ollama" | "glm" | "claude";
+export type AdapterName =
+  | "mock"
+  | "ollama"
+  | "glm"
+  | "claude"
+  | "openrouter"
+  | "nvidia";
 
 /**
  * AIAdapter — every concrete adapter implements this surface.

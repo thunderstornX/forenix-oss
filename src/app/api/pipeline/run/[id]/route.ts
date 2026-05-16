@@ -38,6 +38,7 @@ const Body = z.object({
       ]),
     )
     .optional(),
+  adapter: z.enum(["mock", "ollama", "glm", "claude", "openrouter", "nvidia"]).optional(),
 });
 
 // Fabricate a small handful of search hits so the mock adapter has
@@ -98,7 +99,7 @@ export async function POST(
       ? configured
       : ["identity", "infrastructure", "social"]);
 
-  const adapter = getAdapter();
+  const adapter = parsed.adapter ? getAdapter(parsed.adapter) : getAdapter();
 
   await prisma.investigation.update({
     where: { id },
