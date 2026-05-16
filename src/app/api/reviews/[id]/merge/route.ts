@@ -16,6 +16,7 @@ import { prisma } from "@/lib/db";
 import {
   ensureCaseRepo,
   getBranchHead,
+  gitEngineEnabled,
   mergeBranches,
 } from "@/lib/git-engine";
 import { httpErrorResponse, requireSession } from "@/lib/rbac";
@@ -36,6 +37,16 @@ export async function POST(
       },
     });
     if (!mr) return Response.json({ error: "not_found" }, { status: 404 });
+    if (!gitEngineEnabled()) {
+      return Response.json(
+        {
+          error: "merge_unavailable",
+          details:
+            "Real Git merges require a writable filesystem. This deployment runs on a serverless host without persistent disk — please self-host or set FORENIX_FORCE_GIT=1 if you accept ephemeral repos.",
+        },
+        { status: 503 },
+      );
+    }
     if (mr.status === "merged") {
       return Response.json({ error: "already_merged" }, { status: 409 });
     }

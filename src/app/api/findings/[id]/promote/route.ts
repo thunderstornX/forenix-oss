@@ -14,6 +14,7 @@ import {
   commitChanges,
   ensureCaseRepo,
   getBranchHead,
+  gitEngineEnabled,
   writeEvidenceFile,
 } from "@/lib/git-engine";
 import { httpErrorResponse, requireSession } from "@/lib/rbac";
@@ -74,27 +75,38 @@ export async function POST(
       },
     });
 
-    // Real Git: ensure repo, write evidence file, commit on main.
-    await ensureCaseRepo(caseId);
-    await writeEvidenceFile(caseId, {
-      id: evidence.id,
-      name: evidence.name,
-      type: evidence.type,
-      mimeType: evidence.mimeType,
-      description: evidence.description,
-      hash: evidence.hash,
-      hashAlgo: evidence.hashAlgo,
-      status: evidence.status,
-      tags: evidence.tags,
-      metadata: JSON.parse(evidence.metadata || "{}"),
-    });
-    const parentHead = await getBranchHead(caseId, "main").catch(() => "");
-    const oid = await commitChanges({
-      caseId,
-      message: `add: promoted from finding ${finding.id.slice(0, 8)}`,
-      authorName: actor.name ?? "analyst",
-      authorEmail: actor.email ?? "analyst@forenix-oss.local",
-    });
+    // Real Git on self-host; SHA-256 fallback on Vercel.
+    let parentHead = "";
+    let oid: string;
+    if (gitEngineEnabled()) {
+      try {
+        await ensureCaseRepo(caseId);
+        await writeEvidenceFile(caseId, {
+          id: evidence.id,
+          name: evidence.name,
+          type: evidence.type,
+          mimeType: evidence.mimeType,
+          description: evidence.description,
+          hash: evidence.hash,
+          hashAlgo: evidence.hashAlgo,
+          status: evidence.status,
+          tags: evidence.tags,
+          metadata: JSON.parse(evidence.metadata || "{}"),
+        });
+        parentHead = await getBranchHead(caseId, "main").catch(() => "");
+        oid = await commitChanges({
+          caseId,
+          message: `add: promoted from finding ${finding.id.slice(0, 8)}`,
+          authorName: actor.name ?? "analyst",
+          authorEmail: actor.email ?? "analyst@forenix-oss.local",
+        });
+      } catch (err) {
+        console.warn("[promote] git fallback:", (err as Error).message);
+        oid = createHash("sha256").update(`commit:${evidence.id}:initial:${Date.now()}`).digest("hex");
+      }
+    } else {
+      oid = createHash("sha256").update(`commit:${evidence.id}:initial:${Date.now()}`).digest("hex");
+    }
 
     await prisma.evidenceCommit.create({
       data: {

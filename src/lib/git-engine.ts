@@ -42,6 +42,22 @@ const AUTHOR = {
   email: "system@forenix-oss.local",
 };
 
+/**
+ * Vercel's serverless filesystem is read-only except for /tmp, and
+ * /tmp is wiped on cold-start — so per-case Git repos can't survive
+ * across invocations there. We expose this flag so callers can fall
+ * back to db-only commit records when running on Vercel.
+ *
+ * Set FORENIX_FORCE_GIT=1 in env to override (useful for testing
+ * the git path on Vercel even though the repos won't persist).
+ */
+export function gitEngineEnabled(): boolean {
+  if (process.env.FORENIX_FORCE_GIT === "1") return true;
+  if (process.env.VERCEL) return false;
+  if (process.env.VERCEL_URL) return false;
+  return true;
+}
+
 function caseDir(caseId: string): string {
   return join(ROOT, caseId);
 }

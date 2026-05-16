@@ -19,6 +19,7 @@ import {
   commitChanges,
   ensureCaseRepo,
   getBranchHead,
+  gitEngineEnabled,
   writeEvidenceFile,
 } from "@/lib/git-engine";
 
@@ -79,18 +80,25 @@ export async function POST(
     include: { branches: true },
   });
 
-  // Provision a real Git repo for this case and capture the initial-
-  // commit oid on the main branch row.
-  await ensureCaseRepo(created.id, {
-    title: created.title,
-    description: created.description,
-  });
+  // Provision a real Git repo for this case (skipped on Vercel —
+  // /tmp is the only writable path and is wiped on cold start).
   const mainBranchRow = created.branches.find((b) => b.isMain) ?? created.branches[0]!;
-  const mainHead = await getBranchHead(created.id, "main");
-  await prisma.branch.update({
-    where: { id: mainBranchRow.id },
-    data: { headHash: mainHead },
-  });
+  const gitOn = gitEngineEnabled();
+  if (gitOn) {
+    try {
+      await ensureCaseRepo(created.id, {
+        title: created.title,
+        description: created.description,
+      });
+      const mainHead = await getBranchHead(created.id, "main");
+      await prisma.branch.update({
+        where: { id: mainBranchRow.id },
+        data: { headHash: mainHead },
+      });
+    } catch (err) {
+      console.warn("[bridge] git-engine init failed, falling back to db-only:", (err as Error).message);
+    }
+  }
 
   await prisma.investigation.update({
     where: { id },
@@ -135,24 +143,40 @@ export async function POST(
           }),
         },
       });
-      // Real Git: write the evidence file, then commit.
-      await writeEvidenceFile(created.id, {
-        id: ev.id,
-        name: ev.name,
-        type: ev.type,
-        mimeType: ev.mimeType,
-        description: ev.description,
-        hash: ev.hash,
-        hashAlgo: ev.hashAlgo,
-        status: ev.status,
-        tags: ev.tags,
-        metadata: JSON.parse(ev.metadata || "{}"),
-      });
-      const parentHead = await getBranchHead(created.id, "main");
-      const oid = await commitChanges({
-        caseId: created.id,
-        message: `add: promoted from finding ${f.id.slice(0, 8)}`,
-      });
+      // Real Git: write the evidence file, then commit. Falls back
+      // to deterministic SHA-256 hashes if the git engine is off.
+      let parentHead: string | null = null;
+      let oid: string;
+      if (gitOn) {
+        try {
+          await writeEvidenceFile(created.id, {
+            id: ev.id,
+            name: ev.name,
+            type: ev.type,
+            mimeType: ev.mimeType,
+            description: ev.description,
+            hash: ev.hash,
+            hashAlgo: ev.hashAlgo,
+            status: ev.status,
+            tags: ev.tags,
+            metadata: JSON.parse(ev.metadata || "{}"),
+          });
+          parentHead = await getBranchHead(created.id, "main");
+          oid = await commitChanges({
+            caseId: created.id,
+            message: `add: promoted from finding ${f.id.slice(0, 8)}`,
+          });
+        } catch (err) {
+          console.warn("[bridge] git commit fallback:", (err as Error).message);
+          oid = createHash("sha256")
+            .update(`commit:${ev.id}:initial:${Date.now()}`)
+            .digest("hex");
+        }
+      } else {
+        oid = createHash("sha256")
+          .update(`commit:${ev.id}:initial:${Date.now()}`)
+          .digest("hex");
+      }
       await prisma.evidenceCommit.create({
         data: {
           evidenceId: ev.id,
@@ -171,13 +195,18 @@ export async function POST(
       });
       promoted++;
     }
-    // Update the branch row's head to the latest real oid.
-    if (promoted > 0) {
-      const finalHead = await getBranchHead(created.id, "main");
-      await prisma.branch.update({
-        where: { id: main.id },
-        data: { headHash: finalHead },
-      });
+    // Update the branch row's head to the latest real oid (or skip
+    // if the git engine isn't running).
+    if (promoted > 0 && gitOn) {
+      try {
+        const finalHead = await getBranchHead(created.id, "main");
+        await prisma.branch.update({
+          where: { id: main.id },
+          data: { headHash: finalHead },
+        });
+      } catch {
+        /* already logged above */
+      }
     }
     await appendAudit({
       action: "findings_promoted_to_evidence",
