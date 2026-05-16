@@ -20,6 +20,7 @@ import { PipelineView } from "@/components/views/pipeline";
 import { AdminView } from "@/components/views/admin";
 import { ReportsView } from "@/components/views/reports";
 import { ReviewsView } from "@/components/views/reviews";
+import { SettingsView } from "@/components/views/settings";
 import { TeamsView } from "@/components/views/teams";
 import { VerificationView } from "@/components/views/verification";
 
@@ -52,6 +53,7 @@ function ViewRouter() {
     case "audit":          return <AuditView />;
     case "reviews":        return <ReviewsView />;
     case "teams":          return <TeamsView />;
+    case "settings":       return <SettingsView />;
     case "admin":          return <AdminView />;
   }
 }

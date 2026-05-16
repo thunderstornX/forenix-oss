@@ -43,6 +43,7 @@ const ICONS: Partial<Record<ViewType, React.ComponentType<{ className?: string }
   "audit":          Eye,
   "reviews":        Diff,
   "teams":          Users,
+  "settings":       Cog,
   "admin":          Cog,
 };
 

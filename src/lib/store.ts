@@ -31,6 +31,7 @@ export const VIEWS = [
   "reviews",
   // Account + admin
   "teams",
+  "settings",
   "admin",
 ] as const;
 
@@ -61,6 +62,7 @@ export const NAV: NavItem[] = [
   { id: "audit",          label: "Audit",          section: "forensics" },
   { id: "reviews",        label: "Reviews",        section: "forensics" },
   { id: "teams",          label: "Teams",          section: "account" },
+  { id: "settings",       label: "Settings",       section: "account" },
   { id: "admin",          label: "Admin",          section: "account", adminOnly: true },
 ];
 
