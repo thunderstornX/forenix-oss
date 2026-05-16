@@ -6,7 +6,7 @@ import {
   useMutation,
   useQueryClient,
 } from "@tanstack/react-query";
-import { Loader2, Plus, ShieldAlert, Users as UsersIcon } from "lucide-react";
+import { Key, Loader2, Plus, ShieldAlert, Trash2, Users as UsersIcon } from "lucide-react";
 import { toast } from "sonner";
 
 import { useIntegrity, useMe } from "@/lib/hooks";
@@ -83,6 +83,7 @@ function AdminConsole() {
       <UsersPanel />
       <TeamsPanel />
       <InvitesPanel />
+      <VaultPanel />
     </ViewShell>
   );
 }
@@ -412,6 +413,175 @@ function InvitesPanel() {
               </td>
             </tr>
           ))}
+        </tbody>
+      </table>
+    </section>
+  );
+}
+
+// ───────────────────────── Vault (API keys) ───────────────────────
+
+interface VaultEntry {
+  id: string;
+  envKey: string;
+  label: string;
+  redactedValue: string;
+  setAt: string;
+  rotatedAt: string | null;
+  lastUsedAt: string | null;
+}
+
+const SUGGESTED_KEYS = [
+  { envKey: "SHODAN_API_KEY",  label: "Shodan",      sample: "Shodan host search" },
+  { envKey: "HUNTER_API_KEY",  label: "Hunter.io",   sample: "Domain → emails" },
+  { envKey: "HIBP_API_KEY",    label: "HaveIBeenPwned", sample: "Email → breaches" },
+  { envKey: "CENSYS_API_ID",   label: "Censys ID",   sample: "Internet asset search" },
+  { envKey: "CENSYS_API_SECRET", label: "Censys secret", sample: "(pair with the ID)" },
+  { envKey: "INTELX_API_KEY",  label: "IntelX",      sample: "Dark/leak corpus search" },
+];
+
+function VaultPanel() {
+  const qc = useQueryClient();
+  const list = useQuery({
+    queryKey: ["admin-vault"],
+    queryFn: () => http<{ data: VaultEntry[] }>("/api/admin/vault"),
+  });
+  const [open, setOpen] = useState(false);
+  const [envKey, setEnvKey] = useState("");
+  const [label, setLabel] = useState("");
+  const [plaintext, setPlaintext] = useState("");
+
+  const put = useMutation({
+    mutationFn: (body: { envKey: string; label: string; plaintext: string }) =>
+      http("/api/admin/vault", {
+        method: "PUT",
+        body: JSON.stringify(body),
+      }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["admin-vault"] }),
+  });
+
+  const del = useMutation({
+    mutationFn: (envKeyToDelete: string) =>
+      http("/api/admin/vault", {
+        method: "DELETE",
+        body: JSON.stringify({ envKey: envKeyToDelete }),
+      }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["admin-vault"] }),
+  });
+
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    try {
+      await put.mutateAsync({ envKey, label, plaintext });
+      toast.success(`Stored ${envKey} (encrypted)`);
+      setOpen(false); setEnvKey(""); setLabel(""); setPlaintext("");
+    } catch (err) {
+      toast.error((err as Error).message);
+    }
+  }
+
+  return (
+    <section className="glass rounded-lg p-4">
+      <header className="mb-3 flex items-center justify-between">
+        <div>
+          <h3 className="text-sm font-medium text-[var(--foreground)]">
+            API key vault <span className="text-[11px] text-[var(--foreground-muted)]">({list.data?.data?.length ?? 0})</span>
+          </h3>
+          <p className="text-[11px] text-[var(--foreground-muted)]">
+            AES-256-GCM at rest. The active AI adapter reads decrypted values via process.env at tool-call time.
+          </p>
+        </div>
+        <button type="button" onClick={() => setOpen((o) => !o)}
+          className="flex items-center gap-1.5 rounded border border-[var(--border-strong)] bg-[var(--accent-soft)] px-2.5 py-1 text-[11px] font-medium text-[var(--accent-strong)]">
+          <Plus className="h-3 w-3" /> Add key
+        </button>
+      </header>
+
+      {open && (
+        <form onSubmit={submit} className="mb-3 grid grid-cols-1 gap-2 rounded border border-[var(--border)] bg-[var(--background-elev)] p-3 sm:grid-cols-4">
+          <select
+            value={envKey}
+            onChange={(e) => {
+              const v = e.target.value;
+              setEnvKey(v);
+              const sug = SUGGESTED_KEYS.find((s) => s.envKey === v);
+              if (sug && !label) setLabel(sug.label);
+            }}
+            className="rounded border border-[var(--border)] bg-[var(--background-elev-2)] px-2 py-1.5 text-[12px]"
+          >
+            <option value="">— pick a key —</option>
+            {SUGGESTED_KEYS.map((s) => (
+              <option key={s.envKey} value={s.envKey}>{s.envKey} · {s.sample}</option>
+            ))}
+            <option value="__custom">other (type your own)</option>
+          </select>
+          {envKey === "__custom" ? (
+            <input value={envKey === "__custom" ? "" : envKey}
+              onChange={(e) => setEnvKey(e.target.value.toUpperCase())}
+              required placeholder="CUSTOM_API_KEY" pattern="[A-Z][A-Z0-9_]{2,80}"
+              className="rounded border border-[var(--border)] bg-[var(--background-elev-2)] px-2 py-1.5 font-mono text-[11px]" />
+          ) : (
+            <input value={label} onChange={(e) => setLabel(e.target.value)}
+              required placeholder="Label (e.g. 'Shodan prod')"
+              className="rounded border border-[var(--border)] bg-[var(--background-elev-2)] px-2 py-1.5 text-[12px]" />
+          )}
+          <input value={plaintext} onChange={(e) => setPlaintext(e.target.value)}
+            required type="password" placeholder="Paste the key (8+ chars)"
+            className="rounded border border-[var(--border)] bg-[var(--background-elev-2)] px-2 py-1.5 font-mono text-[12px]" />
+          <button type="submit" disabled={put.isPending}
+            className="flex items-center justify-center gap-1 rounded bg-[var(--accent-soft)] px-3 py-1 text-[12px] font-medium text-[var(--accent-strong)] disabled:opacity-60">
+            {put.isPending && <Loader2 className="h-3 w-3 animate-spin" />} Store
+          </button>
+        </form>
+      )}
+
+      <table className="w-full text-[12px]">
+        <thead className="border-b border-[var(--border)] text-left text-[10px] uppercase tracking-[0.18em] text-[var(--foreground-muted)]">
+          <tr>
+            <th className="px-2 py-1.5 font-medium">Env key</th>
+            <th className="px-2 py-1.5 font-medium">Label</th>
+            <th className="px-2 py-1.5 font-medium">Value</th>
+            <th className="px-2 py-1.5 font-medium">Set</th>
+            <th className="px-2 py-1.5 font-medium">Rotated</th>
+            <th className="px-2 py-1.5 font-medium">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {list.data?.data?.map((v) => (
+            <tr key={v.id} className="border-b border-[var(--border)] last:border-0">
+              <td className="px-2 py-1.5">
+                <span className="flex items-center gap-1.5 font-mono text-[11px]">
+                  <Key className="h-3 w-3 text-[var(--accent)]" />
+                  {v.envKey}
+                </span>
+              </td>
+              <td className="px-2 py-1.5">{v.label}</td>
+              <td className="px-2 py-1.5 font-mono text-[11px] text-[var(--foreground-muted)]">{v.redactedValue}</td>
+              <td className="px-2 py-1.5 text-[10px] text-[var(--foreground-muted)]">{relTime(v.setAt)}</td>
+              <td className="px-2 py-1.5 text-[10px] text-[var(--foreground-muted)]">{v.rotatedAt ? relTime(v.rotatedAt) : "—"}</td>
+              <td className="px-2 py-1.5">
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (confirm(`Delete ${v.envKey}?`)) {
+                      del.mutate(v.envKey);
+                    }
+                  }}
+                  className="flex items-center gap-1 rounded border border-[var(--border)] px-1.5 py-0.5 text-[10px] text-[var(--danger)] hover:border-[var(--danger)]"
+                >
+                  <Trash2 className="h-3 w-3" />
+                  delete
+                </button>
+              </td>
+            </tr>
+          ))}
+          {list.data?.data && list.data.data.length === 0 && (
+            <tr>
+              <td colSpan={6} className="p-4 text-center text-[11px] text-[var(--foreground-muted)]">
+                No keys stored. Add one above to unlock Shodan, Hunter.io, HaveIBeenPwned, etc. for the LLM tools.
+              </td>
+            </tr>
+          )}
         </tbody>
       </table>
     </section>

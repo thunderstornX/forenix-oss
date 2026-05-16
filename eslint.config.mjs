@@ -57,6 +57,7 @@ export default [
         TextEncoder: "readonly",
         Buffer: "readonly",
         AbortSignal: "readonly",
+        confirm: "readonly",
       },
     },
     plugins: {
