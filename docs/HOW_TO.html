@@ -1,0 +1,873 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>How to Use forenix-oss</title>
+<style>
+@page { size: A4; margin: 22mm 18mm 22mm 18mm; }
+
+:root {
+  --bg: #ffffff;
+  --fg: #0c1117;
+  --muted: #5b6473;
+  --accent: #0e6e63;
+  --accent-soft: #d6ece8;
+  --border: #d8dee9;
+  --hr: #e5ebef;
+  --code-bg: #f3f5f7;
+  --code-fg: #1d2530;
+}
+
+html, body { background: var(--bg); color: var(--fg); margin: 0; padding: 0; }
+body {
+  font-family: "Inter", "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 10.5pt; line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+.cover {
+  page-break-after: always;
+  padding: 6mm 0 0 0;
+  border-bottom: 1px solid var(--hr);
+}
+.cover .eyebrow {
+  color: var(--accent); font-size: 10pt;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  font-weight: 600;
+}
+.cover h1.title {
+  font-size: 40pt; font-weight: 800;
+  margin: 8pt 0 6pt 0; line-height: 1.05;
+}
+.cover .subtitle {
+  font-size: 14pt; color: var(--muted); margin-bottom: 28pt;
+}
+.cover .meta {
+  font-size: 10pt; color: var(--muted);
+  border-top: 1px solid var(--hr); padding-top: 8pt;
+}
+
+.content { padding-top: 6mm; }
+
+h1, h2, h3, h4 { page-break-after: avoid; break-after: avoid-page; }
+h1 {
+  font-size: 22pt; font-weight: 800;
+  margin-top: 16pt; margin-bottom: 6pt;
+  border-bottom: 1px solid var(--hr); padding-bottom: 4pt;
+}
+h2 {
+  font-size: 15pt; font-weight: 700;
+  margin-top: 14pt; margin-bottom: 4pt;
+}
+h3 {
+  font-size: 12pt; font-weight: 700;
+  margin-top: 10pt; margin-bottom: 2pt;
+  color: var(--accent);
+}
+h4 {
+  font-size: 11pt; font-weight: 700;
+  margin-top: 8pt; margin-bottom: 2pt;
+  color: var(--muted);
+}
+p { margin: 4pt 0 6pt 0; }
+ul, ol { margin: 4pt 0 6pt 0; padding-left: 18pt; }
+li { margin: 2pt 0; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+code {
+  font-family: "JetBrains Mono", "Menlo", "Consolas", monospace;
+  font-size: 9pt;
+  background: var(--code-bg); color: var(--code-fg);
+  padding: 1pt 4pt; border-radius: 3pt;
+}
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border); border-left: 3px solid var(--accent);
+  border-radius: 4pt; padding: 8pt 10pt;
+  font-size: 9pt; line-height: 1.45;
+  overflow-x: auto; page-break-inside: avoid;
+}
+pre code { background: transparent; padding: 0; }
+
+table {
+  border-collapse: collapse; margin: 6pt 0 10pt 0;
+  font-size: 9.5pt; width: 100%;
+  page-break-inside: avoid;
+}
+th, td {
+  text-align: left; vertical-align: top;
+  border: 1px solid var(--border); padding: 4pt 6pt;
+}
+th { background: var(--code-bg); font-weight: 700; }
+
+img {
+  max-width: 100%; height: auto;
+  border: 1px solid var(--border); border-radius: 4pt;
+  margin: 8pt 0; page-break-inside: avoid; display: block;
+}
+
+hr { border: 0; border-top: 1px solid var(--hr); margin: 14pt 0; }
+
+blockquote {
+  border-left: 3px solid var(--accent);
+  background: var(--accent-soft);
+  margin: 8pt 0; padding: 6pt 10pt;
+  color: var(--code-fg); border-radius: 3pt;
+}
+
+strong { font-weight: 700; }
+em { font-style: italic; }
+
+td > p:first-child { margin-top: 0; }
+td > p:last-child { margin-bottom: 0; }
+
+h2 + p, h3 + p, h4 + p { page-break-before: avoid; }
+</style>
+</head>
+<body>
+
+<section class="cover">
+  <div class="eyebrow">How to Use forenix-oss · v0.1 · 2026-05</div>
+  <h1 class="title">How to Use forenix-oss</h1>
+  <div class="subtitle">Step-by-step recipes for every task in the platform.</div>
+  <div class="meta">
+    <b>Author:</b> Ali Murtaza Bhutto &nbsp;·&nbsp;
+    <b>Repository:</b> github.com/thunderstornX/forenix-oss &nbsp;·&nbsp;
+    <b>License:</b> MIT
+  </div>
+</section>
+
+<main class="content">
+<h1>forenix-oss — How-To Guide</h1>
+<p><em>Cookbook-style recipes. Each topic is independent. Skim the index,
+jump to the one you need.</em></p>
+<hr>
+<h2>Index</h2>
+<p><strong>Investigations</strong></p>
+<ul>
+<li><a href="#how-to-create-a-new-investigation">How to create a new investigation</a></li>
+<li><a href="#how-to-open-an-existing-investigation">How to open an existing investigation</a></li>
+<li><a href="#how-to-filter-the-investigations-list">How to filter the investigations list</a></li>
+<li><a href="#how-to-delete-or-archive-an-investigation">How to delete or archive an investigation</a></li>
+</ul>
+<p><strong>The Pipeline</strong></p>
+<ul>
+<li><a href="#how-to-run-the-osint-pipeline-against-a-target">How to run the OSINT pipeline against a target</a></li>
+<li><a href="#how-to-pick-which-agent-groups-to-run">How to pick which agent groups to run</a></li>
+<li><a href="#how-to-run-the-pipeline-against-a-real-llm-nvidia-or-openrouter">How to run the pipeline against a real LLM (NVIDIA or OpenRouter)</a></li>
+<li><a href="#how-to-compare-two-ai-adapters-on-the-same-target">How to compare two AI adapters on the same target</a></li>
+</ul>
+<p><strong>Findings</strong></p>
+<ul>
+<li><a href="#how-to-verify-a-finding">How to verify a finding</a></li>
+<li><a href="#how-to-promote-a-finding-to-forensic-evidence">How to promote a finding to forensic evidence</a></li>
+<li><a href="#how-to-view-a-findings-reasoning-trace">How to view a finding&#39;s reasoning trace</a></li>
+</ul>
+<p><strong>Forensic cases</strong></p>
+<ul>
+<li><a href="#how-to-bridge-an-investigation-to-a-case">How to bridge an investigation to a case</a></li>
+<li><a href="#how-to-create-a-case-from-scratch">How to create a case from scratch</a></li>
+<li><a href="#how-to-open-an-existing-case">How to open an existing case</a></li>
+<li><a href="#how-to-filter-the-cases-list">How to filter the cases list</a></li>
+</ul>
+<p><strong>Evidence + chain of custody</strong></p>
+<ul>
+<li><a href="#how-to-seal-an-evidence-row">How to seal an evidence row</a></li>
+<li><a href="#how-to-read-an-evidence-commit-chain">How to read an evidence commit chain</a></li>
+<li><a href="#how-to-read-the-branch-graph">How to read the branch graph</a></li>
+</ul>
+<p><strong>Audit + integrity</strong></p>
+<ul>
+<li><a href="#how-to-verify-the-audit-chain">How to verify the audit chain</a></li>
+<li><a href="#how-to-read-the-audit-log">How to read the audit log</a></li>
+<li><a href="#how-to-verify-the-chain-offline-12-lines-of-python">How to verify the chain offline (12 lines of Python)</a></li>
+</ul>
+<p><strong>Reports</strong></p>
+<ul>
+<li><a href="#how-to-read-a-report">How to read a report</a></li>
+<li><a href="#how-to-generate-a-new-report">How to generate a new report</a></li>
+</ul>
+<p><strong>Graphs</strong></p>
+<ul>
+<li><a href="#how-to-read-the-entity-graph">How to read the entity graph</a></li>
+<li><a href="#how-to-read-the-cross-case-network-graph">How to read the cross-case network graph</a></li>
+</ul>
+<p><strong>Navigation + UX</strong></p>
+<ul>
+<li><a href="#how-to-use-the-command-palette-k">How to use the command palette (⌘K)</a></li>
+<li><a href="#how-to-switch-views-with-keyboard-shortcuts">How to switch views with keyboard shortcuts</a></li>
+<li><a href="#how-to-collapse-the-sidebar">How to collapse the sidebar</a></li>
+<li><a href="#how-to-deep-link-to-a-view-or-detail-panel">How to deep-link to a view or detail panel</a></li>
+</ul>
+<p><strong>Setup + ops</strong></p>
+<ul>
+<li><a href="#how-to-switch-the-active-ai-adapter">How to switch the active AI adapter</a></li>
+<li><a href="#how-to-re-seed-the-database">How to re-seed the database</a></li>
+<li><a href="#how-to-recover-from-a-pipeline-run-hung-state">How to recover from a &#39;pipeline run hung&#39; state</a></li>
+</ul>
+<hr>
+<h2>Investigations</h2>
+<h3>How to create a new investigation</h3>
+<p><strong>Goal.</strong> Open a fresh OSINT workspace bound to a target.</p>
+<p><strong>Steps.</strong></p>
+<ol>
+<li>Click <strong>Investigations</strong> in the sidebar (or press <strong>⌘2</strong>).</li>
+<li>Click the <strong>+ New</strong> button in the top-right of the table.</li>
+<li>Fill in:<ul>
+<li><strong>Title</strong> — a short identifier (e.g. <code>INV-2026-008 — Acme Holdings</code>).</li>
+<li><strong>Target</strong> — the actual thing you&#39;re investigating
+(<code>acme-holdings.io</code>).</li>
+<li><strong>Target type</strong> — pick one of <code>domain</code>, <code>person</code>,
+<code>organization</code>, <code>ip</code>, <code>username</code>, <code>phone</code>.</li>
+<li><strong>Objective</strong> — one or two sentences on what you&#39;re trying
+to find out.</li>
+</ul>
+</li>
+<li>Click <strong>Create</strong>.</li>
+</ol>
+<p><strong>Result.</strong> A new investigation lands at the top of the list with
+status <code>draft</code>. An audit row (<code>create_investigation</code>) is written
+to the chain.</p>
+<p><img src="file:///home/alim/Desktop/my_github_portfolio/repos/forenix-oss/docs/manual_screenshots/10-investigations-list.png" alt="Investigations list"></p>
+<hr>
+<h3>How to open an existing investigation</h3>
+<p><strong>Steps.</strong></p>
+<ol>
+<li>Open the Investigations view (⌘2).</li>
+<li>Click any row in the table.</li>
+</ol>
+<p>The detail panel slides in. Use <strong>← Back</strong> in the top-right to
+return to the list.</p>
+<p><img src="file:///home/alim/Desktop/my_github_portfolio/repos/forenix-oss/docs/manual_screenshots/20-investigation-detail.png" alt="Investigation detail"></p>
+<hr>
+<h3>How to filter the investigations list</h3>
+<p><strong>Steps.</strong></p>
+<ol>
+<li>Click <strong>Investigations</strong> (⌘2).</li>
+<li>Click the <strong>Filter…</strong> input above the table.</li>
+<li>Type any of: title fragment, target hostname/IP, target type,
+status (<code>draft</code>, <code>running</code>, <code>complete</code>, <code>paused</code>,
+<code>archived</code>), or priority (<code>low</code>, <code>medium</code>, <code>high</code>,
+<code>critical</code>).</li>
+</ol>
+<p>The table narrows in real time. Clear the filter to see
+everything again.</p>
+<hr>
+<h3>How to delete or archive an investigation</h3>
+<p>Not yet exposed as a UI button in v0.1. For now:</p>
+<ul>
+<li>Open a Bun REPL or use Prisma Studio (<code>bunx prisma studio</code>).</li>
+<li>Set <code>status = &quot;archived&quot;</code> to hide it from primary lists.</li>
+<li>A future release will expose this directly on the detail panel.</li>
+</ul>
+<hr>
+<h2>The Pipeline</h2>
+<h3>How to run the OSINT pipeline against a target</h3>
+<p><strong>Goal.</strong> Have the AI adapter analyse the target across several
+agent groups, extract entities, and draft a report — all in one
+button.</p>
+<p><strong>Steps.</strong></p>
+<ol>
+<li>Click <strong>Pipeline</strong> (⌘5).</li>
+<li>Pick an investigation from the dropdown.<br><em>(Or click any row in <strong>Recent investigations</strong> below — it
+sets the selection too.)</em></li>
+<li>Toggle the <strong>agent groups</strong>. The chips at top: <code>identity</code>,
+<code>infrastructure</code>, <code>financial</code>, <code>social</code>, <code>geo</code>,
+<code>relationships</code>, <code>media</code>. Three or four is the usual sweet
+spot.</li>
+<li>Click <strong>Run pipeline</strong>.</li>
+</ol>
+<p><strong>Result.</strong> Right-hand panel animates each stage from
+<code>idle → running → done</code>. The pipeline writes findings, extracts
+entities, and generates a report. Counts appear in the
+&quot;Pipeline complete&quot; card.</p>
+<p><img src="file:///home/alim/Desktop/my_github_portfolio/repos/forenix-oss/docs/manual_screenshots/30-pipeline-empty.png" alt="Pipeline runner"></p>
+<hr>
+<h3>How to pick which agent groups to run</h3>
+<table>
+<thead>
+<tr>
+<th>Group</th>
+<th>Best for</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>identity</code></td>
+<td>unique people / aliases / PII clusters</td>
+</tr>
+<tr>
+<td><code>infrastructure</code></td>
+<td>domains, ASN/IP footprints, registrar lineage</td>
+</tr>
+<tr>
+<td><code>financial</code></td>
+<td>shell companies, sanctions adjacency, crypto</td>
+</tr>
+<tr>
+<td><code>social</code></td>
+<td>forum personas, follower cliques, mention networks</td>
+</tr>
+<tr>
+<td><code>geo</code></td>
+<td>EXIF clusters, location pins, satellite cross-refs</td>
+</tr>
+<tr>
+<td><code>relationships</code></td>
+<td>co-travelers, email/thread peers, office mates</td>
+</tr>
+<tr>
+<td><code>media</code></td>
+<td>image / video / perceptual-hash matches</td>
+</tr>
+</tbody></table>
+<p><strong>Cost note.</strong> Each group is one separate LLM call. Three groups
+is ≈ 3× the latency of one. Use only what&#39;s relevant to the
+target type.</p>
+<hr>
+<h3>How to run the pipeline against a real LLM (NVIDIA or OpenRouter)</h3>
+<p><strong>One-shot, per-request.</strong></p>
+<p>Open a terminal and POST against the API with an <code>adapter</code> field:</p>
+<pre><code class="language-bash">INV=$(curl -s http://localhost:3000/api/investigations | jq -r &#39;.data[0].id&#39;)
+curl -X POST -H &quot;content-type: application/json&quot; \
+  -d &#39;{&quot;agentGroups&quot;:[&quot;identity&quot;,&quot;social&quot;,&quot;geo&quot;],&quot;adapter&quot;:&quot;nvidia&quot;}&#39; \
+  http://localhost:3000/api/pipeline/run/$INV
+</code></pre>
+<p>The response shape:</p>
+<pre><code class="language-json">{
+  &quot;data&quot;: {
+    &quot;investigationId&quot;: &quot;…&quot;,
+    &quot;adapter&quot;: &quot;nvidia&quot;,
+    &quot;agentGroups&quot;: [&quot;identity&quot;,&quot;social&quot;,&quot;geo&quot;],
+    &quot;findings&quot;: 11,
+    &quot;entities&quot;: 5,
+    &quot;relations&quot;: 7,
+    &quot;report&quot;: { &quot;id&quot;: &quot;…&quot;, &quot;title&quot;: &quot;…&quot; }
+  }
+}
+</code></pre>
+<p><strong>Permanent — for every request.</strong></p>
+<p>Edit <code>.env</code>:</p>
+<pre><code class="language-env">AI_ADAPTER=nvidia
+NVIDIA_API_KEY=nvapi-…
+NVIDIA_MODEL=meta/llama-3.3-70b-instruct
+</code></pre>
+<p>…and restart the dev server (<code>Ctrl+C</code> then <code>bun run dev</code>).</p>
+<p>The top-bar adapter chip will flip from <code>mock</code> to <code>nvidia</code>.</p>
+<hr>
+<h3>How to compare two AI adapters on the same target</h3>
+<p><strong>Goal.</strong> A/B two models and see which one produces better
+findings on a specific target.</p>
+<p><strong>Steps.</strong></p>
+<ol>
+<li>Pick an investigation. Note its id.</li>
+<li>Run the pipeline through adapter A:<pre><code class="language-bash">curl -X POST -H &quot;content-type: application/json&quot; \
+  -d &#39;{&quot;agentGroups&quot;:[&quot;identity&quot;,&quot;social&quot;],&quot;adapter&quot;:&quot;nvidia&quot;}&#39; \
+  http://localhost:3000/api/pipeline/run/$INV
+</code></pre>
+</li>
+<li>Open the investigation detail (⌘2 → click). Note the findings.</li>
+<li>Re-run with adapter B:<pre><code class="language-bash">curl -X POST -H &quot;content-type: application/json&quot; \
+  -d &#39;{&quot;agentGroups&quot;:[&quot;identity&quot;,&quot;social&quot;],&quot;adapter&quot;:&quot;openrouter&quot;}&#39; \
+  http://localhost:3000/api/pipeline/run/$INV
+</code></pre>
+</li>
+<li>Refresh the detail. The second batch is appended; the
+<em>sourceName</em> field on each finding tells you which adapter
+produced it.</li>
+</ol>
+<hr>
+<h2>Findings</h2>
+<h3>How to verify a finding</h3>
+<p><strong>Steps.</strong></p>
+<ol>
+<li>Open the parent investigation (⌘2 → click).</li>
+<li>Scroll to the <strong>Findings</strong> section.</li>
+<li>On any unverified row, click <strong>verify</strong> on the right.</li>
+</ol>
+<p><strong>Result.</strong> A toast confirms; the finding&#39;s <code>verified</code> flag
+flips to <code>true</code>; the confidence is upgraded to <code>confirmed</code> if it
+was <code>unverified</code>. An audit row (<code>verify_finding</code>) is written.</p>
+<hr>
+<h3>How to promote a finding to forensic evidence</h3>
+<p><strong>Prerequisite.</strong> The investigation must already be bridged to a
+case. If it isn&#39;t, the <strong>promote → evidence</strong> button does not
+show (use <a href="#how-to-bridge-an-investigation-to-a-case">How to bridge an investigation to a case</a>
+first).</p>
+<p><strong>Steps.</strong></p>
+<ol>
+<li>Open the investigation detail.</li>
+<li>On any finding that hasn&#39;t been promoted, click
+<strong>promote → evidence</strong>.</li>
+</ol>
+<p><strong>Result.</strong></p>
+<ul>
+<li>A new Evidence row appears on the linked case, with SHA-256
+hash and an initial <code>add:</code> commit on <code>main</code>.</li>
+<li>The finding&#39;s <code>evidenceId</code> is stamped — the row shows the
+green hash chip next time you open it.</li>
+<li>An audit row (<code>promote_finding_to_evidence</code>) is written.</li>
+</ul>
+<p>If you don&#39;t see the button on a finding row, it means one of:</p>
+<ul>
+<li>the investigation isn&#39;t bridged yet, <strong>or</strong></li>
+<li>the finding has already been promoted (look for the green hash
+chip on the right of the row).</li>
+</ul>
+<hr>
+<h3>How to view a finding&#39;s reasoning trace</h3>
+<p>The reasoning trace is the agent&#39;s free-text explanation of why
+it surfaced the finding.</p>
+<p><strong>Steps.</strong></p>
+<ol>
+<li>Open the investigation detail.</li>
+<li>Scroll to <strong>Findings</strong>.</li>
+<li>Each finding row shows the trace inline under the description.</li>
+</ol>
+<p>In the database, the trace lives in <code>Finding.reasoningTrace</code>. It
+is included in every report the platform generates.</p>
+<hr>
+<h2>Forensic cases</h2>
+<h3>How to bridge an investigation to a case</h3>
+<p><strong>Goal.</strong> Turn an OSINT investigation into a forensic case that
+holds the findings as Evidence.</p>
+<p><strong>Two paths — pick one.</strong></p>
+<p><strong>Path A: from the Pipeline view (recommended).</strong></p>
+<ol>
+<li>Run the pipeline (see <a href="#how-to-run-the-osint-pipeline-against-a-target">above</a>).</li>
+<li>When the <em>Pipeline complete</em> card appears, click
+<strong>Open forensic case →</strong>.</li>
+</ol>
+<p><strong>Path B: by API call.</strong></p>
+<pre><code class="language-bash">curl -X POST -H &quot;content-type: application/json&quot; \
+  -d &#39;{&quot;promoteFindings&quot;:true}&#39; \
+  http://localhost:3000/api/bridge/inv-to-case/$INV
+</code></pre>
+<p><strong>Result.</strong> Either path:</p>
+<ul>
+<li>mints a Case with an auto <code>CASE-YYYY-NNN</code> number,</li>
+<li>creates a <code>main</code> branch,</li>
+<li>promotes every finding to Evidence (because
+<code>promoteFindings: true</code>),</li>
+<li>sets <code>Investigation.caseId</code> (the green chip appears on the
+investigation detail),</li>
+<li>writes <code>bridge_investigation_to_case</code> +
+<code>findings_promoted_to_evidence</code> audit rows.</li>
+</ul>
+<p>If you want the case but <strong>don&#39;t</strong> want findings auto-promoted,
+pass <code>&quot;promoteFindings&quot;: false</code> in the API body. The button on
+the Pipeline view always promotes.</p>
+<hr>
+<h3>How to create a case from scratch</h3>
+<p>When you want a forensic case that isn&#39;t tied to an investigation
+(e.g. evidence already in hand).</p>
+<p><strong>Steps.</strong></p>
+<ol>
+<li>Click <strong>Cases</strong> (⌘6).</li>
+<li>Click <strong>+ New</strong>.</li>
+<li>Fill in:<ul>
+<li><strong>Title</strong> — <code>Operation Foo</code>.</li>
+<li><strong>Description</strong> — what this case is about.</li>
+<li><strong>Priority</strong> — <code>low</code> / <code>medium</code> / <code>high</code> / <code>critical</code>.</li>
+</ul>
+</li>
+<li>Click <strong>Create</strong>.</li>
+</ol>
+<p><strong>Result.</strong> A case lands at the top of the grid with status
+<code>open</code>, an auto <code>CASE-YYYY-NNN</code> number, and a fresh <code>main</code>
+branch.</p>
+<p><img src="file:///home/alim/Desktop/my_github_portfolio/repos/forenix-oss/docs/manual_screenshots/40-cases-list.png" alt="Cases list"></p>
+<hr>
+<h3>How to open an existing case</h3>
+<ol>
+<li>Click <strong>Cases</strong> (⌘6).</li>
+<li>Click any card.</li>
+</ol>
+<p>The detail panel slides in.</p>
+<p><img src="file:///home/alim/Desktop/my_github_portfolio/repos/forenix-oss/docs/manual_screenshots/41-case-detail.png" alt="Case detail"></p>
+<hr>
+<h3>How to filter the cases list</h3>
+<p>Same pattern as Investigations:</p>
+<ol>
+<li>Click <strong>Cases</strong> (⌘6).</li>
+<li>Type in the <strong>Filter…</strong> input above the grid.</li>
+</ol>
+<p>Matches across title, case number, status, priority.</p>
+<p><img src="file:///home/alim/Desktop/my_github_portfolio/repos/forenix-oss/docs/manual_screenshots/43-cases-filter.png" alt="Filtering the cases list"></p>
+<hr>
+<h2>Evidence + chain of custody</h2>
+<h3>How to seal an evidence row</h3>
+<p>A sealed row is <strong>immutable</strong> — no further commits are accepted.
+Seal when the case team has signed off and the evidence is ready
+for court.</p>
+<p><strong>Steps.</strong></p>
+<ol>
+<li>Open the parent case (⌘6 → click).</li>
+<li>On any evidence card, click <strong>seal</strong> on the right side of the
+header.</li>
+</ol>
+<p><strong>Result.</strong></p>
+<ul>
+<li>The status chip flips from <code>collected</code> / <code>verified</code> to
+<code>sealed</code>.</li>
+<li>A <code>seal</code> commit is added to the case&#39;s <code>main</code> branch.</li>
+<li>An audit row (<code>seal_evidence</code>) is written.</li>
+<li>The <strong>seal</strong> button disappears (you can&#39;t seal twice).</li>
+</ul>
+<hr>
+<h3>How to read an evidence commit chain</h3>
+<p>Every evidence row carries its full commit chain inline on the
+case detail view.</p>
+<p><strong>Each row shows:</strong></p>
+<ul>
+<li>a dot in the branch colour,</li>
+<li>the commit hash (truncated, monospace),</li>
+<li>the change type (<code>add</code>, <code>verify</code>, <code>seal</code>, <code>merge</code>),</li>
+<li>the commit message,</li>
+<li>the branch name in brackets,</li>
+<li>the relative time.</li>
+</ul>
+<p>A green dot at the side means the commit has been verified by an
+analyst.</p>
+<p><img src="file:///home/alim/Desktop/my_github_portfolio/repos/forenix-oss/docs/manual_screenshots/42-case-detail-full.png" alt="Case detail, full page"></p>
+<hr>
+<h3>How to read the branch graph</h3>
+<p>The Branch Graph is the visual replacement for &quot;scroll through
+case-detail commits.&quot;</p>
+<p><strong>Steps.</strong></p>
+<ol>
+<li>Click <strong>Branch Graph</strong> (⌘8).</li>
+<li>If no case is active, pick one from the list.</li>
+</ol>
+<p><strong>What you see.</strong></p>
+<ul>
+<li>A <strong>swimlane per branch</strong> — leftmost is <code>main</code>.</li>
+<li>A <strong>dot per commit</strong>, branch-coloured.</li>
+<li>Verified commits get a <strong>green ring</strong>.</li>
+<li>The right panel shows the commit message, evidence name,
+change-type, verified state, and relative time.</li>
+</ul>
+<p><img src="file:///home/alim/Desktop/my_github_portfolio/repos/forenix-oss/docs/manual_screenshots/60-branch-graph.png" alt="Branch graph"></p>
+<p>To switch cases, click <strong>Pick another case</strong> in the top-right.</p>
+<hr>
+<h2>Audit + integrity</h2>
+<h3>How to verify the audit chain</h3>
+<p><strong>The single most important verification on the platform.</strong></p>
+<p><strong>Steps.</strong></p>
+<ol>
+<li>Click <strong>Integrity</strong> in the sidebar.</li>
+<li>Click <strong>Verify chain</strong>.</li>
+</ol>
+<p><strong>Result.</strong></p>
+<ul>
+<li>Green panel: <em>&quot;N entries — every hash recomputes to the stored
+value.&quot;</em> You&#39;re done. The chain is intact.</li>
+<li>Red panel: shows the first row id where the chain broke +
+expected vs. stored hashes side-by-side. Escalate per your
+incident-response policy.</li>
+</ul>
+<p><img src="file:///home/alim/Desktop/my_github_portfolio/repos/forenix-oss/docs/manual_screenshots/142-integrity-verified.png" alt="Integrity, verified"></p>
+<hr>
+<h3>How to read the audit log</h3>
+<p><strong>Steps.</strong></p>
+<ol>
+<li>Click <strong>Audit</strong> in the sidebar.</li>
+</ol>
+<p>Every row in chain order. Per row:</p>
+<ul>
+<li><strong>Hash</strong> (truncated, monospace) — this row&#39;s hash.</li>
+<li>The previous row&#39;s hash inline below — the chain link.</li>
+<li><strong>Action</strong> — <code>pipeline_started</code>, <code>promote_finding_to_evidence</code>,
+<code>seal_evidence</code>, etc.</li>
+<li><strong>Entity</strong> — Investigation / Case / Finding / Evidence.</li>
+<li><strong>Scope</strong> — clickable chips that jump to the related
+investigation and/or case.</li>
+<li><strong>When</strong> — relative time.</li>
+</ul>
+<p>Use the filter to narrow by action, entity, or hash fragment.</p>
+<p><img src="file:///home/alim/Desktop/my_github_portfolio/repos/forenix-oss/docs/manual_screenshots/140-audit-log.png" alt="Audit log"></p>
+<hr>
+<h3>How to verify the chain offline (12 lines of Python)</h3>
+<p>Anyone with read access to the database can re-prove the chain
+without forenix-oss running.</p>
+<pre><code class="language-python">import csv, hashlib
+GENESIS = &quot;0&quot; * 64
+prev = GENESIS
+for r in csv.DictReader(open(&quot;audit.csv&quot;)):
+    h = hashlib.sha256(&quot;|&quot;.join([
+        prev, r[&quot;action&quot;], r[&quot;entity&quot;], r[&quot;entityId&quot;] or &quot;&quot;,
+        r[&quot;createdAt&quot;]
+    ]).encode(&quot;utf-8&quot;)).hexdigest()
+    assert r[&quot;prevHash&quot;] == prev and r[&quot;hash&quot;] == h, f&quot;BROKEN at {r[&#39;id&#39;]}&quot;
+    prev = r[&quot;hash&quot;]
+print(&quot;chain OK&quot;)
+</code></pre>
+<p>Export <code>audit.csv</code> from Postgres (<code>COPY (&quot;AuditLog&quot;) TO STDOUT CSV HEADER</code>) or SQLite (<code>.mode csv</code> + <code>SELECT * FROM AuditLog ORDER BY createdAt ASC</code>).</p>
+<hr>
+<h2>Reports</h2>
+<h3>How to read a report</h3>
+<p><strong>Steps.</strong></p>
+<ol>
+<li>Click <strong>Reports</strong> in the sidebar.</li>
+<li>Click <strong>Open</strong> on any report card.</li>
+</ol>
+<p>The detail view auto-detects whether the report has <code>sections</code>
+(JSON, Argus shape), <code>content</code> (markdown, ForenX shape), or
+both, and renders each accordingly.</p>
+<p><img src="file:///home/alim/Desktop/my_github_portfolio/repos/forenix-oss/docs/manual_screenshots/120-reports-list.png" alt="Reports list">
+<img src="file:///home/alim/Desktop/my_github_portfolio/repos/forenix-oss/docs/manual_screenshots/121-report-detail.png" alt="Report detail"></p>
+<p>Use <strong>← Back</strong> in the top-right to return to the list.</p>
+<hr>
+<h3>How to generate a new report</h3>
+<p>Reports are produced <strong>automatically</strong> as the last stage of the
+Pipeline runner. You don&#39;t need to do anything special:</p>
+<ol>
+<li>Run the pipeline (see above).</li>
+<li>When it completes, the report is already saved with
+<code>source = &quot;investigation&quot;</code> and attached to the parent
+investigation.</li>
+</ol>
+<p>To regenerate, just re-run the pipeline — a new report row is
+written each time.</p>
+<hr>
+<h2>Graphs</h2>
+<h3>How to read the entity graph</h3>
+<p>The entity graph shows OSINT entities + their relations, grouped
+by type on concentric rings.</p>
+<p><strong>Steps.</strong></p>
+<ol>
+<li>Click <strong>Entity Graph</strong> (⌘3).</li>
+</ol>
+<p><strong>Reading it.</strong></p>
+<ul>
+<li>Each ring is one type (person / org / domain / ip / …). Outer
+rings are the next type.</li>
+<li>A line between two entities is a relation. The line&#39;s brightness
+reflects the relation&#39;s <code>confidence</code>:<ul>
+<li>bright = <code>confirmed</code>,</li>
+<li>medium = <code>probable</code>,</li>
+<li>faint = <code>unverified</code>.</li>
+</ul>
+</li>
+<li>The line label is the relation type (<code>owns</code>, <code>resolves_to</code>,
+<code>associated_with</code>, …).</li>
+</ul>
+<p><img src="file:///home/alim/Desktop/my_github_portfolio/repos/forenix-oss/docs/manual_screenshots/70-entity-graph.png" alt="Entity graph"></p>
+<hr>
+<h3>How to read the cross-case network graph</h3>
+<p>The Network Graph shows <strong>everything</strong> — users, agents,
+investigations, cases, evidence, entities — on one canvas.</p>
+<p><strong>Steps.</strong></p>
+<ol>
+<li>Click <strong>Network Graph</strong> in the sidebar.</li>
+</ol>
+<p><strong>Reading it.</strong></p>
+<ul>
+<li>Each row (swimlane) is one <strong>kind</strong> of node — case,
+investigation, evidence, user, agent, entity.</li>
+<li>Arrows go from cause to effect: <code>case → evidence</code>,
+<code>investigation → case</code> (the bridge), <code>user → case</code> (assignment),
+<code>entity → entity</code> (relation).</li>
+<li>Hover any node to see its full label in the tooltip.</li>
+</ul>
+<p>This is the view to open when you want to see what <em>connects</em> two
+otherwise-unrelated cases.</p>
+<p><img src="file:///home/alim/Desktop/my_github_portfolio/repos/forenix-oss/docs/manual_screenshots/80-network-graph.png" alt="Network graph"></p>
+<hr>
+<h2>Navigation + UX</h2>
+<h3>How to use the command palette (⌘K)</h3>
+<p>The single fastest way to move around once your dataset gets
+non-trivial.</p>
+<p><strong>Steps.</strong></p>
+<ol>
+<li>Press <strong>⌘K</strong> (macOS) or <strong>Ctrl+K</strong> (Linux/Windows) anywhere.</li>
+<li>Type a few letters. The palette matches against:<ul>
+<li>nav items (<code>audit</code>, <code>entity</code>, <code>monitors</code>),</li>
+<li>investigation titles + targets,</li>
+<li>case numbers + titles,</li>
+<li>report titles + sources.</li>
+</ul>
+</li>
+<li><strong>↑ / ↓</strong> to navigate.</li>
+<li><strong>Enter</strong> to open.</li>
+<li><strong>Esc</strong> (or click outside) to close.</li>
+</ol>
+<p>Activating an investigation or case row sets the active id <em>and</em>
+switches view, so the detail panel opens instantly.</p>
+<p><img src="file:///home/alim/Desktop/my_github_portfolio/repos/forenix-oss/docs/manual_screenshots/160-command-palette.png" alt="Command palette"></p>
+<hr>
+<h3>How to switch views with keyboard shortcuts</h3>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>View</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>⌘1 / Ctrl+1</td>
+<td>Dashboard</td>
+</tr>
+<tr>
+<td>⌘2 / Ctrl+2</td>
+<td>Investigations</td>
+</tr>
+<tr>
+<td>⌘3 / Ctrl+3</td>
+<td>Entity Graph</td>
+</tr>
+<tr>
+<td>⌘4 / Ctrl+4</td>
+<td>Monitors</td>
+</tr>
+<tr>
+<td>⌘5 / Ctrl+5</td>
+<td>Pipeline</td>
+</tr>
+<tr>
+<td>⌘6 / Ctrl+6</td>
+<td>Cases</td>
+</tr>
+<tr>
+<td>⌘7 / Ctrl+7</td>
+<td>Evidence</td>
+</tr>
+<tr>
+<td>⌘8 / Ctrl+8</td>
+<td>Branch Graph</td>
+</tr>
+<tr>
+<td>⌘9 / Ctrl+9</td>
+<td>AI Lab</td>
+</tr>
+</tbody></table>
+<p>The remaining views (Verification, Reports, Network Graph,
+Integrity, Audit, Reviews) are reachable via ⌘K or the sidebar.</p>
+<hr>
+<h3>How to collapse the sidebar</h3>
+<p>To free up horizontal space:</p>
+<ol>
+<li>Click the <strong>Collapse</strong> button at the bottom-left of the sidebar.</li>
+</ol>
+<p>The sidebar slims to just icons + the brand mark; tooltips on
+hover tell you which view is which.</p>
+<p><img src="file:///home/alim/Desktop/my_github_portfolio/repos/forenix-oss/docs/manual_screenshots/03-sidebar-collapsed.png" alt="Sidebar, collapsed"></p>
+<p>Click the same button (now showing a right-arrow) to expand again.
+The collapsed state persists across reloads (Zustand <code>persist</code>).</p>
+<hr>
+<h3>How to deep-link to a view or detail panel</h3>
+<p>The platform reads URL query params on first load so you can paste
+links to specific state.</p>
+<table>
+<thead>
+<tr>
+<th>URL</th>
+<th>Where it lands</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>/?view=cases</code></td>
+<td>Cases list</td>
+</tr>
+<tr>
+<td><code>/?view=cases&amp;case=&lt;id&gt;</code></td>
+<td>Specific case detail</td>
+</tr>
+<tr>
+<td><code>/?view=investigations&amp;inv=&lt;id&gt;</code></td>
+<td>Specific investigation detail</td>
+</tr>
+<tr>
+<td><code>/?view=branch-graph&amp;case=&lt;id&gt;</code></td>
+<td>Branch graph for one case</td>
+</tr>
+<tr>
+<td><code>/?view=dashboard&amp;palette=1</code></td>
+<td>Dashboard with command palette already open</td>
+</tr>
+</tbody></table>
+<p>Use this when sharing screenshots, in bug reports, or in a Slack
+message that says &quot;look at this case.&quot;</p>
+<hr>
+<h2>Setup + ops</h2>
+<h3>How to switch the active AI adapter</h3>
+<p><strong>Permanent — for every request:</strong></p>
+<ol>
+<li><p>Open <code>.env</code>.</p>
+</li>
+<li><p>Change the <code>AI_ADAPTER</code> line:</p>
+<pre><code class="language-env">AI_ADAPTER=nvidia       # was &#39;mock&#39;
+</code></pre>
+</li>
+<li><p>If you&#39;re switching to a hosted adapter, make sure its key is
+present:</p>
+<pre><code class="language-env">NVIDIA_API_KEY=nvapi-…
+NVIDIA_MODEL=meta/llama-3.3-70b-instruct
+</code></pre>
+</li>
+<li><p>Restart the dev server: <strong>Ctrl+C</strong> in the terminal where
+<code>bun run dev</code> is running, then <code>bun run dev</code> again.</p>
+</li>
+</ol>
+<p><strong>Per-request — for one pipeline run:</strong></p>
+<p>Add an <code>adapter</code> field to the POST body:</p>
+<pre><code class="language-bash">curl -X POST -H &quot;content-type: application/json&quot; \
+  -d &#39;{&quot;agentGroups&quot;:[&quot;identity&quot;],&quot;adapter&quot;:&quot;openrouter&quot;}&#39; \
+  http://localhost:3000/api/pipeline/run/$INV
+</code></pre>
+<p>This overrides <code>AI_ADAPTER</code> for that single call. The top-bar
+chip still shows the env-default adapter; only that one request
+runs through the override.</p>
+<hr>
+<h3>How to re-seed the database</h3>
+<p>To reset to a known clean demo state:</p>
+<pre><code class="language-bash">bun run db:seed
+</code></pre>
+<p>This wipes every row via Prisma <code>deleteMany</code> and re-seeds:</p>
+<ul>
+<li>3 users,</li>
+<li>2 investigations (one bridged to a case),</li>
+<li>1 case with 3 evidence items + 2 branches + 6 commits,</li>
+<li>6 findings (2 already linked to evidence),</li>
+<li>monitors, verifications, reports, agents, tasks,</li>
+<li>9 audit rows with a valid SHA-256 chain.</li>
+</ul>
+<p>The seed script is safe to run any time — it doesn&#39;t drop the
+database file, just clears it.</p>
+<p><strong>Do not</strong> run <code>bun run db:reset</code> (which uses <code>--force-reset</code>)
+from inside an AI session unless you explicitly want to wipe the
+schema as well; the Prisma CLI will refuse without explicit
+consent.</p>
+<hr>
+<h3>How to recover from a &quot;pipeline run hung&quot; state</h3>
+<p>If a pipeline POST hangs longer than 90 s, the platform aborts the
+adapter call. Symptoms:</p>
+<ul>
+<li>Investigation stuck in <code>status: &quot;running&quot;</code>.</li>
+<li>Toast says <em>&quot;Pipeline complete&quot;</em> never appears.</li>
+</ul>
+<p><strong>Recovery.</strong></p>
+<ol>
+<li>Reload the Investigations view. If the row&#39;s status is
+<code>running</code>, the pipeline aborted server-side.</li>
+<li>Pick a faster model in <code>.env</code>:<pre><code class="language-env">OPENROUTER_MODEL=openai/gpt-oss-120b:free
+</code></pre>
+</li>
+<li>Restart the dev server.</li>
+<li>Re-run with fewer agent groups (<code>identity</code> alone first).</li>
+<li>If you need to manually reset the status, drop into a Prisma
+client and run:<pre><code class="language-ts">await prisma.investigation.update({
+  where: { id },
+  data: { status: &quot;draft&quot; },
+});
+</code></pre>
+This write also gets audited.</li>
+</ol>
+<hr>
+<p><em>This is a living document. If a workflow you need isn&#39;t here,
+file an issue at github.com/thunderstornX/forenix-oss/issues so
+the next release ships with a recipe for it.</em></p>
+
+</main>
+</body>
+</html>
