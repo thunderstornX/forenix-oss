@@ -1,0 +1,39 @@
+# What stays out of the build context.
+node_modules
+.next
+.git
+.vscode
+.idea
+.DS_Store
+*.log
+dev.log
+server.log
+
+# Local DB + caches
+prisma/dev.db
+prisma/dev.db-journal
+.nvd_cache
+.cache
+
+# Docs that don't belong in a runtime image
+docs/screenshots
+docs/manual_screenshots
+docs/pitch
+docs/USER_MANUAL.pdf
+docs/USER_MANUAL.html
+docs/HOW_TO.pdf
+docs/HOW_TO.html
+
+# Local secrets — NEVER ship these
+.env
+.env.local
+.env.*.local
+
+# Reference projects (read-only sources we merged — they're huge)
+_argus
+_forenix
+
+# CI / test artefacts
+.github
+coverage
+.test-cache
