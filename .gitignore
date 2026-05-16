@@ -49,6 +49,9 @@ next-env.d.ts
 # Prisma dev sqlite + journal.
 /prisma/dev.db
 /prisma/dev.db-journal
+
+# Per-case Git repositories created by the real-Git evidence engine.
+/case-repos/
 /prisma/migrations/dev*
 
 # Logs from dev server output redirection.

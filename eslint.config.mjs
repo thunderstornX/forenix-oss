@@ -53,6 +53,9 @@ export default [
         HTMLButtonElement: "readonly",
         AbortController: "readonly",
         navigator: "readonly",
+        TextDecoder: "readonly",
+        TextEncoder: "readonly",
+        Buffer: "readonly",
       },
     },
     plugins: {
