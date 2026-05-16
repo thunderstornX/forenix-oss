@@ -17,6 +17,7 @@
 import { createHash } from "node:crypto";
 
 import { PrismaClient } from "@prisma/client";
+import bcrypt from "bcryptjs";
 
 import { computeAuditHash, GENESIS_HASH } from "../src/lib/audit-chain";
 
@@ -25,6 +26,8 @@ const prisma = new PrismaClient();
 function sha(s: string): string {
   return createHash("sha256").update(s).digest("hex");
 }
+
+const DEFAULT_PW = "forenix"; // every seeded user gets this password
 
 async function wipe() {
   // Order matters under SQLite (Cascade only fires from the parent side).
@@ -50,6 +53,9 @@ async function wipe() {
   await prisma.agent.deleteMany();
   await prisma.investigation.deleteMany();
   await prisma.case.deleteMany();
+  await prisma.teamInvite.deleteMany();
+  await prisma.teamMember.deleteMany();
+  await prisma.team.deleteMany();
   await prisma.user.deleteMany();
 }
 
@@ -59,11 +65,13 @@ async function main() {
 
   // ───────────────────────── Users ─────────────────────────────
   console.log("[seed] users");
+  const hash = await bcrypt.hash(DEFAULT_PW, 10);
   const admin = await prisma.user.create({
     data: {
       email: "admin@forenix-oss.local",
       name: "Admin",
       role: "admin",
+      passwordHash: hash,
     },
   });
   const investigator = await prisma.user.create({
@@ -71,6 +79,7 @@ async function main() {
       email: "investigator@forenix-oss.local",
       name: "Jay Investigator",
       role: "investigator",
+      passwordHash: hash,
     },
   });
   const analyst = await prisma.user.create({
@@ -78,6 +87,24 @@ async function main() {
       email: "analyst@forenix-oss.local",
       name: "Sam Analyst",
       role: "analyst",
+      passwordHash: hash,
+    },
+  });
+
+  // ───────────────────────── Team ──────────────────────────────
+  console.log("[seed] team + members");
+  const team = await prisma.team.create({
+    data: {
+      name: "Forenix Demo",
+      slug: "forenix-demo",
+      description: "The default team that owns the demo dataset.",
+      members: {
+        create: [
+          { userId: admin.id,        role: "owner" },
+          { userId: investigator.id, role: "admin" },
+          { userId: analyst.id,      role: "member" },
+        ],
+      },
     },
   });
 
@@ -92,6 +119,7 @@ async function main() {
       status: "investigating",
       priority: "high",
       progress: 35,
+      teamId: team.id,
       assignments: {
         create: [
           { userId: investigator.id, role: "lead" },
@@ -280,6 +308,7 @@ async function main() {
       pipelineConfig: JSON.stringify(["identity", "infrastructure", "financial"]),
       createdBy: investigator.name,
       caseId: theCase.id, // BRIDGE
+      teamId: team.id,
     },
   });
   const inv2 = await prisma.investigation.create({
@@ -294,6 +323,7 @@ async function main() {
       tags: "phase-1,osint,identity",
       pipelineConfig: JSON.stringify(["identity", "social", "geo"]),
       createdBy: analyst.name,
+      teamId: team.id,
     },
   });
 

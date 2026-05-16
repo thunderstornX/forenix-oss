@@ -27,21 +27,81 @@ datasource db {
 
 // ───────────────────────── Users ─────────────────────────
 // SOURCE: forenix
+//
+// AUTH (added in 0.2):
+//   - `passwordHash` is a bcrypt of the password; null = SSO-only.
+//   - `role` is the *global* role (admin / investigator / analyst /
+//     viewer); team-scoped roles live on TeamMember.
+//
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String
-  role      String   @default("investigator") // admin, investigator, analyst, viewer
-  avatar    String?
-  status    String   @default("online")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String
+  role         String   @default("investigator") // admin, investigator, analyst, viewer
+  passwordHash String?
+  avatar       String?
+  status       String   @default("online")
+  disabled     Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   caseAssignments   CaseAssignment[]
   comments          Comment[]
   reviewedMRs       MergeRequest[]
   auditLogs         AuditLog[]
   createdReports    Report[]
+  teamMemberships   TeamMember[]
+  sentInvites       TeamInvite[]    @relation("InviteSentBy")
+}
+
+// ───────────────────────── Teams ─────────────────────────
+//
+// Teams provide *isolation*. Every Case + Investigation may belong
+// to one team. A user sees a Case/Investigation only if they are
+// a member of the owning team (or have global role = admin).
+//
+model Team {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  members        TeamMember[]
+  invites        TeamInvite[]
+  cases          Case[]
+  investigations Investigation[]
+}
+
+model TeamMember {
+  id       String   @id @default(cuid())
+  teamId   String
+  userId   String
+  role     String   @default("member") // owner, admin, member, viewer
+  joinedAt DateTime @default(now())
+
+  team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([teamId, userId])
+}
+
+model TeamInvite {
+  id        String   @id @default(cuid())
+  teamId    String
+  email     String
+  token     String   @unique
+  role      String   @default("member")
+  sentById  String
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+  acceptedAt DateTime?
+
+  team   Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  sentBy User @relation("InviteSentBy", fields: [sentById], references: [id], onDelete: Cascade)
+
+  @@index([token])
 }
 
 // ───────────────────────── Investigations (Argus) ────────
@@ -64,6 +124,10 @@ model Investigation {
   // BRIDGE: filled when an investigation graduates into a forensic case.
   caseId  String?
   case    Case?    @relation(fields: [caseId], references: [id], onDelete: SetNull)
+
+  // ISOLATION: optional team owner. NULL = visible to anyone with the right role.
+  teamId  String?
+  team    Team?    @relation(fields: [teamId], references: [id], onDelete: SetNull)
 
   findings    Finding[]
   entities    EntityRelation[]
@@ -225,6 +289,10 @@ model Case {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   closedAt    DateTime?
+
+  // ISOLATION: optional team owner.
+  teamId String?
+  team   Team?   @relation(fields: [teamId], references: [id], onDelete: SetNull)
 
   evidence       Evidence[]
   branches       Branch[]
