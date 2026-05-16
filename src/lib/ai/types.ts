@@ -108,7 +108,8 @@ export type AdapterName =
   | "glm"
   | "claude"
   | "openrouter"
-  | "nvidia";
+  | "nvidia"
+  | "grok";
 
 /**
  * AIAdapter — every concrete adapter implements this surface.

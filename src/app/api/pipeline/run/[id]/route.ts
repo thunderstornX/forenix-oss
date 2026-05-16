@@ -15,6 +15,10 @@
 import { z } from "zod";
 
 import { getAdapter } from "@/lib/ai/adapter";
+
+// Vercel function ceiling — extend to the Hobby/Pro max so the
+// pipeline doesn't get killed mid-run on a slow hosted LLM.
+export const maxDuration = 60;
 import type {
   AgentGroup,
   Finding as AdapterFinding,
@@ -38,7 +42,7 @@ const Body = z.object({
       ]),
     )
     .optional(),
-  adapter: z.enum(["mock", "ollama", "glm", "claude", "openrouter", "nvidia"]).optional(),
+  adapter: z.enum(["mock", "ollama", "glm", "claude", "openrouter", "nvidia", "grok"]).optional(),
 });
 
 // Fabricate a small handful of search hits so the mock adapter has

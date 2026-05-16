@@ -20,9 +20,10 @@ import { GLMAdapter } from "./adapters/glm";
 import { ClaudeAdapter } from "./adapters/claude";
 import { OpenRouterAdapter } from "./adapters/openrouter";
 import { NVIDIAAdapter } from "./adapters/nvidia";
+import { GrokAdapter } from "./adapters/grok";
 
 const VALID: ReadonlySet<AdapterName> = new Set([
-  "mock", "ollama", "glm", "claude", "openrouter", "nvidia",
+  "mock", "ollama", "glm", "claude", "openrouter", "nvidia", "grok",
 ]);
 
 function resolveAdapterName(): AdapterName {
@@ -55,6 +56,7 @@ function construct(name: AdapterName): AIAdapter {
     case "claude":     return new ClaudeAdapter();
     case "openrouter": return new OpenRouterAdapter();
     case "nvidia":     return new NVIDIAAdapter();
+    case "grok":       return new GrokAdapter();
   }
 }
 
