@@ -103,21 +103,9 @@ export function extractJson<T = unknown>(raw: string): T {
 }
 
 // ────────── prompt scaffolds ──────────
-
-const SYSTEM_PIPELINE = `You are an OSINT analyst agent. Output STRICT JSON only — no commentary,
-no markdown fences. Schema:
-{
-  "findings": [{
-    "title": string,
-    "description": string,
-    "confidence": "confirmed" | "probable" | "unverified" | "disputed" | "false",
-    "priority": "low" | "medium" | "high" | "critical",
-    "sourceName": string,
-    "reasoningTrace": string
-  }],
-  "confidence": number,    // 0..1 — your confidence in the analysis
-  "reasoningTrace": string // 1-2 sentences explaining your reasoning
-}`;
+//
+// The per-agent-group SAT-grounded pipeline prompt is sourced from
+// `sat-prompts.ts` at call time (see chatAnalyzePipeline below).
 
 const SYSTEM_ENTITIES = `You are an entity-extraction agent. Output STRICT JSON only. Schema:
 {
@@ -155,6 +143,20 @@ function clampPrio(p: unknown): Priority {
   return typeof p === "string" && (VALID_PRIO as ReadonlySet<string>).has(p) ? (p as Priority) : "medium";
 }
 
+/** Reasoning trace can come back as a SatTrace object (Phase C) or
+ *  legacy free text. Either way we serialise to a string for the
+ *  Finding.reasoningTrace database column; the Verification view
+ *  parses JSON back. */
+function serialiseTrace(t: unknown): string {
+  if (t === null || t === undefined) return "";
+  if (typeof t === "string") return t.slice(0, 4000);
+  try {
+    return JSON.stringify(t).slice(0, 4000);
+  } catch {
+    return String(t).slice(0, 800);
+  }
+}
+
 export async function chatAnalyzePipeline(
   backend: ChatBackend,
   target: string,
@@ -181,10 +183,15 @@ export async function chatAnalyzePipeline(
     "When you have enough evidence, return STRICT JSON only (no prose, no fences) matching the schema in the system prompt. Produce 2-4 findings, each grounded in tool output where possible.",
   ].join("\n");
 
+  // SAT-grounded system prompt per agent group — replaces the
+  // bland SYSTEM_PIPELINE and forces a structured SatTrace.
+  const { satPromptFor } = await import("./sat-prompts");
+  const system = satPromptFor(agentGroup);
+
   let raw: string;
   if (tools.length > 0) {
     const loop = await chatWithTools(backend, {
-      system: SYSTEM_PIPELINE,
+      system,
       user: userMsg,
       tools,
       maxIterations: 6,
@@ -195,7 +202,7 @@ export async function chatAnalyzePipeline(
     raw = await chatComplete(
       backend,
       [
-        { role: "system", content: SYSTEM_PIPELINE },
+        { role: "system", content: system },
         { role: "user", content: userMsg },
       ],
       { response_format: "json_object" },
@@ -209,7 +216,10 @@ export async function chatAnalyzePipeline(
       confidence?: string;
       priority?: string;
       sourceName?: string;
-      reasoningTrace?: string;
+      // SAT trace is structured under Phase C; we accept either
+      // shape so older adapters that produce a plain string still
+      // work.
+      reasoningTrace?: string | Record<string, unknown>;
     }>;
     confidence?: number;
     reasoningTrace?: string;
@@ -223,7 +233,11 @@ export async function chatAnalyzePipeline(
     sourceType: "agent",
     sourceName: String(f.sourceName ?? `${backend.name}/${agentGroup}`).slice(0, 80),
     agentGroup,
-    reasoningTrace: String(f.reasoningTrace ?? "").slice(0, 800),
+    // Preserve the SatTrace object as JSON if structured; fall
+    // back to truncated free text otherwise. Persisted as a
+    // string on Finding.reasoningTrace; the Verification view
+    // parses it back when it looks like JSON.
+    reasoningTrace: serialiseTrace(f.reasoningTrace),
     priority: clampPrio(f.priority),
     evidenceRefs: searchResults.slice(0, 3).map((s) => s.url),
   }));

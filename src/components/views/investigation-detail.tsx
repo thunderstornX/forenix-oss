@@ -141,6 +141,7 @@ export function InvestigationDetail({ investigationId }: Props) {
                   )}
                 </div>
               </div>
+              <SatTraceCard trace={f.reasoningTrace} />
               <div className="mt-2 flex flex-wrap items-center gap-2 text-[10px] text-[var(--foreground-muted)]">
                 <span>source: {f.sourceName}</span>
                 <span>priority: {f.priority}</span>
@@ -291,4 +292,101 @@ function ConfidenceChip({ c }: { c: string }) {
     false: "text-[var(--danger)]",
   };
   return <span className={cn("text-[10px] uppercase tracking-[0.18em]", map[c] ?? "")}>{c}</span>;
+}
+
+// ─────────────────── SatTrace renderer ────────────────────────────
+
+interface SatTrace {
+  technique?: string;
+  inputs?: Array<{
+    sourceId?: string;
+    summary?: string;
+    credibility?: number;
+    recencyDays?: number;
+  }>;
+  reasoning?: string;
+  outputCandidates?: Array<{
+    label?: string;
+    weight?: number;
+    disconfirmingEvidence?: string[];
+  }>;
+  selected?: number;
+}
+
+function SatTraceCard({ trace }: { trace: string }) {
+  if (!trace || typeof trace !== "string") return null;
+  // Old-style free-text traces render as a one-liner.
+  if (!trace.trim().startsWith("{")) {
+    return (
+      <div className="mt-2 rounded border border-[var(--border)] bg-[var(--background-elev-2)] p-2 text-[11px] italic text-[var(--foreground-muted)]">
+        {trace.slice(0, 280)}
+      </div>
+    );
+  }
+  let parsed: SatTrace | null = null;
+  try {
+    parsed = JSON.parse(trace) as SatTrace;
+  } catch {
+    return null;
+  }
+  if (!parsed?.technique) return null;
+  return (
+    <div className="mt-2 rounded border border-[var(--accent)] bg-[var(--background-elev-2)] p-2.5 text-[11px]">
+      <div className="mb-1 flex items-center gap-2">
+        <span className="rounded bg-[var(--accent-soft)] px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-[0.18em] text-[var(--accent-strong)]">
+          {parsed.technique}
+        </span>
+        <span className="text-[10px] text-[var(--foreground-muted)]">analytic technique</span>
+      </div>
+      {parsed.reasoning && (
+        <p className="mb-2 text-[var(--foreground)]">{parsed.reasoning}</p>
+      )}
+      {parsed.outputCandidates && parsed.outputCandidates.length > 0 && (
+        <div className="space-y-1">
+          <div className="text-[10px] uppercase tracking-[0.18em] text-[var(--foreground-muted)]">
+            Hypotheses ({parsed.outputCandidates.length})
+          </div>
+          {parsed.outputCandidates.slice(0, 4).map((h, i) => (
+            <div
+              key={i}
+              className={cn(
+                "rounded border px-2 py-1 text-[10px]",
+                i === parsed!.selected
+                  ? "border-[var(--accent)] bg-[var(--accent-soft)] text-[var(--accent-strong)]"
+                  : "border-[var(--border)] bg-[var(--background-elev)] text-[var(--foreground-muted)]",
+              )}
+            >
+              <div className="flex items-center justify-between">
+                <span>{h.label ?? "(unlabelled)"}</span>
+                <span className="font-mono">w={typeof h.weight === "number" ? h.weight.toFixed(2) : "?"}</span>
+              </div>
+              {h.disconfirmingEvidence && h.disconfirmingEvidence.length > 0 && (
+                <ul className="mt-0.5 list-disc pl-4 text-[10px] text-[var(--foreground-muted)]">
+                  {h.disconfirmingEvidence.slice(0, 3).map((e, j) => (
+                    <li key={j}>{e}</li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+      {parsed.inputs && parsed.inputs.length > 0 && (
+        <div className="mt-2">
+          <div className="text-[10px] uppercase tracking-[0.18em] text-[var(--foreground-muted)]">
+            Inputs ({parsed.inputs.length})
+          </div>
+          <ul className="mt-0.5 space-y-0.5 text-[10px] text-[var(--foreground-muted)]">
+            {parsed.inputs.slice(0, 4).map((inp, i) => (
+              <li key={i}>
+                <span className="font-mono">{inp.sourceId ?? "?"}</span>
+                {typeof inp.credibility === "number" ? ` · cred=${inp.credibility}/5` : ""}
+                {inp.summary ? ` — ${inp.summary.slice(0, 120)}` : ""}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
 }

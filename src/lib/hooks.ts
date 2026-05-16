@@ -399,6 +399,7 @@ export interface InvestigationDetail {
     agentGroup: string;
     verified: boolean;
     evidence: { id: string; name: string; hash: string } | null;
+    reasoningTrace: string;
     createdAt: string;
   }>;
   monitors: Array<{
