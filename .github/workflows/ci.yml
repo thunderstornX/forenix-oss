@@ -55,6 +55,13 @@ jobs:
         run: bunx prisma validate
 
       - name: Prisma validate (postgres deploy schema)
+        # The Postgres-flavoured schema reads env("DATABASE_URL"); the
+        # job-level value is a sqlite path. Override with a dummy
+        # postgres URL just for this step — we don't connect anywhere,
+        # we only validate that the schema parses against a Postgres
+        # provider.
+        env:
+          DATABASE_URL: "postgresql://ci:ci@localhost:5432/ci?sslmode=disable"
         run: bunx prisma validate --schema=prisma/schema.postgres.prisma
 
       - name: Typecheck
