@@ -81,6 +81,24 @@ export interface EvidenceListItem {
   _count: { commits: number; findings: number; comments: number };
 }
 
+export interface NetworkNode {
+  id: string;
+  kind: "user" | "agent" | "investigation" | "case" | "evidence" | "entity";
+  label: string;
+  meta?: Record<string, string | number | boolean | null>;
+}
+export interface NetworkEdge {
+  from: string;
+  to: string;
+  type: string;
+}
+export function useNetwork() {
+  return useQuery({
+    queryKey: ["network"],
+    queryFn: () => http<{ data: { nodes: NetworkNode[]; edges: NetworkEdge[] } }>("/api/network"),
+  });
+}
+
 export interface ReviewRow {
   id: string;
   title: string;
@@ -461,6 +479,44 @@ export function useCases() {
   return useQuery({
     queryKey: ["cases"],
     queryFn: () => http<{ data: CaseListItem[] }>("/api/cases"),
+  });
+}
+
+export function useVerifyFinding() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id }: { id: string; investigationId: string }) =>
+      http(`/api/findings/${id}/verify`, { method: "POST" }),
+    onSuccess: (_d, { investigationId }) => {
+      qc.invalidateQueries({ queryKey: ["investigation", investigationId] });
+      qc.invalidateQueries({ queryKey: ["audit"] });
+    },
+  });
+}
+
+export function usePromoteFinding() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id }: { id: string; investigationId: string }) =>
+      http(`/api/findings/${id}/promote`, { method: "POST" }),
+    onSuccess: (_d, { investigationId }) => {
+      qc.invalidateQueries({ queryKey: ["investigation", investigationId] });
+      qc.invalidateQueries({ queryKey: ["evidence"] });
+      qc.invalidateQueries({ queryKey: ["audit"] });
+    },
+  });
+}
+
+export function useSealEvidence() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id }: { id: string; caseId: string }) =>
+      http(`/api/evidence/${id}/seal`, { method: "POST" }),
+    onSuccess: (_d, { caseId }) => {
+      qc.invalidateQueries({ queryKey: ["case", caseId] });
+      qc.invalidateQueries({ queryKey: ["evidence"] });
+      qc.invalidateQueries({ queryKey: ["audit"] });
+    },
   });
 }
 
