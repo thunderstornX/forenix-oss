@@ -167,6 +167,11 @@ export async function chatAnalyzePipeline(
   // unless we actually run tools.
   const { availableToolsForGroup } = await import("@/lib/tools/registry");
   const { chatWithTools } = await import("./tool-loop");
+  const { injectVaultKeys } = await import("@/lib/vault");
+
+  // Decrypt admin-set API keys into process.env so the registry's
+  // isToolAvailable() check sees them. Cheap — 30 s in-memory cache.
+  try { await injectVaultKeys(); } catch { /* vault not yet ready */ }
 
   const tools = availableToolsForGroup(agentGroup);
   const userMsg = [

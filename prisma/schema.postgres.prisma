@@ -52,6 +52,7 @@ model User {
   createdReports    Report[]
   teamMemberships   TeamMember[]
   sentInvites       TeamInvite[]    @relation("InviteSentBy")
+  apiKeysSet        ApiKey[]        @relation("ApiKeySetBy")
 }
 
 // ───────────────────────── Teams ─────────────────────────
@@ -102,6 +103,30 @@ model TeamInvite {
   sentBy User @relation("InviteSentBy", fields: [sentById], references: [id], onDelete: Cascade)
 
   @@index([token])
+}
+
+// ───────────────────────── API-key vault ─────────────────────
+//
+// Admins drop API keys for paid OSINT sources here. The value is
+// encrypted at rest with the platform's AUTH_SECRET as the key
+// (see src/lib/secrets.ts). Per-call lookup wires the decrypted
+// value into the tool runner via the tool's `apiKeyEnv` field.
+//
+// One row per (envKey) name. Last-write-wins.
+//
+model ApiKey {
+  id        String   @id @default(cuid())
+  envKey    String   @unique           // e.g. "SHODAN_API_KEY"
+  label     String                     // human-readable, e.g. "Shodan (prod)"
+  ciphertext String                    // base64 — AES-256-GCM of the key
+  iv        String                     // base64 — nonce
+  tag       String                     // base64 — auth tag
+  setById   String?
+  setAt     DateTime @default(now())
+  rotatedAt DateTime?
+  lastUsedAt DateTime?
+
+  setBy User? @relation("ApiKeySetBy", fields: [setById], references: [id], onDelete: SetNull)
 }
 
 // ───────────────────────── Investigations (Argus) ────────
