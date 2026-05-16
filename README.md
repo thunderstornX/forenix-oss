@@ -113,10 +113,15 @@ claim: [`docs/FEATURES.md`](docs/FEATURES.md).
 | `claude` | paid (SaaS-gated) | stub | — |
 | `openrouter` | free + paid | ✅ shipped | ✅ |
 | `nvidia` | free dev tier + paid | ✅ shipped | ✅ |
+| `grok` | paid (xAI credits or DSP opt-in) | ✅ shipped | — *(needs credits)* |
+| `groq` | **free, no card** · ~150ms latency | ✅ shipped | ✅ |
 
 Live demos this build proved out (target: `INV-2025-020 — Mira
 Volkov`):
 
+- **Groq `llama-3.3-70b-versatile`** — **4.2 s**, 11 findings,
+  1 entity, chain green at 16 entries. (Fastest of the bunch by
+  more than 10×.)
 - **NVIDIA `meta/llama-3.3-70b-instruct`** — 47s, 11 findings,
   5 entities, 7 relations, chain green.
 - **OpenRouter `openai/gpt-oss-120b:free`** — 82s, 10 findings,

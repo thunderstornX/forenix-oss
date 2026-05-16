@@ -50,6 +50,8 @@ sleep for free between visits.
    | `NVIDIA_MODEL` | (optional) `meta/llama-3.3-70b-instruct` |
    | `XAI_API_KEY` | (optional) `xai-…` (requires credits on xAI side) |
    | `XAI_MODEL` | (optional) `grok-4-fast` |
+   | `GROQ_API_KEY` | **(recommended for Vercel demo)** `gsk_…` — free, no card |
+   | `GROQ_MODEL` | (optional) `llama-3.3-70b-versatile` |
    | `SEED_TOKEN` | a fresh random string — `openssl rand -hex 16` |
 
 8. Click **Deploy**. Watch the build log; it runs `prisma
@@ -112,11 +114,17 @@ Password for all three: `forenix`.
 
 | Plan | Function timeout | Notes |
 |---|---|---|
-| **Hobby (free)** | up to 60s | The pipeline route declares `maxDuration = 60` — works for `mock` adapter + most fast hosted models. Slow models (full 70B Llama on cold start) may run out. |
+| **Hobby (free)** | up to 60s | The pipeline route declares `maxDuration = 60`. Works comfortably with `mock` (< 1s) and `groq` (≈ 4s). NVIDIA (≈ 47s) usually fits. OpenRouter's slower models (≈ 80s) will time out. |
 | **Pro ($20/mo)** | up to 300s | All adapter calls fit comfortably. Recommended for anything serious. |
 
-For a free demo, set `AI_ADAPTER=mock` and let users explore the
-UI. Real-LLM testing is a Pro-plan upgrade away.
+For a **completely free** demo, set `AI_ADAPTER=groq` and a
+`GROQ_API_KEY` — Groq's free tier is generous, the LPU runs a
+3-agent-group pipeline in 4 seconds, and the chain stays green
+throughout.
+
+If even that's overkill, `AI_ADAPTER=mock` works with zero env
+variables and lets reviewers explore the UI without any external
+dependency at all.
 
 ## Going to production
 
