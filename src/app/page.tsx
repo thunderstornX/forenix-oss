@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 
+import { CommandPalette } from "@/components/command-palette";
 import { Sidebar } from "@/components/layout/sidebar";
 import { Topbar } from "@/components/layout/topbar";
 import { CasesView } from "@/components/views/cases";
@@ -14,8 +15,8 @@ import { EntityGraphView } from "@/components/views/entity-graph";
 import { EvidenceView } from "@/components/views/evidence";
 import { IntegrityView } from "@/components/views/integrity";
 import { MonitorsView } from "@/components/views/monitors";
+import { NetworkGraphView } from "@/components/views/network-graph";
 import { PipelineView } from "@/components/views/pipeline";
-import { PlaceholderView } from "@/components/views/view-shell";
 import { ReportsView } from "@/components/views/reports";
 import { ReviewsView } from "@/components/views/reviews";
 import { VerificationView } from "@/components/views/verification";
@@ -42,7 +43,7 @@ function ViewRouter() {
     case "reports":        return <ReportsView />;
     case "pipeline":       return <PipelineView />;
     case "evidence":       return <EvidenceView />;
-    case "network-graph":  return <PlaceholderView title="Network Graph"  description="Cross-case network of users, agents, and merged-finding paths."        phase="Phase 5" />;
+    case "network-graph":  return <NetworkGraphView />;
     case "branch-graph":   return <BranchGraphView />;
     case "ai-lab":         return <AILabView />;
     case "integrity":      return <IntegrityView />;
@@ -53,6 +54,23 @@ function ViewRouter() {
 
 export default function Home() {
   const setView = useUI((s) => s.setView);
+  const setActiveInv = useUI((s) => s.setActiveInvestigation);
+  const setActiveCase = useUI((s) => s.setActiveCase);
+  const setCommandPaletteOpen = useUI((s) => s.setCommandPaletteOpen);
+
+  // URL query params drive initial view + selection (for deep links + screenshot capture).
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const p = new URLSearchParams(window.location.search);
+    const v = p.get("view") as ViewType | null;
+    const inv = p.get("inv");
+    const caseId = p.get("case");
+    const palette = p.get("palette");
+    if (v && NAV.some((n) => n.id === v)) setView(v);
+    if (inv !== null) setActiveInv(inv || null);
+    if (caseId !== null) setActiveCase(caseId || null);
+    if (palette === "1") setCommandPaletteOpen(true);
+  }, [setView, setActiveInv, setActiveCase, setCommandPaletteOpen]);
 
   // ⌘1–⌘9 (Ctrl on Linux/Windows) → switch view.
   useEffect(() => {
@@ -77,6 +95,7 @@ export default function Home() {
           <ViewRouter />
         </div>
       </main>
+      <CommandPalette />
     </div>
   );
 }
