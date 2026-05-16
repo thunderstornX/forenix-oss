@@ -161,23 +161,47 @@ export async function chatAnalyzePipeline(
   agentGroup: AgentGroup,
   searchResults: SearchResult[],
 ): Promise<PipelineAnalysis> {
+  // Lazy-import to dodge the heavy node:child_process surface
+  // unless we actually run tools.
+  const { availableToolsForGroup } = await import("@/lib/tools/registry");
+  const { chatWithTools } = await import("./tool-loop");
+
+  const tools = availableToolsForGroup(agentGroup);
   const userMsg = [
     `Target: ${target}`,
     `Agent group: ${agentGroup}`,
-    `Sources (${searchResults.length}):`,
-    ...searchResults.slice(0, 12).map((s, i) => `  [${i + 1}] ${s.title} — ${s.url}\n      ${s.snippet}`),
     "",
-    "Produce 2-4 OSINT findings relevant to this agent group, each grounded in the sources where possible.",
+    tools.length > 0
+      ? "You have OSINT tools available. Plan a short sequence of tool calls — start with a web search or crt.sh lookup to ground the target, then drill down with specialised tools (sherlock for usernames, holehe for emails, theHarvester for domains, etc.). Once you have real evidence, emit findings.\n"
+      : (searchResults.length > 0
+          ? "Sources (" + searchResults.length + "):\n" +
+            searchResults.slice(0, 12).map((s, i) => `  [${i + 1}] ${s.title} — ${s.url}\n      ${s.snippet}`).join("\n") + "\n"
+          : "No external data is available in this environment — base your findings on prior reasoning only.\n"),
+    "",
+    "When you have enough evidence, return STRICT JSON only (no prose, no fences) matching the schema in the system prompt. Produce 2-4 findings, each grounded in tool output where possible.",
   ].join("\n");
 
-  const raw = await chatComplete(
-    backend,
-    [
-      { role: "system", content: SYSTEM_PIPELINE },
-      { role: "user", content: userMsg },
-    ],
-    { response_format: "json_object" },
-  );
+  let raw: string;
+  if (tools.length > 0) {
+    const loop = await chatWithTools(backend, {
+      system: SYSTEM_PIPELINE,
+      user: userMsg,
+      tools,
+      maxIterations: 6,
+      temperature: 0.3,
+    });
+    raw = loop.text;
+  } else {
+    raw = await chatComplete(
+      backend,
+      [
+        { role: "system", content: SYSTEM_PIPELINE },
+        { role: "user", content: userMsg },
+      ],
+      { response_format: "json_object" },
+    );
+  }
+
   const parsed = extractJson<{
     findings: Array<{
       title: string;
