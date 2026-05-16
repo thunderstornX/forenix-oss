@@ -109,7 +109,8 @@ export type AdapterName =
   | "claude"
   | "openrouter"
   | "nvidia"
-  | "grok";
+  | "grok"
+  | "groq";
 
 /**
  * AIAdapter — every concrete adapter implements this surface.

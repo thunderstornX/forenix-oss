@@ -42,7 +42,7 @@ const Body = z.object({
       ]),
     )
     .optional(),
-  adapter: z.enum(["mock", "ollama", "glm", "claude", "openrouter", "nvidia", "grok"]).optional(),
+  adapter: z.enum(["mock", "ollama", "glm", "claude", "openrouter", "nvidia", "grok", "groq"]).optional(),
 });
 
 // Fabricate a small handful of search hits so the mock adapter has
