@@ -1,10 +1,24 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { CheckCircle2, AlertOctagon, Loader2 } from "lucide-react";
 
+// useSearchParams() opts the route out of static prerender; wrap in
+// a Suspense boundary so the build doesn't bail.
 export default function AcceptInvitePage() {
+  return (
+    <Suspense fallback={
+      <div className="grid min-h-screen place-items-center bg-[var(--background)] p-6">
+        <Loader2 className="h-5 w-5 animate-spin text-[var(--foreground-muted)]" />
+      </div>
+    }>
+      <AcceptInviteInner />
+    </Suspense>
+  );
+}
+
+function AcceptInviteInner() {
   const sp = useSearchParams();
   const router = useRouter();
   const token = sp.get("token") ?? "";
