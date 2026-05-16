@@ -1,8 +1,9 @@
 "use client";
 
-import { Diff, Folders, MessageSquare, GitBranch } from "lucide-react";
+import { Diff, Folders, MessageSquare, GitBranch, GitMerge, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
-import { useReviews } from "@/lib/hooks";
+import { useMergeReview, useReviews } from "@/lib/hooks";
 import { useUI } from "@/lib/store";
 import { cn, relTime } from "@/lib/utils";
 
@@ -16,9 +17,26 @@ const STATUS_TONE: Record<string, string> = {
 
 export function ReviewsView() {
   const r = useReviews();
+  const merge = useMergeReview();
   const setCase = useUI((s) => s.setActiveCase);
   const setView = useUI((s) => s.setView);
   const rows = r.data?.data ?? [];
+
+  async function onMerge(id: string) {
+    try {
+      const res = await merge.mutateAsync(id) as { data: { gitOid: string; fastForward: boolean } };
+      toast.success(
+        `Merged ${res.data.fastForward ? "(fast-forward)" : "(3-way)"} · ${res.data.gitOid.slice(0, 8)}`,
+      );
+    } catch (e) {
+      const msg = (e as Error).message;
+      if (msg.includes("merge_conflict")) {
+        toast.error("Merge conflict — see audit log for affected files.");
+      } else {
+        toast.error(msg);
+      }
+    }
+  }
 
   return (
     <ViewShell
@@ -62,6 +80,17 @@ export function ReviewsView() {
               </span>
               <span>reviewer: {mr.reviewer?.name ?? "unassigned"}</span>
               <span>{relTime(mr.createdAt)}</span>
+              {mr.status === "open" && (
+                <button
+                  type="button"
+                  onClick={() => onMerge(mr.id)}
+                  disabled={merge.isPending}
+                  className="ml-auto flex items-center gap-1 rounded border border-[var(--border-strong)] bg-[var(--accent-soft)] px-2 py-0.5 text-[10px] font-medium text-[var(--forensic)] hover:forensic-glow disabled:opacity-60"
+                >
+                  {merge.isPending ? <Loader2 className="h-3 w-3 animate-spin" /> : <GitMerge className="h-3 w-3" />}
+                  merge
+                </button>
+              )}
             </div>
           </article>
         ))}

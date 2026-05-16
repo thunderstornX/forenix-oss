@@ -251,6 +251,49 @@ export function useVerifications() {
   });
 }
 
+export function useSetVerdict() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, verdict }: { id: string; verdict: string }) =>
+      http(`/api/verifications/${id}`, {
+        method: "PATCH",
+        body: JSON.stringify({ verdict }),
+      }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["verifications"] });
+      qc.invalidateQueries({ queryKey: ["audit"] });
+    },
+  });
+}
+
+export function useMergeReview() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) =>
+      http(`/api/reviews/${id}/merge`, { method: "POST" }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["reviews"] });
+      qc.invalidateQueries({ queryKey: ["audit"] });
+      qc.invalidateQueries({ queryKey: ["case"] });
+    },
+  });
+}
+
+export function useAgentTaskAction() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, action }: { id: string; action: "cancel" | "rerun" }) =>
+      http(`/api/agent-tasks/${id}`, {
+        method: "PATCH",
+        body: JSON.stringify({ action }),
+      }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["agents"] });
+      qc.invalidateQueries({ queryKey: ["audit"] });
+    },
+  });
+}
+
 export function useEvidence(caseId?: string | null) {
   const url = caseId ? `/api/evidence?caseId=${caseId}` : "/api/evidence";
   return useQuery({

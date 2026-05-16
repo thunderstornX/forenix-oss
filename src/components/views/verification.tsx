@@ -1,11 +1,14 @@
 "use client";
 
-import { ShieldCheck } from "lucide-react";
+import { ShieldCheck, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
-import { useVerifications } from "@/lib/hooks";
+import { useSetVerdict, useVerifications } from "@/lib/hooks";
 import { cn, relTime } from "@/lib/utils";
 
 import { ViewShell } from "./view-shell";
+
+const VERDICT_OPTIONS = ["pending", "confirmed", "probable", "unverified", "disputed", "false"] as const;
 
 const VERDICT_TONE: Record<string, string> = {
   confirmed: "bg-[var(--accent-soft)] text-[var(--accent-strong)]",
@@ -18,7 +21,17 @@ const VERDICT_TONE: Record<string, string> = {
 
 export function VerificationView() {
   const v = useVerifications();
+  const setVerdict = useSetVerdict();
   const rows = v.data?.data ?? [];
+
+  async function onVerdict(id: string, verdict: string) {
+    try {
+      await setVerdict.mutateAsync({ id, verdict });
+      toast.success(`Verdict set to ${verdict}`);
+    } catch (e) {
+      toast.error((e as Error).message);
+    }
+  }
 
   return (
     <ViewShell
@@ -41,9 +54,29 @@ export function VerificationView() {
                 {r.verdict}
               </span>
             </header>
-            <div className="mt-2 flex items-center gap-3 text-[10px] text-[var(--foreground-muted)]">
+            <div className="mt-2 flex flex-wrap items-center gap-3 text-[10px] text-[var(--foreground-muted)]">
               <span>by {r.createdBy}</span>
               <span>{relTime(r.createdAt)}</span>
+              <span className="ml-auto flex items-center gap-1.5">
+                {setVerdict.isPending && <Loader2 className="h-3 w-3 animate-spin" />}
+                set verdict:
+                {VERDICT_OPTIONS.map((opt) => (
+                  <button
+                    key={opt}
+                    type="button"
+                    onClick={() => onVerdict(r.id, opt)}
+                    disabled={setVerdict.isPending || r.verdict === opt}
+                    className={cn(
+                      "rounded border px-1.5 py-0.5 text-[9px] capitalize",
+                      r.verdict === opt
+                        ? "border-[var(--accent)] bg-[var(--accent-soft)] text-[var(--accent-strong)] cursor-default"
+                        : "border-[var(--border)] bg-[var(--background-elev)] text-[var(--foreground)] hover:border-[var(--accent)]",
+                    )}
+                  >
+                    {opt}
+                  </button>
+                ))}
+              </span>
             </div>
           </article>
         ))}

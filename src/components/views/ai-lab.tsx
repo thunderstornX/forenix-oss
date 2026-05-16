@@ -1,8 +1,9 @@
 "use client";
 
-import { Sparkles, Activity, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
+import { Sparkles, Activity, CheckCircle2, AlertCircle, Loader2, RotateCw, X } from "lucide-react";
+import { toast } from "sonner";
 
-import { useAgents } from "@/lib/hooks";
+import { useAgents, useAgentTaskAction } from "@/lib/hooks";
 import { cn, relTime } from "@/lib/utils";
 
 import { ViewShell } from "./view-shell";
@@ -18,7 +19,17 @@ function StatusIcon({ s }: { s: string }) {
 
 export function AILabView() {
   const a = useAgents();
+  const taskAction = useAgentTaskAction();
   const rows = a.data?.data ?? [];
+
+  async function onTaskAction(id: string, action: "cancel" | "rerun") {
+    try {
+      await taskAction.mutateAsync({ id, action });
+      toast.success(action === "cancel" ? "Task cancelled" : "Re-run queued");
+    } catch (e) {
+      toast.error((e as Error).message);
+    }
+  }
 
   return (
     <ViewShell
@@ -72,6 +83,28 @@ export function AILabView() {
                         <span className="capitalize text-[var(--foreground)]">{t.type}</span>
                         <span className="text-[10px] text-[var(--foreground-muted)]">conf {(t.confidence * 100).toFixed(0)}%</span>
                         <span className="ml-auto text-[10px] text-[var(--foreground-muted)]">{relTime(t.createdAt)}</span>
+                        {(t.status === "pending" || t.status === "running") && (
+                          <button
+                            type="button"
+                            onClick={() => onTaskAction(t.id, "cancel")}
+                            disabled={taskAction.isPending}
+                            className="rounded border border-[var(--border)] px-1.5 py-0.5 text-[9px] text-[var(--danger)] hover:border-[var(--danger)] disabled:opacity-50"
+                            title="Cancel"
+                          >
+                            <X className="h-3 w-3" />
+                          </button>
+                        )}
+                        {(t.status === "completed" || t.status === "failed") && (
+                          <button
+                            type="button"
+                            onClick={() => onTaskAction(t.id, "rerun")}
+                            disabled={taskAction.isPending}
+                            className="rounded border border-[var(--border)] px-1.5 py-0.5 text-[9px] text-[var(--accent)] hover:border-[var(--accent)] disabled:opacity-50"
+                            title="Re-run"
+                          >
+                            <RotateCw className="h-3 w-3" />
+                          </button>
+                        )}
                       </div>
                       {t.output && (
                         <pre className="mt-1 max-h-24 overflow-y-auto whitespace-pre-wrap rounded bg-[var(--background-elev-2)] p-2 font-mono text-[10px] text-[var(--foreground-muted)]">
