@@ -18,8 +18,11 @@ import {
   Lock,
   Eye,
   Diff,
+  Users,
+  Cog,
 } from "lucide-react";
 
+import { useMe } from "@/lib/hooks";
 import { NAV, type ViewType, useUI } from "@/lib/store";
 import { cn } from "@/lib/utils";
 
@@ -39,18 +42,24 @@ const ICONS: Partial<Record<ViewType, React.ComponentType<{ className?: string }
   "integrity":      Lock,
   "audit":          Eye,
   "reviews":        Diff,
+  "teams":          Users,
+  "admin":          Cog,
 };
 
-const SECTION_LABELS: Record<"osint" | "combined" | "forensics", string> = {
+const SECTION_LABELS: Record<"osint" | "combined" | "forensics" | "account", string> = {
   osint:     "OSINT",
   combined:  "Pipeline",
   forensics: "Forensics",
+  account:   "Account",
 };
 
 export function Sidebar() {
   const { activeView, setView, sidebarCollapsed, toggleSidebar, setCommandPaletteOpen } = useUI();
+  const me = useMe();
+  const isAdmin = me.data?.data?.role === "admin";
 
-  const grouped = NAV.reduce<Record<string, typeof NAV>>((acc, item) => {
+  const visible = NAV.filter((n) => !n.adminOnly || isAdmin);
+  const grouped = visible.reduce<Record<string, typeof NAV>>((acc, item) => {
     (acc[item.section] ??= []).push(item);
     return acc;
   }, {});
@@ -99,7 +108,7 @@ export function Sidebar() {
 
       {/* Nav */}
       <nav className="flex-1 overflow-y-auto px-2 pb-4">
-        {(["osint", "combined", "forensics"] as const).map((section) => (
+        {(["osint", "combined", "forensics", "account"] as const).map((section) => (
           <div key={section} className="mb-4">
             {!sidebarCollapsed && (
               <div className="px-2 pb-1.5 text-[10px] font-medium uppercase tracking-[0.18em] text-[var(--foreground-muted)]">

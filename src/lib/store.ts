@@ -29,6 +29,9 @@ export const VIEWS = [
   "integrity",
   "audit",
   "reviews",
+  // Account + admin
+  "teams",
+  "admin",
 ] as const;
 
 export type ViewType = (typeof VIEWS)[number];
@@ -36,8 +39,9 @@ export type ViewType = (typeof VIEWS)[number];
 export interface NavItem {
   id: ViewType;
   label: string;
-  section: "osint" | "combined" | "forensics";
+  section: "osint" | "combined" | "forensics" | "account";
   shortcut?: string;
+  adminOnly?: boolean;
 }
 
 export const NAV: NavItem[] = [
@@ -56,6 +60,8 @@ export const NAV: NavItem[] = [
   { id: "integrity",      label: "Integrity",      section: "forensics" },
   { id: "audit",          label: "Audit",          section: "forensics" },
   { id: "reviews",        label: "Reviews",        section: "forensics" },
+  { id: "teams",          label: "Teams",          section: "account" },
+  { id: "admin",          label: "Admin",          section: "account", adminOnly: true },
 ];
 
 interface UIState {

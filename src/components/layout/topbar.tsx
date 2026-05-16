@@ -1,9 +1,10 @@
 "use client";
 
-import { Activity, GitMerge, Lock } from "lucide-react";
+import { Activity, GitMerge, Lock, LogOut, User as UserIcon } from "lucide-react";
+import { signOut } from "next-auth/react";
 
 import { useUI, NAV, type ViewType } from "@/lib/store";
-import { useHealth } from "@/lib/hooks";
+import { useHealth, useMe } from "@/lib/hooks";
 
 function viewLabel(v: ViewType): string {
   return NAV.find((n) => n.id === v)?.label ?? v;
@@ -12,6 +13,7 @@ function viewLabel(v: ViewType): string {
 export function Topbar() {
   const activeView = useUI((s) => s.activeView);
   const { data: health } = useHealth();
+  const { data: me } = useMe();
 
   return (
     <header className="flex h-14 shrink-0 items-center justify-between border-b border-[var(--border)] px-6">
@@ -34,6 +36,23 @@ export function Topbar() {
           <Lock className="h-3.5 w-3.5 text-[var(--foreground-muted)]" />
           {health?.status === "ok" ? "online" : "starting"}
         </span>
+
+        {me?.data && (
+          <span className="flex items-center gap-1.5 rounded border border-[var(--border)] bg-[var(--background-elev)] px-2 py-0.5">
+            <UserIcon className="h-3 w-3 text-[var(--accent)]" />
+            <span className="text-[var(--foreground)]">{me.data.name ?? me.data.email}</span>
+            <span className="text-[var(--foreground-muted)]">· {me.data.role}</span>
+          </span>
+        )}
+
+        <button
+          type="button"
+          onClick={() => signOut({ callbackUrl: "/sign-in" })}
+          className="flex items-center gap-1 rounded border border-[var(--border)] bg-[var(--background-elev)] px-2 py-0.5 hover:border-[var(--danger)] hover:text-[var(--danger)]"
+        >
+          <LogOut className="h-3 w-3" />
+          sign out
+        </button>
       </div>
     </header>
   );

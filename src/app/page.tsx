@@ -17,8 +17,10 @@ import { IntegrityView } from "@/components/views/integrity";
 import { MonitorsView } from "@/components/views/monitors";
 import { NetworkGraphView } from "@/components/views/network-graph";
 import { PipelineView } from "@/components/views/pipeline";
+import { AdminView } from "@/components/views/admin";
 import { ReportsView } from "@/components/views/reports";
 import { ReviewsView } from "@/components/views/reviews";
+import { TeamsView } from "@/components/views/teams";
 import { VerificationView } from "@/components/views/verification";
 
 import { NAV, useUI, type ViewType } from "@/lib/store";
@@ -49,6 +51,8 @@ function ViewRouter() {
     case "integrity":      return <IntegrityView />;
     case "audit":          return <AuditView />;
     case "reviews":        return <ReviewsView />;
+    case "teams":          return <TeamsView />;
+    case "admin":          return <AdminView />;
   }
 }
 

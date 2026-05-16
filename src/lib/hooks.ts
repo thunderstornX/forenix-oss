@@ -282,6 +282,22 @@ export function useIntegrity() {
   });
 }
 
+export interface MeResponse {
+  id: string;
+  email: string | null;
+  name: string | null;
+  role: "admin" | "investigator" | "analyst" | "viewer";
+  teams: Array<{ id: string; name: string; slug: string; role: string }>;
+}
+export function useMe() {
+  return useQuery({
+    queryKey: ["me"],
+    queryFn: () => http<{ data: MeResponse }>("/api/me"),
+    staleTime: 5 * 60_000,
+    refetchOnWindowFocus: false,
+  });
+}
+
 export function useHealth() {
   return useQuery({
     queryKey: ["health"],
