@@ -2,6 +2,7 @@ import { z } from "zod";
 
 import { appendAudit } from "@/lib/audit";
 import { prisma } from "@/lib/db";
+import { paginateSlice, readPageParams } from "@/lib/pagination";
 import { httpErrorResponse, requireSession, teamScopeWhere } from "@/lib/rbac";
 
 const CreateBody = z.object({
@@ -10,12 +11,15 @@ const CreateBody = z.object({
   priority: z.enum(["low", "medium", "high", "critical"]).default("medium"),
 });
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
     const actor = await requireSession();
+    const page = readPageParams(new URL(request.url));
     const rows = await prisma.case.findMany({
       where: teamScopeWhere(actor),
       orderBy: { updatedAt: "desc" },
+      take: page.limit + 1,
+      ...(page.cursor ? { cursor: { id: page.cursor }, skip: 1 } : {}),
       select: {
         id: true,
         title: true,
@@ -29,7 +33,8 @@ export async function GET() {
         _count: { select: { evidence: true, branches: true, investigations: true } },
       },
     });
-    return Response.json({ data: rows });
+    const { data, nextCursor } = paginateSlice(rows, page.limit);
+    return Response.json({ data, nextCursor });
   } catch (err) {
     return httpErrorResponse(err);
   }
