@@ -13,12 +13,24 @@
 [![CI](https://github.com/thunderstornX/forenix-oss/actions/workflows/ci.yml/badge.svg)](https://github.com/thunderstornX/forenix-oss/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Version: 0.1.0](https://img.shields.io/badge/version-0.1.0-teal.svg)](CHANGELOG.md)
+[![Live demo](https://img.shields.io/badge/live--demo-forenix--oss.vercel.app-darkgreen.svg)](https://forenix-oss.vercel.app)
 
 **OSINT × Forensics, one workflow.**
 
 Open-source platform that turns public-source intelligence into
 court-admissible evidence — with a cryptographic chain of custody
 from the first finding to the final verdict.
+
+### 👉 Try it live: <https://forenix-oss.vercel.app>
+
+Demo accounts (password `forenix` for all three):
+- `admin@forenix-oss.local` — full access, manage users + teams
+- `investigator@forenix-oss.local` — runs pipelines, manages cases
+- `analyst@forenix-oss.local` — scoped reads + verify findings
+
+The live demo is backed by Neon Postgres + the Groq LPU adapter
+(real LLM, ~5 s pipeline runs). Audit chain verifies cleanly on
+every page load.
 
 ![Dashboard](docs/screenshots/01-dashboard.png)
 
