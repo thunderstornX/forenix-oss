@@ -10,170 +10,256 @@
 
 # forenix-oss
 
-**OSINT × Forensics, one platform.**
+**OSINT × Forensics, one workflow.**
 
-forenix-oss merges two upstream platforms — **Argus** (an OSINT
-investigation engine with seven AI agent groups) and **ForenX** (a
-Git-style forensic case manager with hash-chained chain-of-custody) —
-into one MIT-licensed Next.js app. The headline workflow:
+Open-source platform that turns public-source intelligence into
+court-admissible evidence — with a cryptographic chain of custody
+from the first finding to the final verdict.
 
-> OSINT investigations discover targets and produce intelligence
-> findings → those findings flow directly into forensic cases with
-> full chain-of-custody.
+![Dashboard](docs/screenshots/01-dashboard.png)
 
-The schema is one merged Prisma model with two new bridge columns
-(`Investigation.caseId`, `Finding.evidenceId`). The audit log is
-SHA-256 hash-chained so the Integrity Dashboard can replay every row
-and prove no entry has been tampered with.
+> The shipping ground truth: one schema, two workflows, six AI
+> adapters, every state change on a SHA-256 forward chain.
+
+---
+
+## Why
+
+OSINT analysts and forensic examiners run on two disconnected
+toolchains today — Maltego / SpiderFoot / Hunchly on one side,
+EnCase / AXIOM / Cellebrite on the other. The handoff is manual,
+the chain of custody is artisanal, and the audit trail rarely
+survives a court challenge. forenix-oss owns both halves in one
+MIT-licensed app.
+
+## The headline feature
+
+**Pipeline → Bridge → Chain.** Run an AI-driven OSINT pipeline,
+promote any finding into a forensic Evidence row in one click, and
+let the SHA-256 forward chain attest every state change.
+
+![Pipeline](docs/screenshots/03-pipeline.png)
+![Branch graph](docs/screenshots/06-branch-graph.png)
+![Integrity](docs/screenshots/14-integrity.png)
+
+---
 
 ## Quick start
 
 ```bash
 bun install
 cp .env.example .env
-
-bun run db:push      # apply schema to ./dev.db
-bun run db:seed      # 3 users / 2 investigations / 1 case / 9 audit rows
-bun run dev          # open http://localhost:3000
+bun run db:push
+bun run db:seed
+bun run dev
 ```
 
-Smoke-test the API directly:
+Open <http://localhost:3000>. Walk through the
+[demo script](docs/DEMO_SCRIPT.md) to see every feature.
+
+To swap the mock adapter for a real LLM:
+
+```env
+AI_ADAPTER=nvidia            # or openrouter / ollama / glm / claude
+NVIDIA_API_KEY=nvapi-…
+NVIDIA_MODEL=meta/llama-3.3-70b-instruct
+```
+
+Per-call adapter overrides are supported via the request body:
 
 ```bash
-curl localhost:3000/api/health
-curl localhost:3000/api/investigations | jq '.data | length'
-curl localhost:3000/api/cases          | jq '.data | length'
+curl -X POST -H "content-type: application/json" \
+  -d '{"agentGroups":["identity","social"],"adapter":"openrouter"}' \
+  http://localhost:3000/api/pipeline/run/<INVESTIGATION_ID>
 ```
 
-## What's in the box (Phase 1)
+---
 
-| Layer | Files | Notes |
-|---|---|---|
-| **AI adapter** | `src/lib/ai/` | Interface + factory + `MockAdapter` (seeded deterministic data) + 3 stubs (`OllamaAdapter`, `GLMAdapter`, `ClaudeAdapter`). |
-| **Unified schema** | `prisma/schema.prisma` | All 19 models merged. Two new bridge columns. `Report` carries a `source = "investigation" \| "case"` discriminator. |
-| **Hash-chain audit** | `src/lib/audit.ts` + `src/lib/audit-chain.ts` | `appendAudit()` writes a row whose `hash = sha256(prevHash + action + entity + entityId + iso(createdAt))`. `verifyAuditChain()` replays the whole log. |
-| **Seed** | `prisma/seed.ts` | 3 users, 2 investigations (1 linked to a case), 1 case w/ 2 branches + 3 evidence + 6 commits, 6 findings (2 linked to evidence), 2 monitors, 2 verifications, 3 reports, 2 agents + tasks, 9 audit rows w/ valid chain. |
-| **App shell** | `src/app/` + `src/components/` | Dark + glassmorphism. Sidebar with 3 sections (OSINT / Pipeline / Forensics), collapsible, ⌘1–⌘9 view shortcuts. |
-| **Working views** | Dashboard, Investigations, Cases | Each is fully wired to its API route, with create-via-form. |
-| **Placeholder views** | 12 others | Stubbed with the same shell so the nav doesn't lie. |
-| **API routes** | `src/app/api/{health,investigations,cases}/route.ts` | Zod-validated POST, audit-logged on create. |
+## What's in the box
 
-## AI adapter pattern
+15 production views, 23 API routes, 6 AI adapters, one merged
+Prisma schema, one cryptographically-attested audit log.
 
-Every LLM call in the codebase goes through `src/lib/ai/adapter.ts`:
+| View | Problem it solves |
+|---|---|
+| **[Dashboard](docs/screenshots/01-dashboard.png)** | Both workflows on one screen |
+| **[Investigations](docs/screenshots/02-investigations.png)** | OSINT collection workspace |
+| **[Pipeline](docs/screenshots/03-pipeline.png)** | Run + bridge in one click |
+| **[Cases](docs/screenshots/04-cases.png)** | Forensic case manager |
+| **[Evidence](docs/screenshots/05-evidence.png)** | Inventory + chain of custody |
+| **[Branch graph](docs/screenshots/06-branch-graph.png)** | Git-style commit history over evidence |
+| **[Entity graph](docs/screenshots/07-entity-graph.png)** | OSINT entity + relation map |
+| **[Network graph](docs/screenshots/08-network-graph.png)** | Cross-case knowledge graph |
+| **[Monitors](docs/screenshots/09-monitors.png)** | Cadenced re-runs |
+| **[Verification](docs/screenshots/10-verification.png)** | Claim-level verdicts |
+| **[AI Lab](docs/screenshots/11-ai-lab.png)** | Visibility into every agent run |
+| **[Reports](docs/screenshots/12-reports.png)** | Sectioned JSON + markdown |
+| **[Audit](docs/screenshots/13-audit.png)** | Full hash-chained log |
+| **[Integrity](docs/screenshots/14-integrity.png)** | One-button chain verification |
+| **[Reviews](docs/screenshots/15-reviews.png)** | Merge-request review on evidence branches |
 
-```ts
-import { getAdapter } from "@/lib/ai/adapter";
+Detailed walkthrough with screenshots + what each view does **not**
+claim: [`docs/FEATURES.md`](docs/FEATURES.md).
 
-const ai = getAdapter();
-const report = await ai.generateReport(investigation, findings);
-```
+---
 
-The active adapter is selected by `AI_ADAPTER` (default: `mock`). The
-factory will **never** fall through to a paid adapter on a bad value
-— it falls back to mock. The four implementations:
+## AI adapters
 
-| Adapter | Cost | Status | Setup |
+| Adapter | Cost | Status | Live tested |
 |---|---|---|---|
-| `mock` | free | ✅ shipped | none — works out of the box |
-| `ollama` | free | stub (throws) | `ollama pull qwen2.5:7b-instruct`, then implement the POST in `src/lib/ai/adapters/ollama.ts` |
-| `glm` | free tier | stub (throws) | register at [open.bigmodel.cn](https://open.bigmodel.cn), set `ZHIPU_API_KEY`, then implement the chat-completions POST |
-| `claude` | paid | stub (throws) | requires `SAAS_MODE=true` + `ANTHROPIC_API_KEY`; reserved for premium tier |
+| `mock` | free | ✅ shipped — deterministic seeded output | ✅ |
+| `ollama` | free | stub (drop-in) | — |
+| `glm` | free tier | stub (drop-in) | — |
+| `claude` | paid (SaaS-gated) | stub | — |
+| `openrouter` | free + paid | ✅ shipped | ✅ |
+| `nvidia` | free dev tier + paid | ✅ shipped | ✅ |
 
-### Free API keys to plug in
+Live demos this build proved out (target: `INV-2025-020 — Mira
+Volkov`):
 
-If you want to swap `mock` for real models, here is what's available
-free or near-free at time of writing:
+- **NVIDIA `meta/llama-3.3-70b-instruct`** — 47s, 11 findings,
+  5 entities, 7 relations, chain green.
+- **OpenRouter `openai/gpt-oss-120b:free`** — 82s, 10 findings,
+  9 entities, 8 relations → bridged to case → 13 evidence rows
+  promoted, chain green at 19 entries.
 
-- **Ollama** — completely free, runs entirely on your machine. Best
-  for `qwen2.5:7b-instruct` (~4.7 GB on disk). No API key needed.
-- **Zhipu AI (GLM)** — `glm-4-flash` is currently free on the
-  [open.bigmodel.cn](https://open.bigmodel.cn) developer plan; you
-  get a generous monthly quota after sign-up.
-- **Google AI Studio (Gemini)** — also has a free developer tier; we
-  haven't shipped a `GeminiAdapter` yet but adding one is the same
-  shape as `OllamaAdapter`.
-- **Groq** — fast hosted Llama / Mistral / DeepSeek tier with a
-  generous free quota for tinkering.
+Adding a 7th provider is a single file — see
+[`src/lib/ai/adapters/`](src/lib/ai/adapters/) for the shape.
 
-## Schema merge rules
-
-- **Argus keeps:** `Investigation`, `Finding`, `EntityRelation`,
-  `Monitor`, `MonitorRun`, `PipelineSchedule`, `Verification`,
-  `Annotation`.
-- **ForenX keeps:** `Case`, `Evidence`, `EvidenceCommit`, `Branch`,
-  `MergeRequest`, `AgentTask`, `Agent`, `AgentAssignment`,
-  `CaseAssignment`, `CaseMetric`, `Comment`.
-- **`User`** comes from ForenX (Argus did not model it).
-- **`Entity`** comes from Argus (ForenX did not model it).
-- **`Report`** is merged: carries a `source` discriminator and the
-  union of both projects' fields (`sections` JSON + `content`
-  markdown).
-- **`AuditLog`** keeps ForenX's `hash` + `prevHash` fields, with an
-  added optional `investigationId` column so Argus's
-  investigation-scoped audit events still flow through one ledger.
+---
 
 ## Audit chain
 
-```
-sha256( prevHash | action | entity | entityId | iso(createdAt) )
-```
-
-`GENESIS_HASH` is 32 zero bytes hex-encoded. `verifyAuditChain()` in
-`src/lib/audit.ts` replays the whole log in insertion order and
-returns `{ ok: true, entries: N }` or
-`{ ok: false, brokenAt: id, expected, got }`. The seed produces a
-clean chain you can verify after `bun run db:seed`.
-
-## Repo layout
+Every audit row carries:
 
 ```
-src/
-  app/
-    api/
-      health/route.ts           # GET — adapter + version
-      investigations/route.ts   # GET list, POST create
-      cases/route.ts            # GET list, POST create
-    layout.tsx                  # root layout + providers
-    page.tsx                    # view router with ⌘1–⌘9 shortcuts
-    globals.css                 # tailwind + design tokens + .glass utilities
-  components/
-    layout/                     # sidebar, topbar
-    views/                      # one component per top-level view
-    providers.tsx               # TanStack Query client
-  lib/
-    ai/
-      types.ts                  # wire contract for every adapter
-      adapter.ts                # factory + getAdapter()
-      adapters/                 # mock + 3 stubs
-    audit.ts                    # appendAudit + verifyAuditChain
-    audit-chain.ts              # pure SHA-256 helpers (importable from seed)
-    db.ts                       # singleton PrismaClient
-    hooks.ts                    # TanStack Query hooks
-    store.ts                    # Zustand UI store + nav registry
-    utils.ts                    # cn / shortHash / relTime
-prisma/
-  schema.prisma                 # merged schema (19 models, 2 bridges)
-  seed.ts                       # full demo data + hash-chained audit log
+hash = sha256( prevHash | action | entity | entityId | iso(createdAt) )
 ```
+
+`verifyAuditChain()` replays the entire log in insertion order and
+breaks loudly on tampering. The cryptographic method is documented
++ reproducible offline:
+
+```python
+import csv, hashlib
+GENESIS = "0" * 64
+prev = GENESIS
+for r in csv.DictReader(open("audit.csv")):
+    h = hashlib.sha256("|".join([
+        prev, r["action"], r["entity"], r["entityId"] or "",
+        r["createdAt"]
+    ]).encode("utf-8")).hexdigest()
+    assert r["prevHash"] == prev and r["hash"] == h, f"BROKEN at {r['id']}"
+    prev = r["hash"]
+print("chain OK")
+```
+
+Full security posture + threat model: [`docs/07-SECURITY.md`](docs/07-SECURITY.md).
+
+---
+
+## Document pack
+
+For investors, design partners, engineers, and auditors:
+
+- [BRD — Business Requirements](docs/01-BRD.md)
+- [SRS — Software Requirements](docs/02-SRS.md)
+- [SDS — Software Design](docs/03-SDS.md)
+- [DFD — Data Flow Diagrams](docs/04-DFD.md)
+- [Deployment Plan](docs/05-DEPLOYMENT.md)
+- [Architecture ADRs](docs/06-ARCHITECTURE.md)
+- [Security + Threat Model](docs/07-SECURITY.md)
+- [API Reference](docs/08-API.md)
+- [Operational Runbook](docs/09-RUNBOOK.md)
+- [Feature Catalogue](docs/FEATURES.md) (with screenshots)
+- [One-pager](docs/ONE_PAGER.md)
+- [Demo Script](docs/DEMO_SCRIPT.md)
+- **[YC Pitch Deck (PDF)](docs/pitch/forenix-oss-yc-deck.pdf)** ·
+  [editable .pptx](docs/pitch/forenix-oss-yc-deck.pptx)
+
+---
 
 ## Stack
 
 Next.js 16 (App Router, Turbopack) · TypeScript strict · Tailwind 4 ·
-Prisma 6 (SQLite for dev) · Zustand + persist · TanStack Query 5 ·
-lucide-react · sonner · Bun as runtime.
+Prisma 6 (SQLite for dev, Postgres for prod) · Zustand + persist ·
+TanStack Query 5 · lucide-react · sonner · Bun as runtime.
+
+---
+
+## Repository layout
+
+```
+src/
+  app/
+    api/                 # 23 route handlers (health, investigations,
+                         # pipeline, bridge, findings, cases, evidence,
+                         # audit, network, …)
+    layout.tsx
+    page.tsx             # SPA shell + ?view= deep-link support
+    globals.css          # design tokens + .glass utilities
+  components/
+    command-palette.tsx  # ⌘K palette
+    filter-input.tsx
+    layout/              # sidebar, topbar
+    views/               # one file per top-level view
+  lib/
+    ai/
+      types.ts           # wire contract
+      adapter.ts         # factory
+      chat-completions.ts# shared OpenAI-compat helpers
+      adapters/          # mock, ollama, glm, claude, openrouter, nvidia
+    audit.ts             # server-only — appendAudit + verifyAuditChain
+    audit-chain.ts       # pure SHA-256 helpers
+    db.ts                # PrismaClient singleton
+    hooks.ts             # TanStack Query hooks
+    store.ts             # Zustand UI store + NAV registry
+    utils.ts
+prisma/
+  schema.prisma          # merged Argus + ForenX (19 models, 2 bridges)
+  seed.ts                # demo seed with valid hash-chained audit log
+scripts/
+  screenshots.mjs        # capture every view via Playwright
+  gen_pitch_deck.py      # build the YC .pptx + .pdf
+docs/
+  01-BRD.md … 09-RUNBOOK.md
+  FEATURES.md
+  ONE_PAGER.md
+  DEMO_SCRIPT.md
+  screenshots/           # 19 PNGs covering every view
+  pitch/                 # YC deck (pptx + pdf)
+```
+
+---
+
+## Stack of stacks (open core / SaaS split)
+
+| Tier | Distribution | Includes |
+|---|---|---|
+| **Core (MIT)** | self-host / Docker / `bun run` | every analyst feature, 5 of 6 adapters, hash-chain audit, branch-graph, integrity verifier |
+| **Team** (planned) | hosted single-tenant | managed Postgres + backups + dashboards + Sentry + monitors + email support |
+| **SaaS Premium** (planned) | hosted multi-tenant | Claude adapter, advanced OSINT sources, PDF export, org isolation, SSO, usage metering |
+| **Enterprise** (planned) | air-gapped / annual | custom adapters, in-jurisdiction hosting, SOC2 attestation |
+
+`SAAS_MODE=true` is the **only** premium gate — core paths run
+identically whether it's set or not.
+
+---
 
 ## Roadmap
 
-- ✅ Phase 1 — Foundation: adapter, schema, seed, shell, three API routes.
-- Phase 2 — Investigation + Case detail views with full CRUD.
-- Phase 3 — Pipeline runner (port from Argus, plumbed through the adapter).
-- Phase 4 — Evidence chain-of-custody UI + Integrity Dashboard.
-- Phase 5 — Unified entity / network graph.
-- Phase 6 — AI Lab, Monitors, Verification.
-- Phase 7 — Report builder + real adapter integrations (Ollama → GLM → Claude).
-- Phase 8 — Docker Compose + demo mode + open-source release prep.
+- ✅ Phase 1 — Foundation: adapter, schema, seed, shell, 3 API routes
+- ✅ Phase 2 — Investigation + Case detail with full CRUD + analyst actions
+- ✅ Phase 3 — Pipeline runner + bridge + 6 AI adapters
+- ✅ Phase 4 — Evidence chain-of-custody UI + Integrity Dashboard
+- ✅ Phase 5 — Unified entity / network graph
+- ✅ Phase 6 — AI Lab, Monitors, Verification
+- ✅ Phase 7 — Report viewer + live OpenRouter + NVIDIA adapters
+- Phase 8 — Docker Compose · file-byte evidence storage · scheduled Monitors · multi-tenant orgs · ClaudeAdapter · PDF export
+
+---
 
 ## License
 
-MIT. See `LICENSE`.
+MIT. Built by [Ali Murtaza Bhutto](https://github.com/thunderstornX)
+(`alibhutto101112@gmail.com`).
