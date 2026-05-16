@@ -15,6 +15,7 @@ export default [
       "node_modules/**",
       "_argus/**",
       "_forenix/**",
+      "scripts/**",
       "prisma/dev.db",
       "**/*.d.ts",
     ],
@@ -47,6 +48,10 @@ export default [
         RequestInit: "readonly",
         Headers: "readonly",
         URLSearchParams: "readonly",
+        HTMLInputElement: "readonly",
+        HTMLDivElement: "readonly",
+        HTMLButtonElement: "readonly",
+        AbortController: "readonly",
       },
     },
     plugins: {
