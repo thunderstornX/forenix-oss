@@ -36,11 +36,12 @@ CI runs all of these on every push. A red CI blocks merge.
 
 - Branch off `main`. Name: `feat/<thing>`, `fix/<thing>`,
   `docs/<thing>`, `chore/<thing>`.
-- Commit messages follow the existing pattern in `git log`:
-  - `[ai] feature: short imperative summary`
-  - `[fix] component/route: what broke + how`
-  - `[manual] docs / readme polish`
-  - `[tooling] scripts / CI / docker`
+- Commit messages use Conventional Commits:
+  - `feat: short imperative summary`
+  - `fix(component): what broke and how`
+  - `docs: …`
+  - `chore: …` (tooling, CI, dependencies)
+  - `refactor: …`, `test: …`, `perf: …` as needed.
 - One logical change per commit. We prefer atomic commits over
   big mash-ups.
 

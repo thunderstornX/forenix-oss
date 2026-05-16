@@ -4,7 +4,7 @@
 //   _argus/prisma/schema.prisma     (OSINT side)
 //   _forenix/prisma/schema.prisma   (Forensics side)
 //
-// Merge rules (see CLAUDE.md):
+// Merge rules:
 //   * Argus keeps: Investigation, Finding, EntityRelation, Monitor,
 //                  MonitorRun, PipelineSchedule, Verification, Annotation
 //   * ForenX keeps: Case, Evidence, EvidenceCommit, Branch,

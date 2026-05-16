@@ -48,7 +48,6 @@ multi-tenancy is a non-breaking migration.
 
 ### 1.4 References
 
-- Briefing: `claude-code-prompt.md`
 - BRD: `docs/01-BRD.md`
 - Feature catalogue: `docs/FEATURES.md`
 - Source schemas: `_argus/prisma/schema.prisma`, `_forenix/prisma/schema.prisma`
