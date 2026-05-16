@@ -15,6 +15,12 @@ import { z } from "zod";
 
 import { appendAudit } from "@/lib/audit";
 import { prisma } from "@/lib/db";
+import {
+  commitChanges,
+  ensureCaseRepo,
+  getBranchHead,
+  writeEvidenceFile,
+} from "@/lib/git-engine";
 
 const Body = z.object({
   caseTitle: z.string().min(3).max(200).optional(),
@@ -73,6 +79,19 @@ export async function POST(
     include: { branches: true },
   });
 
+  // Provision a real Git repo for this case and capture the initial-
+  // commit oid on the main branch row.
+  await ensureCaseRepo(created.id, {
+    title: created.title,
+    description: created.description,
+  });
+  const mainBranchRow = created.branches.find((b) => b.isMain) ?? created.branches[0]!;
+  const mainHead = await getBranchHead(created.id, "main");
+  await prisma.branch.update({
+    where: { id: mainBranchRow.id },
+    data: { headHash: mainHead },
+  });
+
   await prisma.investigation.update({
     where: { id },
     data: { caseId: created.id },
@@ -87,10 +106,12 @@ export async function POST(
     details: { caseNumber: created.caseNumber },
   });
 
-  // Optionally promote each finding into an Evidence row.
+  // Optionally promote each finding into an Evidence row, writing
+  // each one as a real file in the case's Git repo and committing
+  // on main.
   let promoted = 0;
   if (parsed.promoteFindings && inv.findings.length > 0) {
-    const main = created.branches.find((b) => b.isMain) ?? created.branches[0]!;
+    const main = mainBranchRow;
     for (const f of inv.findings) {
       const hash = createHash("sha256")
         .update(`finding:${f.id}:${f.title}:${f.description}`)
@@ -114,11 +135,30 @@ export async function POST(
           }),
         },
       });
+      // Real Git: write the evidence file, then commit.
+      await writeEvidenceFile(created.id, {
+        id: ev.id,
+        name: ev.name,
+        type: ev.type,
+        mimeType: ev.mimeType,
+        description: ev.description,
+        hash: ev.hash,
+        hashAlgo: ev.hashAlgo,
+        status: ev.status,
+        tags: ev.tags,
+        metadata: JSON.parse(ev.metadata || "{}"),
+      });
+      const parentHead = await getBranchHead(created.id, "main");
+      const oid = await commitChanges({
+        caseId: created.id,
+        message: `add: promoted from finding ${f.id.slice(0, 8)}`,
+      });
       await prisma.evidenceCommit.create({
         data: {
           evidenceId: ev.id,
           branchId: main.id,
-          commitHash: createHash("sha256").update(`commit:${ev.id}:initial`).digest("hex"),
+          parentHash: parentHead,
+          commitHash: oid,
           message: `add: promoted from finding ${f.id.slice(0, 8)}`,
           authorId: "system",
           changeType: "add",
@@ -130,6 +170,14 @@ export async function POST(
         data: { evidenceId: ev.id },
       });
       promoted++;
+    }
+    // Update the branch row's head to the latest real oid.
+    if (promoted > 0) {
+      const finalHead = await getBranchHead(created.id, "main");
+      await prisma.branch.update({
+        where: { id: main.id },
+        data: { headHash: finalHead },
+      });
     }
     await appendAudit({
       action: "findings_promoted_to_evidence",
