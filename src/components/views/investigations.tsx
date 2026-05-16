@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Plus, Telescope, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
+import { FilterInput, matchesQuery } from "@/components/filter-input";
 import { useCreateInvestigation, useInvestigations } from "@/lib/hooks";
 import { useUI } from "@/lib/store";
 import { cn, relTime } from "@/lib/utils";
@@ -21,12 +22,15 @@ export function InvestigationsView() {
   const [target, setTarget] = useState("");
   const [targetType, setTargetType] = useState("domain");
   const [objective, setObjective] = useState("");
+  const [filter, setFilter] = useState("");
 
   if (activeId) {
     return <InvestigationDetail investigationId={activeId} />;
   }
 
-  const items = list.data?.data ?? [];
+  const items = (list.data?.data ?? []).filter((i) =>
+    matchesQuery(filter, i.title, i.target, i.targetType, i.status, i.priority),
+  );
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -45,13 +49,16 @@ export function InvestigationsView() {
       title="Investigations"
       subtitle="Active OSINT investigations. Promote findings to a forensic case once the pipeline completes."
       actions={
-        <button
-          type="button"
-          onClick={() => setOpen((o) => !o)}
-          className="flex items-center gap-1.5 rounded-md border border-[var(--border-strong)] bg-[var(--accent-soft)] px-3 py-1.5 text-[12px] font-medium text-[var(--accent-strong)] hover:forensic-glow"
-        >
-          <Plus className="h-3.5 w-3.5" /> New
-        </button>
+        <>
+          <FilterInput value={filter} onChange={setFilter} placeholder="Filter…" />
+          <button
+            type="button"
+            onClick={() => setOpen((o) => !o)}
+            className="flex items-center gap-1.5 rounded-md border border-[var(--border-strong)] bg-[var(--accent-soft)] px-3 py-1.5 text-[12px] font-medium text-[var(--accent-strong)] hover:forensic-glow"
+          >
+            <Plus className="h-3.5 w-3.5" /> New
+          </button>
+        </>
       }
     >
       {open && (

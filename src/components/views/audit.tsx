@@ -1,7 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import { GitCommit, Eye, Telescope, Folders } from "lucide-react";
 
+import { FilterInput, matchesQuery } from "@/components/filter-input";
 import { useAudit } from "@/lib/hooks";
 import { useUI } from "@/lib/store";
 import { cn, relTime, shortHash } from "@/lib/utils";
@@ -13,16 +15,20 @@ export function AuditView() {
   const setView = useUI((s) => s.setView);
   const setInv = useUI((s) => s.setActiveInvestigation);
   const setCase = useUI((s) => s.setActiveCase);
-  const rows = audit.data?.data ?? [];
+  const [filter, setFilter] = useState("");
+  const rows = (audit.data?.data ?? []).filter((r) =>
+    matchesQuery(filter, r.action, r.entity, r.entityId ?? "", r.hash ?? ""),
+  );
 
   return (
     <ViewShell
       title="Audit log"
       subtitle="Append-only chain across both workflows. Every write computes sha256(prevHash | action | entity | entityId | iso(t))."
       actions={
-        <span className="text-[11px] text-[var(--foreground-muted)]">
-          {rows.length} entries
-        </span>
+        <>
+          <FilterInput value={filter} onChange={setFilter} placeholder="action, entity, hash…" />
+          <span className="text-[11px] text-[var(--foreground-muted)]">{rows.length} entries</span>
+        </>
       }
     >
       <div className="glass overflow-hidden rounded-lg">

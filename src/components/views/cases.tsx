@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Plus, Folders, Loader2, GitBranch, Archive } from "lucide-react";
 import { toast } from "sonner";
 
+import { FilterInput, matchesQuery } from "@/components/filter-input";
 import { useCases, useCreateCase } from "@/lib/hooks";
 import { useUI } from "@/lib/store";
 import { cn, relTime } from "@/lib/utils";
@@ -20,12 +21,15 @@ export function CasesView() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [priority, setPriority] = useState("medium");
+  const [filter, setFilter] = useState("");
 
   if (activeId) {
     return <CaseDetail caseId={activeId} />;
   }
 
-  const items = list.data?.data ?? [];
+  const items = (list.data?.data ?? []).filter((c) =>
+    matchesQuery(filter, c.title, c.caseNumber, c.status, c.priority),
+  );
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -44,13 +48,16 @@ export function CasesView() {
       title="Cases"
       subtitle="Forensic cases — every evidence change recorded against the hash-chained audit log."
       actions={
-        <button
-          type="button"
-          onClick={() => setOpen((o) => !o)}
-          className="flex items-center gap-1.5 rounded-md border border-[var(--border-strong)] bg-[var(--accent-soft)] px-3 py-1.5 text-[12px] font-medium text-[var(--forensic)] hover:forensic-glow"
-        >
-          <Plus className="h-3.5 w-3.5" /> New
-        </button>
+        <>
+          <FilterInput value={filter} onChange={setFilter} placeholder="Filter…" />
+          <button
+            type="button"
+            onClick={() => setOpen((o) => !o)}
+            className="flex items-center gap-1.5 rounded-md border border-[var(--border-strong)] bg-[var(--accent-soft)] px-3 py-1.5 text-[12px] font-medium text-[var(--forensic)] hover:forensic-glow"
+          >
+            <Plus className="h-3.5 w-3.5" /> New
+          </button>
+        </>
       }
     >
       {open && (

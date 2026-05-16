@@ -2,6 +2,9 @@
 
 import { Archive, Folders, Lock } from "lucide-react";
 
+import { useState } from "react";
+
+import { FilterInput, matchesQuery } from "@/components/filter-input";
 import { useEvidence } from "@/lib/hooks";
 import { useUI } from "@/lib/store";
 import { cn, relTime, shortHash } from "@/lib/utils";
@@ -23,14 +26,22 @@ export function EvidenceView() {
   const list = useEvidence();
   const setActiveCase = useUI((s) => s.setActiveCase);
   const setView = useUI((s) => s.setView);
+  const [filter, setFilter] = useState("");
 
-  const rows = list.data?.data ?? [];
+  const rows = (list.data?.data ?? []).filter((e) =>
+    matchesQuery(filter, e.name, e.type, e.mimeType ?? "", e.status, e.tags, e.case.caseNumber),
+  );
 
   return (
     <ViewShell
       title="Evidence"
       subtitle="Every piece of evidence across every open case. Each row links back to its parent case and its hash-chained commits."
-      actions={<span className="text-[11px] text-[var(--foreground-muted)]">{rows.length} items</span>}
+      actions={
+        <>
+          <FilterInput value={filter} onChange={setFilter} placeholder="Filter…" />
+          <span className="text-[11px] text-[var(--foreground-muted)]">{rows.length} items</span>
+        </>
+      }
     >
       <div className="glass overflow-hidden rounded-lg">
         <table className="w-full">

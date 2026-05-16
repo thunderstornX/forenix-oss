@@ -9,9 +9,12 @@ import {
   Telescope,
   Users,
   Sparkles,
+  Lock,
+  Loader2,
 } from "lucide-react";
+import { toast } from "sonner";
 
-import { useCase } from "@/lib/hooks";
+import { useCase, useSealEvidence } from "@/lib/hooks";
 import { useUI } from "@/lib/store";
 import { relTime, shortHash } from "@/lib/utils";
 
@@ -27,7 +30,13 @@ export function CaseDetail({ caseId }: Props) {
   const setActiveInv = useUI((s) => s.setActiveInvestigation);
   const setView = useUI((s) => s.setView);
   const detail = useCase(caseId);
+  const seal = useSealEvidence();
   const c = detail.data?.data;
+
+  async function onSeal(evidenceId: string) {
+    try { await seal.mutateAsync({ id: evidenceId, caseId }); toast.success("Evidence sealed"); }
+    catch (e) { toast.error((e as Error).message); }
+  }
 
   if (detail.isLoading) {
     return (
@@ -126,6 +135,17 @@ export function CaseDetail({ caseId }: Props) {
                     {ev.status}
                   </span>
                   <div className="mt-1 font-mono text-[10px] text-[var(--foreground-muted)]">{shortHash(ev.hash)}</div>
+                  {ev.status !== "sealed" && (
+                    <button
+                      type="button"
+                      onClick={() => onSeal(ev.id)}
+                      disabled={seal.isPending}
+                      className="mt-1 flex items-center gap-1 rounded border border-[var(--border)] bg-[var(--background-elev-2)] px-2 py-0.5 text-[10px] text-[var(--foreground)] hover:border-[var(--forensic)] disabled:opacity-50"
+                    >
+                      {seal.isPending ? <Loader2 className="h-3 w-3 animate-spin" /> : <Lock className="h-3 w-3" />}
+                      seal
+                    </button>
+                  )}
                 </div>
               </header>
               {/* Commit chain */}

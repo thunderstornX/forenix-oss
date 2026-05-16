@@ -10,9 +10,13 @@ import {
   Radar,
   ShieldCheck,
   Lock,
+  Check,
+  GitMerge,
+  Loader2,
 } from "lucide-react";
+import { toast } from "sonner";
 
-import { useInvestigation } from "@/lib/hooks";
+import { useInvestigation, usePromoteFinding, useVerifyFinding } from "@/lib/hooks";
 import { useUI } from "@/lib/store";
 import { cn, relTime, shortHash } from "@/lib/utils";
 
@@ -27,7 +31,18 @@ export function InvestigationDetail({ investigationId }: Props) {
   const setCase = useUI((s) => s.setActiveCase);
   const setView = useUI((s) => s.setView);
   const detail = useInvestigation(investigationId);
+  const verify = useVerifyFinding();
+  const promote = usePromoteFinding();
   const inv = detail.data?.data;
+
+  async function onVerify(findingId: string) {
+    try { await verify.mutateAsync({ id: findingId, investigationId }); toast.success("Finding verified"); }
+    catch (e) { toast.error((e as Error).message); }
+  }
+  async function onPromote(findingId: string) {
+    try { const r = await promote.mutateAsync({ id: findingId, investigationId }); toast.success("Promoted to evidence"); void r; }
+    catch (e) { toast.error((e as Error).message); }
+  }
 
   if (detail.isLoading) {
     return (
@@ -126,11 +141,35 @@ export function InvestigationDetail({ investigationId }: Props) {
                   )}
                 </div>
               </div>
-              <div className="mt-2 flex items-center gap-3 text-[10px] text-[var(--foreground-muted)]">
+              <div className="mt-2 flex flex-wrap items-center gap-2 text-[10px] text-[var(--foreground-muted)]">
                 <span>source: {f.sourceName}</span>
                 <span>priority: {f.priority}</span>
                 <span>verified: {f.verified ? "yes" : "no"}</span>
                 <span>{relTime(f.createdAt)}</span>
+                <span className="ml-auto flex items-center gap-1.5">
+                  {!f.verified && (
+                    <button
+                      type="button"
+                      onClick={() => onVerify(f.id)}
+                      disabled={verify.isPending}
+                      className="flex items-center gap-1 rounded border border-[var(--border)] bg-[var(--background-elev-2)] px-2 py-0.5 text-[10px] text-[var(--foreground)] hover:border-[var(--accent)] disabled:opacity-50"
+                    >
+                      {verify.isPending ? <Loader2 className="h-3 w-3 animate-spin" /> : <Check className="h-3 w-3" />}
+                      verify
+                    </button>
+                  )}
+                  {inv.case && !f.evidence && (
+                    <button
+                      type="button"
+                      onClick={() => onPromote(f.id)}
+                      disabled={promote.isPending}
+                      className="flex items-center gap-1 rounded border border-[var(--border)] bg-[var(--background-elev-2)] px-2 py-0.5 text-[10px] text-[var(--forensic)] hover:border-[var(--forensic)] disabled:opacity-50"
+                    >
+                      {promote.isPending ? <Loader2 className="h-3 w-3 animate-spin" /> : <GitMerge className="h-3 w-3" />}
+                      promote → evidence
+                    </button>
+                  )}
+                </span>
               </div>
             </li>
           ))}
