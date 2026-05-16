@@ -10,6 +10,10 @@
 
 # forenix-oss
 
+[![CI](https://github.com/thunderstornX/forenix-oss/actions/workflows/ci.yml/badge.svg)](https://github.com/thunderstornX/forenix-oss/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Version: 0.1.0](https://img.shields.io/badge/version-0.1.0-teal.svg)](CHANGELOG.md)
+
 **OSINT × Forensics, one workflow.**
 
 Open-source platform that turns public-source intelligence into
@@ -18,7 +22,7 @@ from the first finding to the final verdict.
 
 ![Dashboard](docs/screenshots/01-dashboard.png)
 
-> The shipping ground truth: one schema, two workflows, six AI
+> The shipping ground truth: one schema, two workflows, seven AI
 > adapters, every state change on a SHA-256 forward chain.
 
 ---
@@ -113,7 +117,6 @@ claim: [`docs/FEATURES.md`](docs/FEATURES.md).
 | `claude` | paid (SaaS-gated) | stub | — |
 | `openrouter` | free + paid | ✅ shipped | ✅ |
 | `nvidia` | free dev tier + paid | ✅ shipped | ✅ |
-| `grok` | paid (xAI credits or DSP opt-in) | ✅ shipped | — *(needs credits)* |
 | `groq` | **free, no card** · ~150ms latency | ✅ shipped | ✅ |
 
 Live demos this build proved out (target: `INV-2025-020 — Mira

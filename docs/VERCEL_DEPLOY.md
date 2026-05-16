@@ -48,8 +48,6 @@ sleep for free between visits.
    | `OPENROUTER_MODEL` | (optional) `openai/gpt-oss-120b:free` |
    | `NVIDIA_API_KEY` | (optional) `nvapi-…` |
    | `NVIDIA_MODEL` | (optional) `meta/llama-3.3-70b-instruct` |
-   | `XAI_API_KEY` | (optional) `xai-…` (requires credits on xAI side) |
-   | `XAI_MODEL` | (optional) `grok-4-fast` |
    | `GROQ_API_KEY` | **(recommended for Vercel demo)** `gsk_…` — free, no card |
    | `GROQ_MODEL` | (optional) `llama-3.3-70b-versatile` |
    | `SEED_TOKEN` | a fresh random string — `openssl rand -hex 16` |

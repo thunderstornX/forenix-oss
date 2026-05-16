@@ -109,7 +109,6 @@ export type AdapterName =
   | "claude"
   | "openrouter"
   | "nvidia"
-  | "grok"
   | "groq";
 
 /**
