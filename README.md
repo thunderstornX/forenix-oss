@@ -174,6 +174,10 @@ For investors, design partners, engineers, and auditors:
 - [Feature Catalogue](docs/FEATURES.md) (with screenshots)
 - [One-pager](docs/ONE_PAGER.md)
 - [Demo Script](docs/DEMO_SCRIPT.md)
+- **[User Manual (PDF)](docs/USER_MANUAL.pdf)** — 42 pages, every view with screenshots ·
+  [markdown source](docs/USER_MANUAL.md)
+- **[How-To Guide (PDF)](docs/HOW_TO.pdf)** — task-oriented recipes ("How to create an investigation", "How to verify the chain", …) ·
+  [markdown source](docs/HOW_TO.md)
 - **[YC Pitch Deck (PDF)](docs/pitch/forenix-oss-yc-deck.pdf)** ·
   [editable .pptx](docs/pitch/forenix-oss-yc-deck.pptx)
 
