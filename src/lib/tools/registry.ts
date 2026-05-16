@@ -8,9 +8,12 @@ import type { AgentGroup, Tool } from "./types";
 
 import { crtshTool } from "./catalogue/crtsh";
 import { duckDuckGoSearchTool } from "./catalogue/duckduckgo-search";
+import { hibpBreachesTool } from "./catalogue/hibp";
 import { holeheTool } from "./catalogue/holehe";
 import { httpFetchTool } from "./catalogue/http-fetch";
+import { hunterDomainTool } from "./catalogue/hunter";
 import { sherlockTool } from "./catalogue/sherlock";
+import { shodanHostTool } from "./catalogue/shodan";
 import { theHarvesterTool } from "./catalogue/the-harvester";
 import { whoisTool } from "./catalogue/whois";
 
@@ -18,9 +21,13 @@ export const ALL_TOOLS: readonly Tool[] = [
   // builtins — work everywhere
   duckDuckGoSearchTool,
   httpFetchTool,
-  // HTTP-API tools — work on Vercel
+  // HTTP-API tools (no key) — work on Vercel
   crtshTool,
   whoisTool,
+  // API-keyed HTTP tools (admin-vault-gated) — work on Vercel
+  shodanHostTool,
+  hunterDomainTool,
+  hibpBreachesTool,
   // subprocess tools — self-host (or WORKER_URL on Vercel)
   sherlockTool,
   holeheTool,
