@@ -41,5 +41,9 @@ export async function POST(
     caseId: ev.caseId,
     details: { hash: ev.hash },
   });
-  return Response.json({ data: updated });
+  // Evidence.size is BigInt — coerce to string for JSON.
+  const serialized = JSON.parse(
+    JSON.stringify(updated, (_k, v) => (typeof v === "bigint" ? v.toString() : v)),
+  );
+  return Response.json({ data: serialized });
 }
