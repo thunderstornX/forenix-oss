@@ -4,25 +4,50 @@
 
 # forenix-oss
 
+<!-- Project status badges -->
 <p>
   <a href="https://github.com/thunderstornX/forenix-oss/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/thunderstornX/forenix-oss/actions/workflows/ci.yml/badge.svg"></a>
-  <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-blue.svg"></a>
-  <a href="https://github.com/thunderstornX/forenix-oss/releases/latest"><img alt="Latest release" src="https://img.shields.io/github/v/release/thunderstornX/forenix-oss?color=c97a2f&label=release"></a>
+  <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-blue.svg?style=flat"></a>
+  <a href="https://github.com/thunderstornX/forenix-oss/releases/latest"><img alt="Latest release" src="https://img.shields.io/github/v/release/thunderstornX/forenix-oss?color=c97a2f&label=release&style=flat"></a>
+  <a href="https://github.com/thunderstornX/forenix-oss/releases"><img alt="Release date" src="https://img.shields.io/github/release-date/thunderstornX/forenix-oss?color=c97a2f&style=flat&label=released"></a>
+  <a href="https://github.com/thunderstornX/forenix-oss/commits/main"><img alt="Last commit" src="https://img.shields.io/github/last-commit/thunderstornX/forenix-oss?style=flat&color=c97a2f"></a>
   <a href="https://github.com/thunderstornX/forenix-oss/stargazers"><img alt="Stars" src="https://img.shields.io/github/stars/thunderstornX/forenix-oss?style=flat&color=c97a2f"></a>
+  <a href="https://github.com/thunderstornX/forenix-oss/network/members"><img alt="Forks" src="https://img.shields.io/github/forks/thunderstornX/forenix-oss?style=flat&color=2f8754"></a>
 </p>
 
+<!-- Live surfaces  -  one badge per deployment, vendor-neutral -->
 <p>
-  <a href="https://forenix.tech"><img alt="Concept demo" src="https://img.shields.io/badge/concept_demo-forenix.tech-c97a2f?style=flat&logo=vercel&logoColor=white"></a>
-  <a href="https://demo.forenix.tech"><img alt="Full demo" src="https://img.shields.io/badge/full_demo-demo.forenix.tech-2f8754?style=flat"></a>
+  <a href="https://forenix.tech"><img alt="Landing  -  forenix.tech" src="https://img.shields.io/badge/landing-forenix.tech-c97a2f?style=flat&logo=globe&logoColor=white"></a>
+  <a href="https://demo.forenix.tech"><img alt="Live demo  -  demo.forenix.tech" src="https://img.shields.io/badge/live%20demo-demo.forenix.tech-2f8754?style=flat&logo=icloud&logoColor=white"></a>
+  <a href="https://forenix.tech/waitlist"><img alt="Join the waitlist" src="https://img.shields.io/badge/waitlist-open-c97a2f?style=flat"></a>
 </p>
 
+<!-- Repo health -->
 <p>
-  <img alt="Next.js" src="https://img.shields.io/badge/Next.js-16-000?style=flat&logo=nextdotjs&logoColor=white">
+  <a href="https://github.com/thunderstornX/forenix-oss"><img alt="Top language" src="https://img.shields.io/github/languages/top/thunderstornX/forenix-oss?style=flat&color=3178c6"></a>
+  <a href="https://github.com/thunderstornX/forenix-oss"><img alt="Code size" src="https://img.shields.io/github/languages/code-size/thunderstornX/forenix-oss?style=flat&color=4a5568"></a>
+  <a href="https://github.com/thunderstornX/forenix-oss/graphs/contributors"><img alt="Contributors" src="https://img.shields.io/github/contributors/thunderstornX/forenix-oss?style=flat&color=4a5568"></a>
+  <a href="https://github.com/thunderstornX/forenix-oss/issues"><img alt="Open issues" src="https://img.shields.io/github/issues/thunderstornX/forenix-oss?style=flat&color=4a5568"></a>
+  <a href="https://github.com/thunderstornX/forenix-oss/pulls"><img alt="Open pull requests" src="https://img.shields.io/github/issues-pr/thunderstornX/forenix-oss?style=flat&color=4a5568"></a>
+</p>
+
+<!-- Stack + posture -->
+<p>
+  <img alt="Next.js 16" src="https://img.shields.io/badge/Next.js-16-000?style=flat&logo=nextdotjs&logoColor=white">
   <img alt="TypeScript strict" src="https://img.shields.io/badge/TypeScript-strict-3178c6?style=flat&logo=typescript&logoColor=white">
-  <img alt="Bun" src="https://img.shields.io/badge/Bun-1.3-fbf0df?style=flat&logo=bun&logoColor=black">
+  <img alt="Bun 1.3" src="https://img.shields.io/badge/Bun-1.3-fbf0df?style=flat&logo=bun&logoColor=black">
   <img alt="Prisma 6" src="https://img.shields.io/badge/Prisma-6-2d3748?style=flat&logo=prisma&logoColor=white">
   <img alt="Tailwind 4" src="https://img.shields.io/badge/Tailwind-4-38bdf8?style=flat&logo=tailwindcss&logoColor=white">
+  <img alt="next-auth v5" src="https://img.shields.io/badge/next--auth-v5-7c3aed?style=flat&logo=nextdotjs&logoColor=white">
   <img alt="Tests" src="https://img.shields.io/badge/tests-61_passing-2f8754?style=flat">
+</p>
+
+<!-- Cryptographic posture -->
+<p>
+  <a href="docs/07-SECURITY.md"><img alt="SHA-256 chained" src="https://img.shields.io/badge/audit_log-SHA--256_chained-2f8754?style=flat"></a>
+  <a href="https://rekor.sigstore.dev"><img alt="Sigstore Rekor attested" src="https://img.shields.io/badge/attested-Sigstore_Rekor-c97a2f?style=flat&logo=sigstore&logoColor=white"></a>
+  <a href="docs/07-SECURITY.md"><img alt="Offline verifiable" src="https://img.shields.io/badge/verify-offline%2012_lines_of_python-2f8754?style=flat"></a>
+  <a href="SECURITY.md"><img alt="Security policy" src="https://img.shields.io/badge/security-policy-2f8754?style=flat"></a>
 </p>
 
 **An open-source platform that fuses OSINT investigations with Git-style forensic case management. One workflow from public-source lead to chain-of-custody evidence  -  with a SHA-256 forward-chained audit log on every state change.**
