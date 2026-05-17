@@ -7,7 +7,9 @@ import { NextResponse, type NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
 
 const PUBLIC_ROUTES = new Set<string>([
+  "/",            // marketing landing
   "/sign-in",
+  "/waitlist",    // standalone waitlist sign-up page
   "/favicon.ico",
   "/robots.txt",
 ]);
@@ -17,6 +19,7 @@ const PUBLIC_ROUTES = new Set<string>([
 const PUBLIC_PREFIXES = [
   "/api/auth/",
   "/api/admin/seed-demo", // token-gated, bootstraps fresh deploys
+  "/api/waitlist",        // public sign-up endpoint
   "/_next/",
   "/_vercel/",
 ];

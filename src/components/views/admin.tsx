@@ -84,6 +84,7 @@ function AdminConsole() {
       <TeamsPanel />
       <InvitesPanel />
       <VaultPanel />
+      <WaitlistPanel />
     </ViewShell>
   );
 }
@@ -584,6 +585,116 @@ function VaultPanel() {
           )}
         </tbody>
       </table>
+    </section>
+  );
+}
+
+// ───────────────────────── Waitlist ──────────────────────────────
+
+interface WaitlistRow {
+  id: string;
+  email: string;
+  role: string | null;
+  useCase: string | null;
+  source: string | null;
+  status: string;
+  createdAt: string;
+  invitedAt: string | null;
+}
+
+function WaitlistPanel() {
+  const list = useQuery({
+    queryKey: ["admin-waitlist"],
+    queryFn: () =>
+      http<{ data: WaitlistRow[]; total: number }>("/api/admin/waitlist"),
+  });
+  const rows = list.data?.data ?? [];
+
+  return (
+    <section className="glass rounded-lg p-4">
+      <div className="flex items-baseline justify-between gap-3">
+        <div>
+          <div className="text-[10px] uppercase tracking-[0.18em] text-[var(--foreground-muted)]">
+            Waitlist
+          </div>
+          <div className="mt-1 text-[13px] font-medium text-[var(--foreground)]">
+            Public sign-ups from the marketing landing
+          </div>
+          <p className="mt-1 max-w-2xl text-[12px] text-[var(--foreground-muted)]">
+            Triage list. Invite flow is still manual  -  copy the email
+            and reach out, then update status in the DB.
+          </p>
+        </div>
+        <div className="text-[11px] text-[var(--foreground-muted)]">
+          {list.isFetching ? (
+            <span className="inline-flex items-center gap-1">
+              <Loader2 className="h-3 w-3 animate-spin" /> loading
+            </span>
+          ) : (
+            <>total: {list.data?.total ?? 0}</>
+          )}
+        </div>
+      </div>
+
+      <div className="mt-4 overflow-hidden rounded border border-[var(--border)]">
+        <table className="w-full text-[12px]">
+          <thead className="bg-[var(--background-elev-2)] text-[10px] uppercase tracking-[0.14em] text-[var(--foreground-muted)]">
+            <tr>
+              <th className="px-3 py-2 text-left">Email</th>
+              <th className="px-3 py-2 text-left">Role</th>
+              <th className="px-3 py-2 text-left">Use case</th>
+              <th className="px-3 py-2 text-left">Source</th>
+              <th className="px-3 py-2 text-left">Status</th>
+              <th className="px-3 py-2 text-left">When</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-[var(--border)]">
+            {rows.length === 0 && (
+              <tr>
+                <td
+                  colSpan={6}
+                  className="p-4 text-center text-[12px] text-[var(--foreground-muted)]"
+                >
+                  No waitlist sign-ups yet.
+                </td>
+              </tr>
+            )}
+            {rows.map((r) => (
+              <tr key={r.id}>
+                <td className="px-3 py-2 font-mono text-[11px] text-[var(--foreground)]">
+                  {r.email}
+                </td>
+                <td className="px-3 py-2 text-[var(--foreground-muted)]">
+                  {r.role ?? "-"}
+                </td>
+                <td className="max-w-xs truncate px-3 py-2 text-[var(--foreground-muted)]" title={r.useCase ?? ""}>
+                  {r.useCase ?? "-"}
+                </td>
+                <td className="px-3 py-2 font-mono text-[10px] text-[var(--foreground-faint)]">
+                  {r.source ?? "-"}
+                </td>
+                <td className="px-3 py-2">
+                  <span
+                    className={cn(
+                      "inline-flex items-center rounded border px-1.5 py-0.5 text-[10px] uppercase tracking-[0.12em]",
+                      r.status === "invited"
+                        ? "border-[var(--accent-strong)] bg-[var(--accent-soft)] text-[var(--accent-strong)]"
+                        : r.status === "declined"
+                        ? "border-[var(--border-strong)] text-[var(--foreground-muted)]"
+                        : "border-[var(--border-strong)] bg-[var(--background-elev-2)] text-[var(--foreground-muted)]",
+                    )}
+                  >
+                    {r.status}
+                  </span>
+                </td>
+                <td className="px-3 py-2 text-[var(--foreground-muted)]">
+                  {relTime(r.createdAt)}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </section>
   );
 }

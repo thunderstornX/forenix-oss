@@ -589,3 +589,21 @@ model Attestation {
   createdAt   DateTime  @default(now())
   confirmedAt DateTime?
 }
+
+// ───────────────────────── Waitlist ──────────────────────────────
+// Public sign-up list for the marketing landing page. Lives in the
+// same DB as everything else so the admin view can triage it without
+// a separate pipeline. Emails are stored verbatim because anyone who
+// types theirs into a waitlist form is consenting to keep it on file;
+// IPs are hashed to deter duplicate sign-ups without keeping PII.
+model WaitlistSignup {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  role      String?  // analyst | investigator | ciso | researcher | other
+  useCase   String?  // short free text, capped at 500 chars by the API
+  source    String?  // referrer / utm tag if known
+  ipHash    String?  // sha256 of the requesting IP; non-reversible
+  status    String   @default("pending") // pending | invited | declined
+  createdAt DateTime @default(now())
+  invitedAt DateTime?
+}
