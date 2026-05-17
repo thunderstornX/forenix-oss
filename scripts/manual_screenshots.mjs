@@ -28,6 +28,20 @@ const ctx = await browser.newContext({
   colorScheme: "dark",
 });
 
+// Sign in as the seeded admin so every authenticated route is reachable.
+async function signIn() {
+  const page = await ctx.newPage();
+  await page.goto(`${HOST}/sign-in`);
+  await page.locator('input[type="email"]').fill("admin@forenix-oss.local");
+  await page.locator('input[type="password"]').fill("forenix");
+  await Promise.all([
+    page.waitForURL((u) => !u.toString().includes("/sign-in"), { timeout: 15_000 }),
+    page.locator('button[type="submit"]').click(),
+  ]);
+  await page.close();
+}
+await signIn();
+
 async function shoot(page, file, settle = 1100) {
   await page.waitForLoadState("networkidle", { timeout: 8_000 }).catch(() => {});
   await page.waitForTimeout(settle);

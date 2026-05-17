@@ -16,7 +16,7 @@ bun run scripts/screenshots.mjs
 
 ## 1. Dashboard
 
-![Dashboard](./screenshots/01-dashboard.png)
+![Dashboard](./manual_screenshots/00-landing-dashboard.png)
 
 **Problem.** Analysts juggle two tools — an OSINT engine and a case
 manager — and never see them on one pane. Switching back and forth
@@ -37,8 +37,8 @@ current session.
 
 ## 2. Investigations
 
-![Investigations](./screenshots/02-investigations.png)
-![Investigation detail](./screenshots/16-investigation-detail.png)
+![Investigations](./manual_screenshots/10-investigations-list.png)
+![Investigation detail](./manual_screenshots/20-investigation-detail.png)
 
 **Problem.** OSINT collection is iterative: targets multiply, agent
 groups produce overlapping findings, and you need a workspace that
@@ -66,7 +66,7 @@ re-runs come next).
 
 ## 3. Pipeline runner
 
-![Pipeline](./screenshots/03-pipeline.png)
+![Pipeline](./manual_screenshots/31-pipeline-configured.png)
 
 **Problem.** Triggering an OSINT pipeline against the right target
 with the right agent groups is a setup ritual every time. Bridging
@@ -96,8 +96,8 @@ single error). No per-finding diffing across runs.
 
 ## 4. Cases
 
-![Cases](./screenshots/04-cases.png)
-![Case detail](./screenshots/17-case-detail.png)
+![Cases](./manual_screenshots/40-cases-list.png)
+![Case detail](./manual_screenshots/41-case-detail.png)
 
 **Problem.** Forensic cases require structure: who's assigned, what
 evidence lives on which branch, who reviewed what, when.
@@ -124,7 +124,7 @@ between branches is not yet implemented.
 
 ## 5. Evidence (cross-case)
 
-![Evidence](./screenshots/05-evidence.png)
+![Evidence](./manual_screenshots/50-evidence-list.png)
 
 **Problem.** Sometimes you need the inventory of *every* piece of
 evidence across every case at once — for chain-of-custody review,
@@ -143,7 +143,7 @@ Bulk re-tag and bulk seal will land alongside the file-bytes feature.
 
 ## 6. Branch graph
 
-![Branch graph](./screenshots/06-branch-graph.png)
+![Branch graph](./manual_screenshots/60-branch-graph.png)
 
 **Problem.** Cases evolve. Evidence gets re-verified, merged,
 re-collected. Reading that as a flat list loses the structure.
@@ -163,7 +163,7 @@ we don't render it side-by-side).
 
 ## 7. Entity graph
 
-![Entity graph](./screenshots/07-entity-graph.png)
+![Entity graph](./manual_screenshots/70-entity-graph.png)
 
 **Problem.** OSINT findings are noisy — you need to see the
 entities (people, orgs, domains, IPs) and how they relate, fast.
@@ -182,7 +182,7 @@ handles the broader connection graph.
 
 ## 8. Network graph (cross-case)
 
-![Network graph](./screenshots/08-network-graph.png)
+![Network graph](./manual_screenshots/80-network-graph.png)
 
 **Problem.** Once you have multiple cases and investigations going,
 the most interesting signal is across them — the same analyst
@@ -204,7 +204,7 @@ iteration's polish.
 
 ## 9. Monitors
 
-![Monitors](./screenshots/09-monitors.png)
+![Monitors](./manual_screenshots/90-monitors.png)
 
 **Problem.** Investigations don't end when the report ships.
 Targets change. Domains move. New posts appear. Manual re-runs are
@@ -224,7 +224,7 @@ roadmap as Phase 7's "Pipeline Schedules".)
 
 ## 10. Verification
 
-![Verification](./screenshots/10-verification.png)
+![Verification](./manual_screenshots/100-verification.png)
 
 **Problem.** OSINT findings carry a confidence label but the human
 analyst needs to ratify or contest specific *claims* — and that
@@ -243,7 +243,7 @@ verdicts come from the API; UI mutations are the next iteration.
 
 ## 11. AI Lab
 
-![AI Lab](./screenshots/11-ai-lab.png)
+![AI Lab](./manual_screenshots/110-ai-lab.png)
 
 **Problem.** When agents are doing real work you need to inspect
 *exactly* what each one was asked, what it returned, and how
@@ -264,7 +264,7 @@ add.
 
 ## 12. Reports
 
-![Reports](./screenshots/12-reports.png)
+![Reports](./manual_screenshots/120-reports-list.png)
 
 **Problem.** Two reporting traditions: Argus produces sectioned
 JSON for parameterised dashboards; ForenX produces markdown for
@@ -284,7 +284,7 @@ editing — reports here are read-only.
 
 ## 13. Audit log
 
-![Audit](./screenshots/13-audit.png)
+![Audit](./manual_screenshots/140-audit-log.png)
 
 **Problem.** Forensics lives or dies on the chain of custody. If
 *anyone* can't answer "who changed what, when, in what order?",
@@ -305,7 +305,7 @@ regex/date-range yet).
 
 ## 14. Integrity dashboard
 
-![Integrity](./screenshots/14-integrity.png)
+![Integrity](./manual_screenshots/141-integrity-dashboard.png)
 
 **Problem.** "Tamper-evident" is easy to claim and hard to verify.
 You want a single button that replays the entire chain and tells
@@ -329,7 +329,7 @@ millions of rows would deserve batched verification + caching).
 
 ## 15. Reviews (merge requests)
 
-![Reviews](./screenshots/15-reviews.png)
+![Reviews](./manual_screenshots/150-reviews.png)
 
 **Problem.** A second pair of eyes on every evidence-modifying
 branch is the difference between "internal review" and "court-
@@ -346,7 +346,7 @@ ready; the *Approve & merge* button is the next polish pass).
 
 ## 16. Command palette ⌘K
 
-![Command palette](./screenshots/18-command-palette.png)
+![Command palette](./manual_screenshots/160-command-palette.png)
 
 **Problem.** Even with ⌘1–⌘9 nav shortcuts, the analyst still
 needs a way to jump straight to a specific case / investigation /

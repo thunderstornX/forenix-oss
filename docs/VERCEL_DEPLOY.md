@@ -73,7 +73,7 @@ The response:
     "users": 3,
     "team": "forenix-demo",
     "case": "CASE-2025-007",
-    "message": "Demo data seeded. Sign in with admin@forenix-oss.local / forenix"
+    "message": "Demo data seeded. Sign in with the seeded accounts."
   }
 }
 ```
@@ -90,15 +90,14 @@ curl -X POST -H "content-type: application/json" \
 ## Step 4 — first sign-in
 
 Open `https://YOUR-DEPLOYMENT.vercel.app`. You should be bounced
-to `/sign-in`. Use the seeded demo accounts:
-
-| Email | Role |
-|---|---|
-| `admin@forenix-oss.local` | admin (full access, can manage users + teams) |
-| `investigator@forenix-oss.local` | investigator |
-| `analyst@forenix-oss.local` | analyst |
-
-Password for all three: `forenix`.
+to `/sign-in`. The seed script creates three role-test accounts
+(admin / investigator / analyst). **Operate the deployment as
+invite-only:** before sharing the URL, sign in as the admin once
+and either rotate the seeded passwords (Admin → Users) or use
+them only for your own evaluation. Do not publish the seeded
+credentials in any client-facing material — see the in-app sign-in
+page (which intentionally shows no credential hints) for the
+intended user experience.
 
 ## Step 5 — go live + tell users
 
@@ -106,7 +105,7 @@ Password for all three: `forenix`.
   `VERCEL_URL` automatically but next-auth wants `NEXTAUTH_URL`).
 - Add a custom domain if you have one (Vercel → Settings →
   Domains).
-- Share the URL + the three demo logins.
+- Share the URL + credentials with invited users only.
 
 ## Vercel pricing notes
 

@@ -16,7 +16,10 @@ import { sherlockTool } from "./catalogue/sherlock";
 import { shodanHostTool } from "./catalogue/shodan";
 import { theHarvesterTool } from "./catalogue/the-harvester";
 import { whoisTool } from "./catalogue/whois";
-// monster-mode subprocess tools — self-host only (DO Droplet)
+// Deep subprocess toolchain — requires self-hosting (a real OS with
+// these binaries installed; see docs/SELF_HOST.md). Gated by
+// canSpawnLocally() below so Vercel deployments transparently skip
+// them.
 import { maigretTool } from "./catalogue/maigret";
 import { subfinderTool } from "./catalogue/subfinder";
 import { httpxTool } from "./catalogue/httpx";
@@ -43,7 +46,7 @@ export const ALL_TOOLS: readonly Tool[] = [
   sherlockTool,
   holeheTool,
   theHarvesterTool,
-  // monster-mode subprocess tools — DO Droplet only
+  // Deep subprocess toolchain — self-host only
   maigretTool,
   subfinderTool,
   httpxTool,

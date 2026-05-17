@@ -106,10 +106,11 @@ baseline with 9 audit rows.
 ```bash
 bun run dev                  # in one terminal
 bun run db:seed              # in another
-bun run scripts/screenshots.mjs
+HOST=http://localhost:3000 bun run scripts/manual_screenshots.mjs
 ```
 
-Output lands in `docs/screenshots/` (~5 MB total).
+Output lands in `docs/manual_screenshots/`. The script signs in
+as the seeded admin automatically — no manual auth needed.
 
 ## 8. Routine — rotate an LLM key
 

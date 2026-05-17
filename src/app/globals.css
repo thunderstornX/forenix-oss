@@ -1,3 +1,6 @@
+/* @import rules MUST be the very first declarations; web fonts first so
+   Tailwind's downstream bundling can't inject rules above them. */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap");
 @import "tailwindcss";
 
 /* =====================================================================
@@ -7,8 +10,6 @@
    - accent via [data-accent]
    - density via [data-density]
    ===================================================================== */
-
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap");
 
 :root {
   /* ── type ─────────────────────────────────────────────────────────── */
