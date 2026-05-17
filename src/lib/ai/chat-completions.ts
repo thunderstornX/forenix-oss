@@ -91,15 +91,59 @@ export async function chatComplete(
   }
 }
 
-/** Robust JSON extraction — handles ```json fences and prose. */
+/**
+ * Robust JSON extraction — handles ```json fences, prose around the
+ * JSON, trailing commas, and prose after the closing brace.
+ *
+ * Strategy:
+ *   1. Strip a markdown code fence if present.
+ *   2. Find the first `{` (or `[`) and the matching closer by walking
+ *      braces with quote/escape awareness.
+ *   3. Try strict JSON.parse first. On failure, strip trailing commas
+ *      (`,}` → `}`, `,]` → `]`) and retry. That covers the two most
+ *      common LLM JSON-emission glitches.
+ */
 export function extractJson<T = unknown>(raw: string): T {
   let s = raw.trim();
   const fence = s.match(/```(?:json)?\s*([\s\S]*?)```/);
   if (fence) s = fence[1]!.trim();
-  // Find first { or [ and last matching closer.
   const first = s.search(/[{[]/);
-  if (first >= 0) s = s.slice(first);
-  return JSON.parse(s) as T;
+  if (first < 0) throw new Error(`extractJson: no JSON opener in ${s.slice(0, 80)}`);
+  s = s.slice(first);
+
+  // Walk to the matching closer (respecting strings + escapes).
+  const open = s[0];
+  const close = open === "{" ? "}" : "]";
+  let depth = 0;
+  let inStr = false;
+  let escape = false;
+  let end = -1;
+  for (let i = 0; i < s.length; i++) {
+    const c = s[i];
+    if (escape) { escape = false; continue; }
+    if (c === "\\" && inStr) { escape = true; continue; }
+    if (c === '"') { inStr = !inStr; continue; }
+    if (inStr) continue;
+    if (c === open) depth++;
+    else if (c === close) {
+      depth--;
+      if (depth === 0) { end = i + 1; break; }
+    }
+  }
+  if (end > 0) s = s.slice(0, end);
+
+  try {
+    return JSON.parse(s) as T;
+  } catch (err) {
+    // Last-mile repair: drop trailing commas before } or ].
+    const repaired = s.replace(/,(\s*[}\]])/g, "$1");
+    try {
+      return JSON.parse(repaired) as T;
+    } catch {
+      // Bubble the original error — more diagnostic than the repaired one.
+      throw err;
+    }
+  }
 }
 
 // ────────── prompt scaffolds ──────────
