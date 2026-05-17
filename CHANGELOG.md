@@ -6,6 +6,30 @@ and the project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Fixed
+
+- **Middleware auth was breaking under HTTPS reverse proxy** (Caddy
+  on the self-host, Vercel edge on the serverless surface).
+  `getToken({ req })` inferred `secureCookie` from `req.url`, which
+  for proxied requests is always the internal `http://localhost:3000`,
+  so it looked for the non-`Secure-` cookie name. Browsers + curl
+  rightly sent the `__Secure-authjs.session-token` cookie issued
+  under HTTPS, so getToken never found it and the middleware 401-ed
+  every protected route. Fixed by computing `isHttps` from
+  `AUTH_URL/NEXTAUTH_URL` (`https://...`) or
+  `X-Forwarded-Proto: https` and passing `secureCookie: isHttps`
+  explicitly. Same bug recurrence as the nip.io attempt in v0.2.0.
+
+### Added - live domains
+
+- **forenix.tech** registered (GitHub Student Pack via the .tech
+  registry). Wired so:
+    - `forenix.tech` + `www.forenix.tech` -> Vercel (concept demo).
+    - `demo.forenix.tech` -> DigitalOcean Droplet (full feature demo
+      with HTTPS via Caddy auto-Let's Encrypt).
+- README now lists the canonical demo URLs in the "Deployment models"
+  section.
+
 ## [0.3.0] - 2026-05-17
 
 Real file bytes on disk and a forensic-grade PDF report. The two

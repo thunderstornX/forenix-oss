@@ -39,7 +39,14 @@ The project ships three independent deployment shapes from the same codebase:
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/thunderstornX/forenix-oss)
 
-The Vercel demo is the easiest way to see the UI; it runs on Neon Postgres with the deterministic `mock` adapter by default. Bring your own LLM key (in `.env` or via the in-app admin vault) to upgrade to real reasoning. Self-host is where the full feature set lives  -  real Git on disk, real subprocess tools, real OSINT depth.
+### Live deployments
+
+| Surface | URL | Mode |
+|---|---|---|
+| Landing / concept demo (Vercel) | https://forenix.tech | Mock adapter, HTTP-API tools only, deterministic Git fallback. Instant load. |
+| Full feature demo (self-host) | https://demo.forenix.tech | Real Git per case, full 20-tool OSINT registry, real LLM (OpenRouter), file-byte custody, PDF export. |
+
+The Vercel demo is the easiest way to see the UI. Self-host is where the full feature set lives - real Git on disk, real subprocess tools, real OSINT depth.
 
 ---
 
