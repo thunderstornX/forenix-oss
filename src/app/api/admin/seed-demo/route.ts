@@ -2,7 +2,7 @@
  * POST /api/admin/seed-demo
  *
  * Idempotent demo-data initialiser for fresh Vercel deploys.
- * Authorised by a SEED_TOKEN env var (NOT by user session — needed
+ * Authorised by a SEED_TOKEN env var (NOT by user session  -  needed
  * to bootstrap an empty database). On a non-empty database it
  * returns 409 unless `force: true` is provided AND the token matches.
  *
@@ -45,7 +45,7 @@ export async function POST(request: Request) {
   const existing = await prisma.user.count();
   if (existing > 0 && !body.force) {
     return Response.json(
-      { error: "already_seeded", details: `${existing} users present — pass force:true to wipe` },
+      { error: "already_seeded", details: `${existing} users present  -  pass force:true to wipe` },
       { status: 409 },
     );
   }
@@ -108,7 +108,7 @@ export async function POST(request: Request) {
   const theCase = await prisma.case.create({
     data: {
       title: "Operation Sandstone",
-      description: "Cross-jurisdictional shell-corporation network — seeded demo case.",
+      description: "Cross-jurisdictional shell-corporation network  -  seeded demo case.",
       caseNumber: "CASE-2025-007",
       status: "investigating",
       priority: "high",
@@ -136,7 +136,7 @@ export async function POST(request: Request) {
 
   await prisma.investigation.create({
     data: {
-      title: "INV-2025-019 — Northwind Holdings",
+      title: "INV-2025-019  -  Northwind Holdings",
       target: "northwind-holdings.io",
       targetType: "domain",
       objective: "Identify beneficial owners and infrastructure footprint.",
@@ -148,7 +148,7 @@ export async function POST(request: Request) {
   });
   await prisma.investigation.create({
     data: {
-      title: "INV-2025-020 — Mira Volkov",
+      title: "INV-2025-020  -  Mira Volkov",
       target: "Mira Volkov",
       targetType: "person",
       objective: "Build identity profile + social adjacency map.",

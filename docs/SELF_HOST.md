@@ -8,11 +8,11 @@ self-host model unlocks the full feature set:**
 - Real Git repositories per case on a real filesystem.
 - The deep OSS subprocess toolchain (sherlock, maigret, subfinder,
   httpx, dnsx, amass, nuclei, exiftool, yt-dlp, tesseract, gowitness,
-  …) called by the LLM during pipeline runs.
+  ...) called by the LLM during pipeline runs.
 - AES-256-GCM-encrypted admin API-key vault.
 - Cryptographic audit chain you control end-to-end.
 
-If you just want a fast preview, deploy to Vercel instead — see
+If you just want a fast preview, deploy to Vercel instead  -  see
 [`VERCEL_DEPLOY.md`](VERCEL_DEPLOY.md). That mode is intentionally
 degraded (no subprocess tools, SHA-256 fallback for Git operations)
 because Vercel's serverless runtime is read-only and ephemeral.
@@ -23,7 +23,7 @@ because Vercel's serverless runtime is read-only and ephemeral.
 
 | | Version |
 |---|---|
-| Linux (Ubuntu 24.04 LTS is what we test against) | — |
+| Linux (Ubuntu 24.04 LTS is what we test against) |  -  |
 | Node | 22+ |
 | Bun | 1.3+ |
 | Postgres (recommended for prod) or SQLite (fine for dev) | 16+ |
@@ -32,7 +32,7 @@ because Vercel's serverless runtime is read-only and ephemeral.
 | Chromium / Chrome | latest (only needed for gowitness screenshots) |
 
 A 2 GB / 2 vCPU box is the practical minimum; the LLM subprocess
-tools will happily eat more RAM if you give it to them. 4–8 GB is
+tools will happily eat more RAM if you give it to them. 4-8 GB is
 comfortable when running large nuclei sweeps in parallel with the
 Next.js process.
 
@@ -56,7 +56,7 @@ sudo -u postgres createdb -O forenix forenix_oss
 
 ## 2. Install the deep OSS toolchain
 
-This is what differentiates self-host from Vercel — the LLM picks
+This is what differentiates self-host from Vercel  -  the LLM picks
 from these tools during pipeline runs and captures real output.
 
 ```bash
@@ -66,7 +66,7 @@ sudo apt install -y \
   python3 python3-pip python3-venv \
   exiftool tesseract-ocr chromium-browser
 
-# Python OSINT tools — install into a project-scoped venv
+# Python OSINT tools  -  install into a project-scoped venv
 python3 -m venv ~/osint-venv
 source ~/osint-venv/bin/activate
 pip install -U sherlock-project holehe theHarvester maigret yt-dlp
@@ -100,7 +100,7 @@ Verify everything resolves on `$PATH`:
 ```bash
 for t in sherlock maigret holehe theHarvester yt-dlp \
          subfinder httpx dnsx amass nuclei exiftool tesseract gowitness; do
-  command -v "$t" >/dev/null && echo "  $t ✓" || echo "  $t MISSING"
+  command -v "$t" >/dev/null && echo "  $t OK" || echo "  $t MISSING"
 done
 ```
 
@@ -184,13 +184,13 @@ service.
 
 ## 6. (Optional) Connect a real LLM
 
-The Vault panel (Admin → Vault) accepts API keys at runtime —
+The Vault panel (Admin -> Vault) accepts API keys at runtime  - 
 they're AES-256-GCM-encrypted at rest using `AUTH_SECRET` as key
 material. Alternatively, set them in `.env`:
 
 ```env
 AI_ADAPTER=groq                    # or openrouter / nvidia / claude / ollama / glm
-GROQ_API_KEY=gsk_…
+GROQ_API_KEY=gsk_...
 GROQ_MODEL=llama-3.1-8b-instant
 ```
 
@@ -213,6 +213,6 @@ provider's expected env vars.
 - **Updates**: `git pull && bun install && bun run build &&
   systemctl restart forenix`. Schema migrations: `bunx prisma db push`.
 - **Backups**: `pg_dump forenix_oss` + tar the case-repo directory.
-  Audit chain is self-verifying — restore + run the offline
+  Audit chain is self-verifying  -  restore + run the offline
   verifier (see [`07-SECURITY.md`](07-SECURITY.md)) to confirm
   nothing tore.

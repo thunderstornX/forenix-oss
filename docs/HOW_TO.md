@@ -1,4 +1,4 @@
-# forenix-oss — How-To Guide
+# forenix-oss  -  How-To Guide
 
 *Cookbook-style recipes. Each topic is independent. Skim the index,
 jump to the one you need.*
@@ -72,13 +72,13 @@ jump to the one you need.*
 1. Click **Investigations** in the sidebar (or press **⌘2**).
 2. Click the **+ New** button in the top-right of the table.
 3. Fill in:
-   - **Title** — a short identifier (e.g. `INV-2026-008 —
+   - **Title**  -  a short identifier (e.g. `INV-2026-008  - 
      Acme Holdings`).
-   - **Target** — the actual thing you're investigating
+   - **Target**  -  the actual thing you're investigating
      (`acme-holdings.io`).
-   - **Target type** — pick one of `domain`, `person`,
+   - **Target type**  -  pick one of `domain`, `person`,
      `organization`, `ip`, `username`, `phone`.
-   - **Objective** — one or two sentences on what you're trying
+   - **Objective**  -  one or two sentences on what you're trying
      to find out.
 4. Click **Create**.
 
@@ -97,7 +97,7 @@ to the chain.
 1. Open the Investigations view (⌘2).
 2. Click any row in the table.
 
-The detail panel slides in. Use **← Back** in the top-right to
+The detail panel slides in. Use **<- Back** in the top-right to
 return to the list.
 
 ![Investigation detail](manual_screenshots/20-investigation-detail.png)
@@ -109,7 +109,7 @@ return to the list.
 **Steps.**
 
 1. Click **Investigations** (⌘2).
-2. Click the **Filter…** input above the table.
+2. Click the **Filter...** input above the table.
 3. Type any of: title fragment, target hostname/IP, target type,
    status (`draft`, `running`, `complete`, `paused`,
    `archived`), or priority (`low`, `medium`, `high`,
@@ -135,14 +135,14 @@ Not yet exposed as a UI button in v0.1. For now:
 ### How to run the OSINT pipeline against a target
 
 **Goal.** Have the AI adapter analyse the target across several
-agent groups, extract entities, and draft a report — all in one
+agent groups, extract entities, and draft a report  -  all in one
 button.
 
 **Steps.**
 
 1. Click **Pipeline** (⌘5).
 2. Pick an investigation from the dropdown.  
-   *(Or click any row in **Recent investigations** below — it
+   *(Or click any row in **Recent investigations** below  -  it
    sets the selection too.)*
 3. Toggle the **agent groups**. The chips at top: `identity`,
    `infrastructure`, `financial`, `social`, `geo`,
@@ -151,7 +151,7 @@ button.
 4. Click **Run pipeline**.
 
 **Result.** Right-hand panel animates each stage from
-`idle → running → done`. The pipeline writes findings, extracts
+`idle -> running -> done`. The pipeline writes findings, extracts
 entities, and generates a report. Counts appear in the
 "Pipeline complete" card.
 
@@ -172,7 +172,7 @@ entities, and generates a report. Counts appear in the
 | `media` | image / video / perceptual-hash matches |
 
 **Cost note.** Each group is one separate LLM call. Three groups
-is ≈ 3× the latency of one. Use only what's relevant to the
+is ~ 3x the latency of one. Use only what's relevant to the
 target type.
 
 ---
@@ -195,28 +195,28 @@ The response shape:
 ```json
 {
   "data": {
-    "investigationId": "…",
+    "investigationId": "...",
     "adapter": "nvidia",
     "agentGroups": ["identity","social","geo"],
     "findings": 11,
     "entities": 5,
     "relations": 7,
-    "report": { "id": "…", "title": "…" }
+    "report": { "id": "...", "title": "..." }
   }
 }
 ```
 
-**Permanent — for every request.**
+**Permanent  -  for every request.**
 
 Edit `.env`:
 
 ```env
 AI_ADAPTER=nvidia
-NVIDIA_API_KEY=nvapi-…
+NVIDIA_API_KEY=nvapi-...
 NVIDIA_MODEL=meta/llama-3.3-70b-instruct
 ```
 
-…and restart the dev server (`Ctrl+C` then `bun run dev`).
+...and restart the dev server (`Ctrl+C` then `bun run dev`).
 
 The top-bar adapter chip will flip from `mock` to `nvidia`.
 
@@ -236,7 +236,7 @@ findings on a specific target.
      -d '{"agentGroups":["identity","social"],"adapter":"nvidia"}' \
      http://localhost:3000/api/pipeline/run/$INV
    ```
-3. Open the investigation detail (⌘2 → click). Note the findings.
+3. Open the investigation detail (⌘2 -> click). Note the findings.
 4. Re-run with adapter B:
    ```bash
    curl -X POST -H "content-type: application/json" \
@@ -255,7 +255,7 @@ findings on a specific target.
 
 **Steps.**
 
-1. Open the parent investigation (⌘2 → click).
+1. Open the parent investigation (⌘2 -> click).
 2. Scroll to the **Findings** section.
 3. On any unverified row, click **verify** on the right.
 
@@ -268,7 +268,7 @@ was `unverified`. An audit row (`verify_finding`) is written.
 ### How to promote a finding to forensic evidence
 
 **Prerequisite.** The investigation must already be bridged to a
-case. If it isn't, the **promote → evidence** button does not
+case. If it isn't, the **promote -> evidence** button does not
 show (use [How to bridge an investigation to a case](#how-to-bridge-an-investigation-to-a-case)
 first).
 
@@ -276,13 +276,13 @@ first).
 
 1. Open the investigation detail.
 2. On any finding that hasn't been promoted, click
-   **promote → evidence**.
+   **promote -> evidence**.
 
 **Result.**
 
 - A new Evidence row appears on the linked case, with SHA-256
   hash and an initial `add:` commit on `main`.
-- The finding's `evidenceId` is stamped — the row shows the
+- The finding's `evidenceId` is stamped  -  the row shows the
   green hash chip next time you open it.
 - An audit row (`promote_finding_to_evidence`) is written.
 
@@ -316,13 +316,13 @@ is included in every report the platform generates.
 **Goal.** Turn an OSINT investigation into a forensic case that
 holds the findings as Evidence.
 
-**Two paths — pick one.**
+**Two paths  -  pick one.**
 
 **Path A: from the Pipeline view (recommended).**
 
 1. Run the pipeline (see [above](#how-to-run-the-osint-pipeline-against-a-target)).
 2. When the *Pipeline complete* card appears, click
-   **Open forensic case →**.
+   **Open forensic case ->**.
 
 **Path B: by API call.**
 
@@ -359,9 +359,9 @@ When you want a forensic case that isn't tied to an investigation
 1. Click **Cases** (⌘6).
 2. Click **+ New**.
 3. Fill in:
-   - **Title** — `Operation Foo`.
-   - **Description** — what this case is about.
-   - **Priority** — `low` / `medium` / `high` / `critical`.
+   - **Title**  -  `Operation Foo`.
+   - **Description**  -  what this case is about.
+   - **Priority**  -  `low` / `medium` / `high` / `critical`.
 4. Click **Create**.
 
 **Result.** A case lands at the top of the grid with status
@@ -388,7 +388,7 @@ The detail panel slides in.
 Same pattern as Investigations:
 
 1. Click **Cases** (⌘6).
-2. Type in the **Filter…** input above the grid.
+2. Type in the **Filter...** input above the grid.
 
 Matches across title, case number, status, priority.
 
@@ -400,13 +400,13 @@ Matches across title, case number, status, priority.
 
 ### How to seal an evidence row
 
-A sealed row is **immutable** — no further commits are accepted.
+A sealed row is **immutable**  -  no further commits are accepted.
 Seal when the case team has signed off and the evidence is ready
 for court.
 
 **Steps.**
 
-1. Open the parent case (⌘6 → click).
+1. Open the parent case (⌘6 -> click).
 2. On any evidence card, click **seal** on the right side of the
    header.
 
@@ -453,7 +453,7 @@ case-detail commits."
 
 **What you see.**
 
-- A **swimlane per branch** — leftmost is `main`.
+- A **swimlane per branch**  -  leftmost is `main`.
 - A **dot per commit**, branch-coloured.
 - Verified commits get a **green ring**.
 - The right panel shows the commit message, evidence name,
@@ -478,7 +478,7 @@ To switch cases, click **Pick another case** in the top-right.
 
 **Result.**
 
-- Green panel: *"N entries — every hash recomputes to the stored
+- Green panel: *"N entries  -  every hash recomputes to the stored
   value."* You're done. The chain is intact.
 - Red panel: shows the first row id where the chain broke +
   expected vs. stored hashes side-by-side. Escalate per your
@@ -496,14 +496,14 @@ To switch cases, click **Pick another case** in the top-right.
 
 Every row in chain order. Per row:
 
-- **Hash** (truncated, monospace) — this row's hash.
-- The previous row's hash inline below — the chain link.
-- **Action** — `pipeline_started`, `promote_finding_to_evidence`,
+- **Hash** (truncated, monospace)  -  this row's hash.
+- The previous row's hash inline below  -  the chain link.
+- **Action**  -  `pipeline_started`, `promote_finding_to_evidence`,
   `seal_evidence`, etc.
-- **Entity** — Investigation / Case / Finding / Evidence.
-- **Scope** — clickable chips that jump to the related
+- **Entity**  -  Investigation / Case / Finding / Evidence.
+- **Scope**  -  clickable chips that jump to the related
   investigation and/or case.
-- **When** — relative time.
+- **When**  -  relative time.
 
 Use the filter to narrow by action, entity, or hash fragment.
 
@@ -552,7 +552,7 @@ both, and renders each accordingly.
 ![Reports list](manual_screenshots/120-reports-list.png)
 ![Report detail](manual_screenshots/121-report-detail.png)
 
-Use **← Back** in the top-right to return to the list.
+Use **<- Back** in the top-right to return to the list.
 
 ---
 
@@ -566,7 +566,7 @@ Pipeline runner. You don't need to do anything special:
    `source = "investigation"` and attached to the parent
    investigation.
 
-To regenerate, just re-run the pipeline — a new report row is
+To regenerate, just re-run the pipeline  -  a new report row is
 written each time.
 
 ---
@@ -584,7 +584,7 @@ by type on concentric rings.
 
 **Reading it.**
 
-- Each ring is one type (person / org / domain / ip / …). Outer
+- Each ring is one type (person / org / domain / ip / ...). Outer
   rings are the next type.
 - A line between two entities is a relation. The line's brightness
   reflects the relation's `confidence`:
@@ -592,7 +592,7 @@ by type on concentric rings.
   - medium = `probable`,
   - faint = `unverified`.
 - The line label is the relation type (`owns`, `resolves_to`,
-  `associated_with`, …).
+  `associated_with`, ...).
 
 ![Entity graph](manual_screenshots/70-entity-graph.png)
 
@@ -600,8 +600,8 @@ by type on concentric rings.
 
 ### How to read the cross-case network graph
 
-The Network Graph shows **everything** — users, agents,
-investigations, cases, evidence, entities — on one canvas.
+The Network Graph shows **everything**  -  users, agents,
+investigations, cases, evidence, entities  -  on one canvas.
 
 **Steps.**
 
@@ -609,11 +609,11 @@ investigations, cases, evidence, entities — on one canvas.
 
 **Reading it.**
 
-- Each row (swimlane) is one **kind** of node — case,
+- Each row (swimlane) is one **kind** of node  -  case,
   investigation, evidence, user, agent, entity.
-- Arrows go from cause to effect: `case → evidence`,
-  `investigation → case` (the bridge), `user → case` (assignment),
-  `entity → entity` (relation).
+- Arrows go from cause to effect: `case -> evidence`,
+  `investigation -> case` (the bridge), `user -> case` (assignment),
+  `entity -> entity` (relation).
 - Hover any node to see its full label in the tooltip.
 
 This is the view to open when you want to see what *connects* two
@@ -638,7 +638,7 @@ non-trivial.
    - investigation titles + targets,
    - case numbers + titles,
    - report titles + sources.
-3. **↑ / ↓** to navigate.
+3. **^ / v** to navigate.
 4. **Enter** to open.
 5. **Esc** (or click outside) to close.
 
@@ -706,7 +706,7 @@ message that says "look at this case."
 
 ### How to switch the active AI adapter
 
-**Permanent — for every request:**
+**Permanent  -  for every request:**
 
 1. Open `.env`.
 2. Change the `AI_ADAPTER` line:
@@ -718,13 +718,13 @@ message that says "look at this case."
 3. If you're switching to a hosted adapter, make sure its key is
    present:
    ```env
-   NVIDIA_API_KEY=nvapi-…
+   NVIDIA_API_KEY=nvapi-...
    NVIDIA_MODEL=meta/llama-3.3-70b-instruct
    ```
 4. Restart the dev server: **Ctrl+C** in the terminal where
    `bun run dev` is running, then `bun run dev` again.
 
-**Per-request — for one pipeline run:**
+**Per-request  -  for one pipeline run:**
 
 Add an `adapter` field to the POST body:
 
@@ -757,7 +757,7 @@ This wipes every row via Prisma `deleteMany` and re-seeds:
 - monitors, verifications, reports, agents, tasks,
 - 9 audit rows with a valid SHA-256 chain.
 
-The seed script is safe to run any time — it doesn't drop the
+The seed script is safe to run any time  -  it doesn't drop the
 database file, just clears it.
 
 **Do not** run `bun run db:reset` (which uses `--force-reset`)

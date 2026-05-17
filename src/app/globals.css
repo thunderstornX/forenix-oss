@@ -4,7 +4,7 @@
 @import "tailwindcss";
 
 /* =====================================================================
-   forenix-oss — enterprise design tokens
+   forenix-oss  -  enterprise design tokens
    ---------------------------------------------------------------------
    - light/dark via [data-theme]
    - accent via [data-accent]
@@ -246,7 +246,7 @@
 }
 
 /* =====================================================================
-   Back-compat shim — legacy variable names map onto the new tokens so
+   Back-compat shim  -  legacy variable names map onto the new tokens so
    existing components keep working until they get refactored.
    ===================================================================== */
 :root {
@@ -312,7 +312,7 @@ a { color: inherit; text-decoration: none; }
 }
 
 /* =====================================================================
-   primitives — fx-*
+   primitives  -  fx-*
    ===================================================================== */
 
 .fx-app {
@@ -778,7 +778,7 @@ a { color: inherit; text-decoration: none; }
 }
 
 /* =====================================================================
-   Legacy classes — translated to use new tokens (kept for current views)
+   Legacy classes  -  translated to use new tokens (kept for current views)
    ===================================================================== */
 .glass {
   background: var(--bg-elev);

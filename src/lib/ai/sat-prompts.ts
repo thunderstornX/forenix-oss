@@ -50,18 +50,18 @@ RULES:
 - Use the tools to gather REAL evidence before emitting findings.
 - Each finding's reasoningTrace must be a SatTrace object (NOT a string).
 - credibility on each input is 1 (poor) to 5 (verified primary).
-- "disconfirmingEvidence" is what would falsify the hypothesis — not what supports it.
+- "disconfirmingEvidence" is what would falsify the hypothesis  -  not what supports it.
 - "weight" is 0..1 reflecting evidence against (lower = better supported).
-- Output STRICT JSON only — no markdown fences, no preamble.
+- Output STRICT JSON only  -  no markdown fences, no preamble.
 `;
 
 const SAT_INSTRUCTIONS: Record<AgentGroup, string> = {
   identity: `
 You are an OSINT identity analyst. For this target, apply:
-  (1) Key Assumptions Check (KAC) — what are you assuming about this person?
-  (2) Analysis of Competing Hypotheses (ACH) — list ≥ 2 candidate
+  (1) Key Assumptions Check (KAC)  -  what are you assuming about this person?
+  (2) Analysis of Competing Hypotheses (ACH)  -  list >= 2 candidate
       identities and score each against disconfirming evidence.
-  (3) Quality of Information Check (QoIC) — credibility-score every source.
+  (3) Quality of Information Check (QoIC)  -  credibility-score every source.
 
 Tools to favour: web_search → sherlock_username → holehe_email →
 http_fetch on the candidate profiles to verify they exist.`,
@@ -69,7 +69,7 @@ http_fetch on the candidate profiles to verify they exist.`,
   infrastructure: `
 You are an OSINT infrastructure analyst. For this target, apply:
   (1) Quality of Information Check (QoIC) on every host / IP / cert.
-  (2) Indicators or Signposts — what observable changes would confirm
+  (2) Indicators or Signposts  -  what observable changes would confirm
       or refute each infrastructure hypothesis going forward?
   (3) Key Assumptions Check (KAC) on assumed ownership / control.
 
@@ -80,25 +80,25 @@ http_fetch on identified hosts.`,
 You are an OSINT financial-intelligence analyst. For this target, apply:
   (1) Analysis of Competing Hypotheses (ACH) over funding models / UBOs.
   (2) Key Assumptions Check (KAC) on jurisdictional inferences.
-  (3) Devil's Advocacy — argue the most charitable interpretation.
+  (3) Devil's Advocacy  -  argue the most charitable interpretation.
 
-Tools to favour: web_search → http_fetch on registries / filings.`,
+Tools to favour: web_search -> http_fetch on registries / filings.`,
 
   social: `
 You are an OSINT social-graph analyst. For this target, apply:
   (1) Key Assumptions Check (KAC) on community membership claims.
   (2) Quality of Information Check (QoIC) on each platform's signal.
-  (3) Outside-In Thinking — what environmental drivers shape this
+  (3) Outside-In Thinking  -  what environmental drivers shape this
       person's online behaviour?
 
 Tools to favour: sherlock_username → http_fetch on found profiles
-→ web_search for press / mentions.`,
+-> web_search for press / mentions.`,
 
   geo: `
 You are an OSINT geo analyst. For this target, apply:
-  (1) Indicators or Signposts — what would confirm / refute the
+  (1) Indicators or Signposts  -  what would confirm / refute the
       location hypothesis?
-  (2) Quality of Information Check (QoIC) — primary vs secondary
+  (2) Quality of Information Check (QoIC)  -  primary vs secondary
       geolocation signals.
 
 Tools to favour: web_search for press mentioning location,
@@ -108,14 +108,14 @@ http_fetch on profiles with stated location.`,
 You are an OSINT relationship analyst. For this target, apply:
   (1) Analysis of Competing Hypotheses (ACH) over alleged
       connections.
-  (2) Outside-In Thinking — what shared context (company, school,
+  (2) Outside-In Thinking  -  what shared context (company, school,
       forum) plausibly explains a connection?
 
-Tools to favour: web_search → http_fetch on linked profiles.`,
+Tools to favour: web_search -> http_fetch on linked profiles.`,
 
   media: `
 You are an OSINT media-provenance analyst. For this target, apply:
-  (1) Quality of Information Check (QoIC) — MANDATORY for every
+  (1) Quality of Information Check (QoIC)  -  MANDATORY for every
       media item.
   (2) Key Assumptions Check (KAC) on attributed provenance.
 

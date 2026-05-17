@@ -62,7 +62,7 @@ export async function POST(
 
   const created = await prisma.case.create({
     data: {
-      title: parsed.caseTitle ?? `${inv.title} — forensic follow-up`,
+      title: parsed.caseTitle ?? `${inv.title}  -  forensic follow-up`,
       description: `Forensic case opened from investigation ${inv.title}. Target: ${inv.target}`,
       priority: inv.priority,
       caseNumber,
@@ -80,7 +80,7 @@ export async function POST(
     include: { branches: true },
   });
 
-  // Provision a real Git repo for this case (skipped on Vercel —
+  // Provision a real Git repo for this case (skipped on Vercel  - 
   // /tmp is the only writable path and is wiped on cold start).
   const mainBranchRow = created.branches.find((b) => b.isMain) ?? created.branches[0]!;
   const gitOn = gitEngineEnabled();
@@ -127,7 +127,7 @@ export async function POST(
       const ev = await prisma.evidence.create({
         data: {
           caseId: created.id,
-          name: `Finding ${f.id.slice(0, 8)} — ${f.title}`,
+          name: `Finding ${f.id.slice(0, 8)}  -  ${f.title}`,
           type: "document",
           mimeType: "application/x-osint-finding",
           description: f.description,

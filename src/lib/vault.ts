@@ -1,5 +1,5 @@
 /**
- * API-key vault — admin-only writes, runtime reads.
+ * API-key vault  -  admin-only writes, runtime reads.
  *
  * Storage: the `ApiKey` Prisma model. AES-256-GCM at rest.
  *
@@ -42,7 +42,7 @@ async function refresh(): Promise<void> {
 }
 
 /** Make every vault key available via process.env for the lifetime
- *  of the current request. Cheap to call repeatedly — uses a 30 s
+ *  of the current request. Cheap to call repeatedly  -  uses a 30 s
  *  in-memory cache to avoid hitting the database every tool call. */
 export async function injectVaultKeys(): Promise<void> {
   if (Date.now() - cache.loadedAt > CACHE_TTL_MS) {
@@ -71,7 +71,7 @@ export interface VaultRow {
   lastUsedAt: Date | null;
 }
 
-/** Admin-only — list every stored key (redacted). */
+/** Admin-only  -  list every stored key (redacted). */
 export async function listVault(): Promise<VaultRow[]> {
   const rows = await prisma.apiKey.findMany({ orderBy: { setAt: "desc" } });
   return rows.map((r) => {
@@ -92,7 +92,7 @@ export async function listVault(): Promise<VaultRow[]> {
   });
 }
 
-/** Admin-only — upsert a key. */
+/** Admin-only  -  upsert a key. */
 export async function setVaultKey(args: {
   envKey: string;
   label: string;
@@ -129,7 +129,7 @@ export async function setVaultKey(args: {
   await reloadVault();
 }
 
-/** Admin-only — delete a key by envKey. */
+/** Admin-only  -  delete a key by envKey. */
 export async function removeVaultKey(envKey: string): Promise<void> {
   await prisma.apiKey.deleteMany({ where: { envKey } });
   await reloadVault();

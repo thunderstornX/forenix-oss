@@ -62,7 +62,7 @@ export async function GET(
   if (!row) {
     return Response.json({ error: "not_found" }, { status: 404 });
   }
-  // Prisma returns BigInt for Evidence.size — JSON.stringify can't handle it.
+  // Prisma returns BigInt for Evidence.size  -  JSON.stringify can't handle it.
   // Cast to string for safe wire transport.
   const serialized = JSON.parse(
     JSON.stringify(row, (_k, v) => (typeof v === "bigint" ? v.toString() : v)),

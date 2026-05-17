@@ -4,7 +4,7 @@
  * https://developer.shodan.io/api
  *
  * Returns open ports, banners, hostname, ASN, country for a given
- * IPv4 — the bread-and-butter input for infrastructure analysis.
+ * IPv4  -  the bread-and-butter input for infrastructure analysis.
  */
 import type { Tool } from "../types";
 
@@ -52,7 +52,7 @@ export const shodanHostTool: Tool = {
       hostnames: data.hostnames,
       isp: data.isp,
       last_update: data.last_update,
-      // Surface the most informative banners only — full data array
+      // Surface the most informative banners only  -  full data array
       // is often megabytes.
       bannerSnippets: ((data.data as Record<string, unknown>[]) ?? [])
         .slice(0, 8)

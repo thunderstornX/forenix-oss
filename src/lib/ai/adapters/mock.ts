@@ -1,5 +1,5 @@
 /**
- * MockAdapter — deterministic, seeded, zero-network.
+ * MockAdapter  -  deterministic, seeded, zero-network.
  *
  * Produces plausible-looking OSINT findings, entity graphs,
  * evidence tags, and report sections so the UI is demo-grade
@@ -65,7 +65,7 @@ function rng(seed: string) {
   let s = hash32(seed) || 1;
   return () => {
     // Park-Miller LCG. Math.imul returns a signed int32, so a naive
-    // modulo can leak negative values — coerce to unsigned via >>> 0
+    // modulo can leak negative values  -  coerce to unsigned via >>> 0
     // before doing the modulo, then divide.
     const next = (Math.imul(s, 48271) >>> 0) % 2147483647;
     s = next || 1;
@@ -78,7 +78,7 @@ function pick<T>(arr: readonly T[], r: () => number): T {
 }
 
 function fakeHash(seed: string): string {
-  // 64-char hex, deterministic from seed — looks like a SHA-256 digest.
+  // 64-char hex, deterministic from seed  -  looks like a SHA-256 digest.
   const r = rng(seed + ":hash");
   let out = "";
   for (let i = 0; i < 64; i++) {
@@ -240,7 +240,7 @@ export class MockAdapter implements AIAdapter {
     const grouped = groupBy(findings, (f) => f.agentGroup);
     const sections: string[] = [];
 
-    sections.push(`# Investigation Report — ${investigation.title}\n`);
+    sections.push(`# Investigation Report  -  ${investigation.title}\n`);
     sections.push(
       `**Target:** ${investigation.target}\n` +
         `**Objective:** ${investigation.objective}\n` +
@@ -262,8 +262,8 @@ export class MockAdapter implements AIAdapter {
       sections.push(`\n## ${capitalize(group)} (${items.length})\n`);
       for (const f of items) {
         sections.push(
-          `- **${f.title}** — ${f.description}  \n` +
-            `  *source:* ${f.sourceName} · *confidence:* ${f.confidence} · *priority:* ${f.priority}`,
+          `- **${f.title}**  -  ${f.description}  \n` +
+            `  *source:* ${f.sourceName} | *confidence:* ${f.confidence} | *priority:* ${f.priority}`,
         );
       }
     }

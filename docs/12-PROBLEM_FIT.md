@@ -1,6 +1,6 @@
 # Honest problem-fit evaluation
 
-*Written after Phases A–E shipped, before users have touched it.
+*Written after Phases A-E shipped, before users have touched it.
 The goal here is to be uncomfortably specific about what works,
 what doesn't, and who would genuinely benefit.*
 
@@ -11,7 +11,7 @@ what doesn't, and who would genuinely benefit.*
 **Investigators who mix open-source intelligence with forensic
 case management run on two disconnected toolchains.** The OSINT
 side is Maltego, SpiderFoot, Hunchly, plus a pile of CLI tools
-(sherlock, amass, theHarvester, holehe, …). The forensic side is
+(sherlock, amass, theHarvester, holehe, ...). The forensic side is
 EnCase, AXIOM, Cellebrite, Relativity. The handoff between the
 two is manual: an analyst finds something on the open web, exports
 a screenshot or a CSV, emails it to the case team, and someone
@@ -20,15 +20,15 @@ SharePoint.
 
 **That handoff is the bug.** It loses provenance, it loses tool
 output, it loses audit chain. The investigator's defence in front
-of a sceptical reviewer — "how do you know you didn't tamper with
-this between Hunchly and EnCase?" — is a personal claim, not a
+of a sceptical reviewer  -  "how do you know you didn't tamper with
+this between Hunchly and EnCase?"  -  is a personal claim, not a
 cryptographic one.
 
 forenix-oss collapses both halves into one app with a real Git
 repository per forensic case, a SHA-256 forward-chained audit log
 over every state change, and an AI-orchestrated tool runner that
 captures the actual tool output (sherlock JSON, theHarvester JSON,
-Shodan banners, …) directly into the evidence record.
+Shodan banners, ...) directly into the evidence record.
 
 ---
 
@@ -52,7 +52,7 @@ Shodan banners, …) directly into the evidence record.
   passed through to the finding's reasoning trace. Not a
   fabricated snippet.
 - **Findings carry structured analytic reasoning.** Phase C
-  forces every finding to carry a SatTrace object — which
+  forces every finding to carry a SatTrace object  -  which
   Structured Analytic Technique was applied, what inputs scored
   what credibility, which competing hypotheses lost on
   disconfirming evidence. This is the rendering UI an analyst
@@ -82,13 +82,13 @@ Shodan banners, …) directly into the evidence record.
 
 - **Real-time collaboration.** TanStack Query refetches on focus,
   not via websocket push. Two analysts looking at the same case
-  see lag. Phase 8 task — not blocking for a courtroom artefact,
+  see lag. Phase 8 task  -  not blocking for a courtroom artefact,
   blocking for "interactive war-room" UX.
 - **Evidence-file bytes.** Today the platform stores hashes and
   metadata. To make this a true forensic system the actual bytes
   need somewhere to live (S3 / R2 / IPFS with content addressing).
   The hash currently in the database is computed over the finding
-  text, not over real file bytes — that's a marketing-grade lie
+  text, not over real file bytes  -  that's a marketing-grade lie
   we should fix before anyone tries to use this for a serious
   case.
 - **PDF / DOCX export of admissible reports.** Markdown renders
@@ -111,7 +111,7 @@ they can show in court. Tool output captured automatically.
 
 **Why they might not**: trust. They're not going to trust a
 1-developer 6-month-old project with cases that have real legal
-consequences. We earn that the hard way — published audits,
+consequences. We earn that the hard way  -  published audits,
 referenceable cases, eventually a Tier 3 with SOC 2.
 
 ### 2. Incident-response teams at MSSPs
@@ -125,7 +125,7 @@ case write-up live on one chain.
 
 **Why they'd switch**: integration is the bottleneck. Today they
 manually paste IoCs into MISP, manually copy reports into wiki.
-forenix-oss does the agent-pipeline → evidence promotion → SAT-
+forenix-oss does the agent-pipeline -> evidence promotion -> SAT-
 backed report in one click.
 
 **Why they might not**: it doesn't replace Velociraptor for the
@@ -144,7 +144,7 @@ tool output captured at a specific time.
 
 **Why they'd switch**: when stories get sued, the chain becomes
 exculpatory evidence. Bellingcat-style claims already appear in
-ICC filings — the standard of "show your work" is rising fast.
+ICC filings  -  the standard of "show your work" is rising fast.
 
 **Why they might not**: this isn't a journalism tool. They want
 collaborative editing first, audit chain second. We're inverted
@@ -163,7 +163,7 @@ evidence challenge.
 (Relativity, EnCase) are firmly enterprise-priced.
 
 **Why they might not**: they don't have the technical capacity
-to self-host. They need a managed offering — that's Tier 3.
+to self-host. They need a managed offering  -  that's Tier 3.
 
 ### 5. Academics studying intelligence analysis
 
@@ -189,20 +189,20 @@ Being uncomfortably specific:
    SAT-grounded prompting + real evidence make the LLM's output
    *checkable*. They don't make it correct. A 70B model running
    ACH over four hypotheses still picks the wrong one sometimes.
-   What we've done is make the wrongness *visible* — the
+   What we've done is make the wrongness *visible*  -  the
    reviewing analyst can see the disconfirming-evidence column
    and disagree with the weight assignment in 30 seconds.
 
 2. **The "real Git" claim is true but understated.** Right now
    we have a real Git repo per case with real commits and real
    merges. We do **not** have real file-bytes in those commits
-   yet — every evidence record is its own JSON file holding
+   yet  -  every evidence record is its own JSON file holding
    metadata + a content hash. That's still better than the
    metadata-only commit table we had pre-Phase-A, and it's a
    single Phase 8 task to add the bytes (R2 / S3 / IPFS upload
    + content-addressed storage + a hash that's genuinely over
    bytes-on-disk). Until that ships, the platform is
-   "chain-of-custody for narrative" — not "chain-of-custody for
+   "chain-of-custody for narrative"  -  not "chain-of-custody for
    raw files".
 
 3. **Workspace isolation is per-team, not per-org.** Teams
@@ -229,7 +229,7 @@ Being uncomfortably specific:
    on which sources you toggle. Real analysts know to chase down
    each hit; the platform should make that easier by surfacing
    per-tool confidence (which it already does via the SatTrace
-   credibility field — but only if the LLM populates it
+   credibility field  -  but only if the LLM populates it
    honestly).
 
 ---
@@ -238,15 +238,15 @@ Being uncomfortably specific:
 
 forenix-oss is a *defensible chain-of-custody system over an
 LLM-orchestrated OSINT pipeline*. Each of those words is now
-genuinely true after Phases A–E:
+genuinely true after Phases A-E:
 
-- **defensible** — the audit chain is verifiable offline; the Git
+- **defensible**  -  the audit chain is verifiable offline; the Git
   history is independently inspectable.
-- **chain-of-custody** — every state change is captured on the
+- **chain-of-custody**  -  every state change is captured on the
   chain; every evidence record carries a hash + a real Git commit.
-- **LLM-orchestrated** — the LLM is invoked with real tools and
+- **LLM-orchestrated**  -  the LLM is invoked with real tools and
   picks which to run, constrained by SAT-grounded prompting.
-- **OSINT pipeline** — the seven agent groups + 10 real tools
+- **OSINT pipeline**  -  the seven agent groups + 10 real tools
   cover the headline workflow.
 
 **What it isn't yet:**
@@ -259,18 +259,18 @@ genuinely true after Phases A–E:
 
 **Is it worth running on a real case today?** Yes, for #1, #2, #3
 above (boutique investigators, MSSP IR, journalists) **if** they
-treat the file-byte hashing limitation explicitly — i.e. if they
+treat the file-byte hashing limitation explicitly  -  i.e. if they
 also keep the raw bytes in their existing storage and the
 forenix-oss hash is supplementary attestation, not the primary
 custody record. With that caveat, the platform makes their
 workflow auditable in a way nothing else open-source does today.
 
 **Is it worth the academic paper?** Yes. The contribution isn't
-"we built another LLM agent" — it's "we operationalised SAT-
+"we built another LLM agent"  -  it's "we operationalised SAT-
 grounded prompting on top of OSINT tool calls with a
 cryptographically-attested chain". That's a publishable claim
 because the SAT-evaluation literature (Coulthart, Heuer, Pherson,
 RAND) is mostly about why analysts *don't* use SATs in practice.
-forenix-oss is a proposal for *how* you might force them to —
+forenix-oss is a proposal for *how* you might force them to  - 
 not by training, but by making the platform refuse to emit a
 finding without one.

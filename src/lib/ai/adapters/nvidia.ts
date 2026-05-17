@@ -1,5 +1,5 @@
 /**
- * NVIDIAAdapter — NVIDIA NIM hosted model catalogue (build.nvidia.com).
+ * NVIDIAAdapter  -  NVIDIA NIM hosted model catalogue (build.nvidia.com).
  *
  * OpenAI-compatible chat-completions API. Free dev tier hosts
  * Nemotron, Llama 3.x, Mixtral, DeepSeek, Qwen and others at
@@ -7,7 +7,7 @@
  *
  * Setup:
  *   1. Sign in at https://build.nvidia.com
- *   2. Generate a key → set NVIDIA_API_KEY=nvapi-…
+ *   2. Generate a key → set NVIDIA_API_KEY=nvapi-...
  *   3. Pick a model with NVIDIA_MODEL (default below works on the
  *      free dev tier).
  *   4. AI_ADAPTER=nvidia bun dev

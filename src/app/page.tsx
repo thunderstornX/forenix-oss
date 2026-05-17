@@ -78,7 +78,7 @@ export default function Home() {
     if (palette === "1") setCommandPaletteOpen(true);
   }, [setView, setActiveInv, setActiveCase, setCommandPaletteOpen]);
 
-  // ⌘1–⌘9 (Ctrl on Linux/Windows) → switch view.
+  // ⌘1-⌘9 (Ctrl on Linux/Windows) -> switch view.
   useEffect(() => {
     function handler(e: KeyboardEvent) {
       const mod = e.metaKey || e.ctrlKey;

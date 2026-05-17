@@ -8,7 +8,7 @@
  * Works against any provider whose chat-completions endpoint
  * accepts `tools` + returns `choices[].message.tool_calls`
  * (OpenRouter, NVIDIA NIM, Groq, Anthropic-via-OpenAI compat,
- * Together, …).
+ * Together, ...).
  */
 import type { ChatBackend } from "./chat-completions";
 import { runToolCall } from "@/lib/tools/runner";
@@ -86,7 +86,7 @@ export async function chatWithTools(
     });
 
     if (!msg.tool_calls || msg.tool_calls.length === 0) {
-      // No tools requested → final answer.
+      // No tools requested -> final answer.
       return {
         text: msg.content ?? "",
         toolCalls: callLog,

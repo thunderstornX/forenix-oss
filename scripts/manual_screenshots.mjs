@@ -47,7 +47,7 @@ async function shoot(page, file, settle = 1100) {
   await page.waitForTimeout(settle);
   const path = join(OUT, file);
   await page.screenshot({ path, fullPage: false });
-  console.log("  →", file);
+  console.log("  ->", file);
 }
 
 async function shootFull(page, file, settle = 1100) {
@@ -55,7 +55,7 @@ async function shootFull(page, file, settle = 1100) {
   await page.waitForTimeout(settle);
   const path = join(OUT, file);
   await page.screenshot({ path, fullPage: true });
-  console.log("  → (full)", file);
+  console.log("  -> (full)", file);
 }
 
 // Helper for selectors that need an ID first.
@@ -97,7 +97,7 @@ const SHOTS = [
   // 2. Investigations list + new investigation flow
   ["10-investigations-list.png",  `${HOST}/?view=investigations`],
 
-  // 3. Investigation detail — Northwind (already complete, has linked case)
+  // 3. Investigation detail  -  Northwind (already complete, has linked case)
   ["20-investigation-detail.png", `${HOST}/?view=investigations&inv=${idx.invNorthwind}`],
   ["21-investigation-bridge-chip.png", `${HOST}/?view=investigations&inv=${idx.invNorthwind}`],
 
@@ -176,7 +176,7 @@ await page.waitForTimeout(700);
 await page.locator('button:has-text("Collapse")').first().click().catch(() => {});
 await shoot(page, "03-sidebar-collapsed.png", 800);
 
-// 21. Pipeline configure → fill in form → before-Run
+// 21. Pipeline configure -> fill in form -> before-Run
 console.log("[shoot] 31-pipeline-configured.png");
 await page.goto(`${HOST}/?view=pipeline`, { waitUntil: "domcontentloaded" });
 await page.waitForTimeout(800);
@@ -188,7 +188,7 @@ await shoot(page, "31-pipeline-configured.png", 700);
 console.log("[shoot] 43-cases-filter.png");
 await page.goto(`${HOST}/?view=cases`, { waitUntil: "domcontentloaded" });
 await page.waitForTimeout(800);
-const filterInput = page.locator('input[placeholder="Filter…"]').first();
+const filterInput = page.locator('input[placeholder="Filter..."]').first();
 if (await filterInput.count()) {
   await filterInput.fill("sandstone");
   await page.waitForTimeout(400);
@@ -204,4 +204,4 @@ await page.locator('button:has-text("Open")').first().click().catch(() => {});
 await shoot(page, "121-report-detail.png", 900);
 
 await browser.close();
-console.log("\ndone →", OUT);
+console.log("\ndone ->", OUT);

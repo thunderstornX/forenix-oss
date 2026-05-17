@@ -49,7 +49,7 @@ export async function POST(
         parentHead = await getBranchHead(ev.caseId, "main").catch(() => "");
         oid = await commitChanges({
           caseId: ev.caseId,
-          message: `seal: ${ev.name} — chain of custody locked`,
+          message: `seal: ${ev.name}  -  chain of custody locked`,
           authorName: actor.name ?? "analyst",
           authorEmail: actor.email ?? "analyst@forenix-oss.local",
         });
@@ -94,7 +94,7 @@ export async function POST(
       details: { hash: ev.hash, gitOid: oid },
     });
 
-    // Evidence.size is BigInt — coerce to string for JSON.
+    // Evidence.size is BigInt  -  coerce to string for JSON.
     const serialized = JSON.parse(
       JSON.stringify(updated, (_k, v) => (typeof v === "bigint" ? v.toString() : v)),
     );

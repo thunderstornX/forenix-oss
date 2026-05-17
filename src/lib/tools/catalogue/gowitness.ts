@@ -1,5 +1,5 @@
 /**
- * Subprocess: gowitness — automated webpage screenshot capture.
+ * Subprocess: gowitness  -  automated webpage screenshot capture.
  * Used as evidence acquisition: snapshot a URL, return the path
  * (relative to /tmp) and the metadata. Operators / the forensic
  * agent can promote a screenshot to evidence.

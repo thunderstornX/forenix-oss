@@ -39,7 +39,7 @@ export function TeamsView() {
   return (
     <ViewShell
       title="Teams"
-      subtitle="Teams you belong to. Each team owns its own cases and investigations — visibility is scoped to membership."
+      subtitle="Teams you belong to. Each team owns its own cases and investigations  -  visibility is scoped to membership."
       actions={<span className="text-[11px] text-[var(--foreground-muted)]">{rows.length} memberships</span>}
     >
       <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
@@ -80,7 +80,7 @@ export function TeamsView() {
                       <span className="font-mono text-[10px] text-[var(--foreground-muted)]">{m.user.email}</span>
                     </span>
                     <span className="text-[10px] uppercase tracking-[0.18em] text-[var(--foreground-muted)]">
-                      {m.role} · {relTime(m.joinedAt)}
+                      {m.role} | {relTime(m.joinedAt)}
                     </span>
                   </li>
                 ))}

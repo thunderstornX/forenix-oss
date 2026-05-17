@@ -16,7 +16,7 @@ interface PositionedNode {
 }
 
 /**
- * Cheap radial layout — group entities by type, place each type on
+ * Cheap radial layout  -  group entities by type, place each type on
  * its own ring. Deterministic, no physics, no extra deps.
  */
 function layout(entities: { id: string; name: string; type: string }[]): PositionedNode[] {
@@ -69,7 +69,7 @@ export function EntityGraphView() {
       subtitle="Entities discovered across investigations + their relations. Type-grouped radial layout."
       actions={
         <span className="text-[11px] text-[var(--foreground-muted)]">
-          {data?.entities.length ?? 0} entities · {data?.relations.length ?? 0} relations
+          {data?.entities.length ?? 0} entities | {data?.relations.length ?? 0} relations
         </span>
       }
     >
@@ -129,7 +129,7 @@ export function EntityGraphView() {
                   textAnchor="middle"
                   fontFamily="ui-sans-serif, system-ui"
                 >
-                  {n.name.length > 22 ? n.name.slice(0, 20) + "…" : n.name}
+                  {n.name.length > 22 ? n.name.slice(0, 20) + "..." : n.name}
                 </text>
               </g>
             ))}

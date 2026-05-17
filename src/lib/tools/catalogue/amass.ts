@@ -1,5 +1,5 @@
 /**
- * Subprocess: amass — deep, slower subdomain enumeration with
+ * Subprocess: amass  -  deep, slower subdomain enumeration with
  * historical Certificate Transparency + WHOIS pivots. Use as a
  * follow-up to subfinder when more recall is wanted.
  * https://github.com/owasp-amass/amass

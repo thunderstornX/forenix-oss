@@ -7,9 +7,9 @@ import { THEME_PRE_SCRIPT } from "@/lib/theme";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "forenix-oss — OSINT × Forensics",
+  title: "forenix-oss  -  OSINT x Forensics",
   description:
-    "Open-source platform that fuses OSINT investigations with forensic case management — one workflow from public-source lead to chain-of-custody evidence.",
+    "Open-source platform that fuses OSINT investigations with forensic case management  -  one workflow from public-source lead to chain-of-custody evidence.",
 };
 
 export default function RootLayout({

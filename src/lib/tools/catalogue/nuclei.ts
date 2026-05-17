@@ -1,5 +1,5 @@
 /**
- * Subprocess: nuclei (ProjectDiscovery) — template-driven detection
+ * Subprocess: nuclei (ProjectDiscovery)  -  template-driven detection
  * for misconfigurations, exposures, and known vulns.
  * https://github.com/projectdiscovery/nuclei
  *

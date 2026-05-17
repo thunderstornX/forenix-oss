@@ -60,7 +60,7 @@ export function PipelineView() {
     setStages(pre);
 
     // Pre-flight: mark agents running sequentially while the server
-    // works (we don't have streaming yet — this gives the UI motion).
+    // works (we don't have streaming yet  -  this gives the UI motion).
     for (const grp of groups) setStage(`agent_${grp}`, "running");
     setStage("extract", "idle");
     setStage("report",  "idle");
@@ -71,7 +71,7 @@ export function PipelineView() {
       setStage("extract", "done");
       setStage("report",  "done");
       setResult(res.data);
-      toast.success(`Pipeline complete · ${res.data.findings} findings · ${res.data.entities} entities`);
+      toast.success(`Pipeline complete | ${res.data.findings} findings | ${res.data.entities} entities`);
     } catch (err) {
       for (const stage of pre) setStage(stage.key, "error");
       toast.error((err as Error).message);
@@ -85,7 +85,7 @@ export function PipelineView() {
       if (res.data.alreadyLinked) {
         toast.info("Investigation already linked to a case");
       } else {
-        toast.success(`Case ${res.data.case.caseNumber} opened · ${res.data.promoted} promoted to evidence`);
+        toast.success(`Case ${res.data.case.caseNumber} opened | ${res.data.promoted} promoted to evidence`);
       }
       setActiveCase(res.data.case.id);
       setView("cases");
@@ -111,7 +111,7 @@ export function PipelineView() {
               onChange={(e) => setSelectedId(e.target.value || null)}
               className="mt-1 w-full rounded border border-[var(--border)] bg-[var(--background-elev)] px-2.5 py-1.5 text-[13px] outline-none focus:border-[var(--accent)]"
             >
-              <option value="">— pick one —</option>
+              <option value=""> -  pick one  - </option>
               {items.map((i) => (
                 <option key={i.id} value={i.id}>
                   {i.title}
@@ -153,7 +153,7 @@ export function PipelineView() {
             className="mt-4 flex w-full items-center justify-center gap-1.5 rounded border border-[var(--border-strong)] bg-[var(--accent-soft)] py-2 text-[12px] font-medium text-[var(--accent-strong)] forensic-glow disabled:opacity-50"
           >
             {run.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Play className="h-3.5 w-3.5" />}
-            {run.isPending ? "Running pipeline…" : "Run pipeline"}
+            {run.isPending ? "Running pipeline..." : "Run pipeline"}
           </button>
         </section>
 

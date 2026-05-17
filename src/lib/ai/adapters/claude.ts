@@ -1,5 +1,5 @@
 /**
- * ClaudeAdapter — calls Anthropic's Claude via @anthropic-ai/sdk.
+ * ClaudeAdapter  -  calls Anthropic's Claude via @anthropic-ai/sdk.
  *
  * Gated as a SaaS-premium tier feature; requires SAAS_MODE=true and
  * an Anthropic API key.
@@ -41,7 +41,7 @@ export class ClaudeAdapter implements AIAdapter {
     if (process.env.SAAS_MODE !== "true") {
       // Stay loud: this adapter is intentionally gated.
       console.warn(
-        "[ClaudeAdapter] SAAS_MODE is not 'true' — Claude is intentionally a paid premium adapter.",
+        "[ClaudeAdapter] SAAS_MODE is not 'true'  -  Claude is intentionally a paid premium adapter.",
       );
     }
   }

@@ -44,7 +44,7 @@ function AcceptInviteInner() {
           return;
         }
         setState("ok");
-        setMsg("You're in. Redirecting…");
+        setMsg("You're in. Redirecting...");
         setTimeout(() => router.push("/?view=teams"), 1100);
       })
       .catch((e) => {
@@ -63,7 +63,7 @@ function AcceptInviteInner() {
           {state === "err"     && <AlertOctagon  className="h-5 w-5 text-[var(--danger)]" />}
           <div>
             <div className="text-[13px] text-[var(--foreground)]">
-              {state === "working" && "Accepting invite…"}
+              {state === "working" && "Accepting invite..."}
               {state === "ok"      && "Joined the team."}
               {state === "err"     && "Couldn't accept this invite."}
             </div>

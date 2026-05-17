@@ -7,7 +7,7 @@ import { useState } from "react";
 import { ThemeProvider } from "@/lib/theme";
 
 /**
- * App-level client providers — TanStack Query for server cache,
+ * App-level client providers  -  TanStack Query for server cache,
  * NextAuth SessionProvider for the client-side session hook.
  *
  * Wrapped here so the root layout stays a Server Component.

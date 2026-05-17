@@ -76,7 +76,7 @@ export default function SignInPage() {
             </div>
             <div>
               <div className="fx-side__name">forenix-oss</div>
-              <div className="fx-side__tag">osint × forensics</div>
+              <div className="fx-side__tag">osint x forensics</div>
             </div>
           </div>
 

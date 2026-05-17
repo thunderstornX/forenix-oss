@@ -46,10 +46,10 @@ export function CasesView() {
   return (
     <ViewShell
       title="Cases"
-      subtitle="Forensic cases — every evidence change recorded against the hash-chained audit log."
+      subtitle="Forensic cases  -  every evidence change recorded against the hash-chained audit log."
       actions={
         <>
-          <FilterInput value={filter} onChange={setFilter} placeholder="Filter…" />
+          <FilterInput value={filter} onChange={setFilter} placeholder="Filter..." />
           <button
             type="button"
             onClick={() => setOpen((o) => !o)}
@@ -69,7 +69,7 @@ export function CasesView() {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               className="mt-1 w-full rounded border border-[var(--border)] bg-[var(--background-elev)] px-2.5 py-1.5 text-[13px] outline-none focus:border-[var(--forensic)]"
-              placeholder="Operation …"
+              placeholder="Operation ..."
             />
           </label>
           <label className="block sm:col-span-2">
@@ -156,7 +156,7 @@ export function CasesView() {
         ))}
         {items.length === 0 && !list.isLoading && (
           <div className="glass col-span-full rounded-lg p-6 text-center text-[12px] text-[var(--foreground-muted)]">
-            No cases yet — use <span className="font-mono">New</span> above or seed the database.
+            No cases yet  -  use <span className="font-mono">New</span> above or seed the database.
           </div>
         )}
       </div>

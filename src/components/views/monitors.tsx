@@ -30,7 +30,7 @@ export function MonitorsView() {
                   {r.cadence}
                 </div>
                 <div className="mt-0.5 text-[13px] text-[var(--foreground)]">
-                  <span className="font-mono">{r.target}</span> · {r.targetType}
+                  <span className="font-mono">{r.target}</span> | {r.targetType}
                 </div>
               </div>
               <span
@@ -47,11 +47,11 @@ export function MonitorsView() {
             <div className="mt-3 grid grid-cols-2 gap-2 text-[11px]">
               <div className="rounded border border-[var(--border)] bg-[var(--background-elev)] p-2">
                 <div className="text-[10px] uppercase tracking-[0.18em] text-[var(--foreground-muted)]">Last run</div>
-                <div className="mt-0.5 text-[var(--foreground)]">{r.lastRunAt ? relTime(r.lastRunAt) : "—"}</div>
+                <div className="mt-0.5 text-[var(--foreground)]">{r.lastRunAt ? relTime(r.lastRunAt) : " - "}</div>
               </div>
               <div className="rounded border border-[var(--border)] bg-[var(--background-elev)] p-2">
                 <div className="text-[10px] uppercase tracking-[0.18em] text-[var(--foreground-muted)]">Next run</div>
-                <div className="mt-0.5 text-[var(--foreground)]">{r.nextRunAt ? relTime(r.nextRunAt) : "—"}</div>
+                <div className="mt-0.5 text-[var(--foreground)]">{r.nextRunAt ? relTime(r.nextRunAt) : " - "}</div>
               </div>
             </div>
 
@@ -61,7 +61,7 @@ export function MonitorsView() {
                 <ul className="mt-1 space-y-1">
                   {r.runs.map((run) => (
                     <li key={run.id} className="flex items-center justify-between rounded bg-[var(--background-elev-2)] px-2 py-1 text-[11px]">
-                      <span>{run.status} · {run.findingsCount} findings</span>
+                      <span>{run.status} | {run.findingsCount} findings</span>
                       <span className="text-[10px] text-[var(--foreground-muted)]">{relTime(run.startedAt)}</span>
                     </li>
                   ))}

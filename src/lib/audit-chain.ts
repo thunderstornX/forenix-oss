@@ -1,5 +1,5 @@
 /**
- * Pure hash-chain helpers — no Prisma, no `server-only` marker, so
+ * Pure hash-chain helpers  -  no Prisma, no `server-only` marker, so
  * the seed script and any non-Next tooling can import them.
  *
  * The runtime wrapper that ALSO appends to Prisma lives in

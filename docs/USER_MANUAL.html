@@ -128,22 +128,22 @@ h2 + p, h3 + p, h4 + p { page-break-before: avoid; }
 <body>
 
 <section class="cover">
-  <div class="eyebrow">forenix-oss · v0.1 · 2026-05</div>
+  <div class="eyebrow">forenix-oss | v0.1 | 2026-05</div>
   <h1 class="title">forenix-oss</h1>
-  <div class="subtitle">OSINT × Forensics — a step-by-step guide for analysts, examiners, and team leads.</div>
+  <div class="subtitle">OSINT x Forensics  -  a step-by-step guide for analysts, examiners, and team leads.</div>
   <div class="meta">
-    <b>Author:</b> Ali Murtaza Bhutto &nbsp;·&nbsp;
-    <b>Repository:</b> github.com/thunderstornX/forenix-oss &nbsp;·&nbsp;
+    <b>Author:</b> Ali Murtaza Bhutto &nbsp;|&nbsp;
+    <b>Repository:</b> github.com/thunderstornX/forenix-oss &nbsp;|&nbsp;
     <b>License:</b> MIT
   </div>
 </section>
 
 <main class="content">
-<h1>forenix-oss — User Manual</h1>
-<p><em>Version 0.1 · 2026-05</em></p>
+<h1>forenix-oss  -  User Manual</h1>
+<p><em>Version 0.1 | 2026-05</em></p>
 <p>Welcome to forenix-oss. This manual is for the analyst, the
 forensic examiner, and the team lead who&#39;ll be using the platform
-day to day. We assume zero prior knowledge — by the end of this
+day to day. We assume zero prior knowledge  -  by the end of this
 document you&#39;ll understand every feature, the workflow it serves,
 and the keystrokes that make it fast.</p>
 <p>The platform is screenshot-driven. Every figure in this manual is a
@@ -156,12 +156,12 @@ mocked-up in Figma.</p>
 <li><a href="#2-before-you-start">Before you start</a></li>
 <li><a href="#3-your-first-launch">Your first launch</a></li>
 <li><a href="#4-the-workspace-in-60-seconds">The workspace, in 60 seconds</a></li>
-<li><a href="#5-workflow-1--your-first-osint-investigation">Workflow 1 — Your first OSINT investigation</a></li>
-<li><a href="#6-workflow-2--bridge-findings-to-a-forensic-case">Workflow 2 — Bridge findings to a forensic case</a></li>
-<li><a href="#7-workflow-3--evidence--chain-of-custody">Workflow 3 — Evidence + chain of custody</a></li>
-<li><a href="#8-workflow-4--verify-the-audit-chain">Workflow 4 — Verify the audit chain</a></li>
-<li><a href="#9-workflow-5--generate-and-read-reports">Workflow 5 — Generate and read reports</a></li>
-<li><a href="#10-feature-reference--every-view">Feature reference — every view</a></li>
+<li><a href="#5-workflow-1--your-first-osint-investigation">Workflow 1  -  Your first OSINT investigation</a></li>
+<li><a href="#6-workflow-2--bridge-findings-to-a-forensic-case">Workflow 2  -  Bridge findings to a forensic case</a></li>
+<li><a href="#7-workflow-3--evidence--chain-of-custody">Workflow 3  -  Evidence + chain of custody</a></li>
+<li><a href="#8-workflow-4--verify-the-audit-chain">Workflow 4  -  Verify the audit chain</a></li>
+<li><a href="#9-workflow-5--generate-and-read-reports">Workflow 5  -  Generate and read reports</a></li>
+<li><a href="#10-feature-reference--every-view">Feature reference  -  every view</a></li>
 <li><a href="#11-working-with-the-ai-adapters">Working with the AI adapters</a></li>
 <li><a href="#12-keyboard-shortcuts--command-palette">Keyboard shortcuts + command palette</a></li>
 <li><a href="#13-tips-for-new-analysts">Tips for new analysts</a></li>
@@ -175,10 +175,10 @@ mocked-up in Figma.</p>
 <p>forenix-oss is an open-source platform that fuses two workflows
 that have always lived in separate tools:</p>
 <ul>
-<li><strong>OSINT (Open-Source Intelligence)</strong> — discovering, organising
+<li><strong>OSINT (Open-Source Intelligence)</strong>  -  discovering, organising
 and reasoning about a target using publicly-available
 information.</li>
-<li><strong>Digital forensics</strong> — taking material that may be entered into
+<li><strong>Digital forensics</strong>  -  taking material that may be entered into
 evidence, hashing it, tracking every change, and proving the
 custody chain hasn&#39;t been tampered with.</li>
 </ul>
@@ -206,8 +206,8 @@ instead.</p>
 under chain of custody.</li>
 <li>Verify the integrity of the audit chain yourself.</li>
 <li>Use every secondary view (network graph, monitors, AI lab,
-reports, …) and know what problem each one solves.</li>
-<li>Switch between AI adapters (mock, NVIDIA, OpenRouter, …) and
+reports, ...) and know what problem each one solves.</li>
+<li>Switch between AI adapters (mock, NVIDIA, OpenRouter, ...) and
 understand the tradeoffs.</li>
 </ol>
 <hr>
@@ -234,16 +234,16 @@ Brave, Arc) or recent Firefox / Safari.</li>
 <p>forenix-oss ships with a seed script that creates a complete demo
 workspace in one command:</p>
 <ul>
-<li><strong>3 users</strong> — <code>Admin</code>, <code>Jay Investigator</code>, <code>Sam Analyst</code>.</li>
+<li><strong>3 users</strong>  -  <code>Admin</code>, <code>Jay Investigator</code>, <code>Sam Analyst</code>.</li>
 <li><strong>2 investigations</strong>:<ul>
-<li><code>INV-2025-019 — Northwind Holdings</code> (status: <code>complete</code>,
-bridged to <code>CASE-2025-007 — Operation Sandstone</code>).</li>
-<li><code>INV-2025-020 — Mira Volkov</code> (status: <code>running</code> / <code>complete</code>
+<li><code>INV-2025-019  -  Northwind Holdings</code> (status: <code>complete</code>,
+bridged to <code>CASE-2025-007  -  Operation Sandstone</code>).</li>
+<li><code>INV-2025-020  -  Mira Volkov</code> (status: <code>running</code> / <code>complete</code>
 after the live demo run).</li>
 </ul>
 </li>
 <li><strong>1 seeded case</strong> with 3 evidence items, 2 branches, and 6
-commits — plus a second case auto-created when the live demo
+commits  -  plus a second case auto-created when the live demo
 bridges the second investigation.</li>
 <li>A valid 9-row hash-chained audit log to start with; the
 chain grows naturally as you operate.</li>
@@ -251,7 +251,7 @@ chain grows naturally as you operate.</li>
 <p>Every screenshot in this manual was taken <strong>after</strong> running the
 live demo, so the numbers and findings you see are the real
 output of hosted Large Language Models. Your numbers will look
-slightly different — the model returns slightly different findings
+slightly different  -  the model returns slightly different findings
 on every run, by design.</p>
 <hr>
 <h2>3. Your first launch</h2>
@@ -265,7 +265,7 @@ bun run db:seed
 bun run dev
 </code></pre>
 <p>Open <a href="http://localhost:3000">http://localhost:3000</a>. (The screenshots in this manual were
-taken at port 3737 — the port is configurable.)</p>
+taken at port 3737  -  the port is configurable.)</p>
 <h3>3.2 First screen</h3>
 <p>The landing view is the Dashboard. It pulls live counts from the
 database and renders both workflows on one pane.</p>
@@ -278,7 +278,7 @@ active view is highlighted in teal with a soft glow.</li>
 <li><strong>Top bar (centre).</strong> The current view&#39;s name + the active AI
 adapter chip + the version + the online status.</li>
 <li><strong>Stat cards.</strong> Investigations, Cases, Active monitors, AI
-adapter. Each is wired to a live query — refresh and the
+adapter. Each is wired to a live query  -  refresh and the
 numbers update.</li>
 <li><strong>Recent investigations + Open cases.</strong> Sortable preview rows
 pulled straight from the database.</li>
@@ -288,20 +288,20 @@ straight into the detail panel.</p>
 <hr>
 <h2>4. The workspace, in 60 seconds</h2>
 <p>The whole platform is one page (<code>/</code>) with a sidebar-driven view
-router. Switching views is <strong>instant</strong> — no route load, no
+router. Switching views is <strong>instant</strong>  -  no route load, no
 re-fetch unless you ask.</p>
 <h3>4.1 Sidebar</h3>
 <p><img src="file:///home/alim/Desktop/my_github_portfolio/repos/forenix-oss/docs/manual_screenshots/01-sidebar-tour.png" alt="Sidebar tour"></p>
 <ul>
-<li><strong>Brand</strong> (top-left) — the platform name + the &quot;OSINT ×
+<li><strong>Brand</strong> (top-left)  -  the platform name + the &quot;OSINT x
 Forensics&quot; tagline.</li>
-<li><strong>Search</strong> button — opens the global command palette (⌘K).</li>
-<li><strong>OSINT section</strong> — Dashboard, Investigations, Entity Graph,
+<li><strong>Search</strong> button  -  opens the global command palette (⌘K).</li>
+<li><strong>OSINT section</strong>  -  Dashboard, Investigations, Entity Graph,
 Monitors, Verification, Reports.</li>
-<li><strong>Pipeline section</strong> — the bridge runner.</li>
-<li><strong>Forensics section</strong> — Cases, Evidence, Network Graph,
+<li><strong>Pipeline section</strong>  -  the bridge runner.</li>
+<li><strong>Forensics section</strong>  -  Cases, Evidence, Network Graph,
 Branch Graph, AI Lab, Integrity, Audit, Reviews.</li>
-<li><strong>Collapse toggle</strong> (bottom-left) — slim mode with just icons.</li>
+<li><strong>Collapse toggle</strong> (bottom-left)  -  slim mode with just icons.</li>
 </ul>
 <p><img src="file:///home/alim/Desktop/my_github_portfolio/repos/forenix-oss/docs/manual_screenshots/03-sidebar-collapsed.png" alt="Sidebar, collapsed"></p>
 <h3>4.2 Top bar</h3>
@@ -309,11 +309,11 @@ Branch Graph, AI Lab, Integrity, Audit, Reviews.</li>
 <p>The top bar always shows:</p>
 <ul>
 <li>the <strong>active view&#39;s title</strong> (left);</li>
-<li>the <strong>active AI adapter</strong> (right) — useful when you&#39;ve switched
+<li>the <strong>active AI adapter</strong> (right)  -  useful when you&#39;ve switched
 to a real model and want to verify the chip says <code>nvidia</code> or
 <code>openrouter</code>;</li>
 <li>the <strong>version</strong> of the platform;</li>
-<li>the <strong>online</strong> status — green when the database + adapter are
+<li>the <strong>online</strong> status  -  green when the database + adapter are
 reachable.</li>
 </ul>
 <h3>4.3 Command palette (⌘K)</h3>
@@ -331,7 +331,7 @@ palette opens.</p>
 is the fastest way to move around the platform once your dataset
 gets non-trivial.</p>
 <hr>
-<h2>5. Workflow 1 — Your first OSINT investigation</h2>
+<h2>5. Workflow 1  -  Your first OSINT investigation</h2>
 <p>This is the workflow you&#39;ll run dozens of times a week. We&#39;ll
 walk through it slowly the first time.</p>
 <h3>5.1 Start at Investigations</h3>
@@ -344,42 +344,42 @@ walk through it slowly the first time.</p>
 chip (if it&#39;s been linked to a forensic case), and the time it
 was last updated.</li>
 <li>A filter input above the table lets you type to narrow the
-list — it matches against title, target, target type, status,
+list  -  it matches against title, target, target type, status,
 and priority.</li>
 <li>A <strong>+ New</strong> button opens the create-form.</li>
 </ul>
 <h3>5.2 Open one to see the detail</h3>
-<p>Click any row — let&#39;s pick <strong>INV-2025-019 — Northwind Holdings</strong>.</p>
+<p>Click any row  -  let&#39;s pick <strong>INV-2025-019  -  Northwind Holdings</strong>.</p>
 <p><img src="file:///home/alim/Desktop/my_github_portfolio/repos/forenix-oss/docs/manual_screenshots/20-investigation-detail.png" alt="Investigation detail"></p>
 <p>What you&#39;re looking at:</p>
 <ul>
-<li><strong>Header strip</strong> — target, target type, status, priority. All
+<li><strong>Header strip</strong>  -  target, target type, status, priority. All
 the at-a-glance metadata.</li>
 <li><strong>Bridge card (the green one).</strong> This investigation is already
-linked to <code>CASE-2025-007 — Operation Sandstone</code>. Click it and
+linked to <code>CASE-2025-007  -  Operation Sandstone</code>. Click it and
 the view switches straight into the case.</li>
 </ul>
 <p><img src="file:///home/alim/Desktop/my_github_portfolio/repos/forenix-oss/docs/manual_screenshots/21-investigation-bridge-chip.png" alt="The bridge chip in close-up"></p>
 <ul>
-<li><strong>Stat row</strong> — findings, entities, monitors, reports for this
+<li><strong>Stat row</strong>  -  findings, entities, monitors, reports for this
 investigation.</li>
-<li><strong>Findings list</strong> — every signal an agent produced, grouped by
+<li><strong>Findings list</strong>  -  every signal an agent produced, grouped by
 category. Each finding shows its confidence chip, priority,
 source, the reasoning trace, and (if it&#39;s been promoted) the
 evidence hash.</li>
 <li><strong>Action buttons on each finding row:</strong><ul>
-<li><strong>verify</strong> — flips the finding&#39;s confidence from <code>unverified</code>
+<li><strong>verify</strong>  -  flips the finding&#39;s confidence from <code>unverified</code>
 to <code>confirmed</code> and records you as the verifier. Writes a
 <code>verify_finding</code> audit row.</li>
-<li><strong>promote → evidence</strong> — only visible if the investigation is
+<li><strong>promote -> evidence</strong>  -  only visible if the investigation is
 bridged to a case AND the finding hasn&#39;t been promoted yet.
 Creates an Evidence row with its own initial commit and
 stamps <code>Finding.evidenceId</code>.</li>
 </ul>
 </li>
-<li><strong>Monitors / Reports</strong> — two side-by-side cards listing the
+<li><strong>Monitors / Reports</strong>  -  two side-by-side cards listing the
 monitor cadences and the published reports.</li>
-<li><strong>Audit trail</strong> (bottom) — every state change for this
+<li><strong>Audit trail</strong> (bottom)  -  every state change for this
 investigation, in chain order.</li>
 </ul>
 <h3>5.3 Run the pipeline against a fresh target</h3>
@@ -388,13 +388,13 @@ investigation, in chain order.</li>
 <p>The Pipeline runner is the headline feature. It takes an existing
 investigation, fans out the AI agents in parallel against the
 target, consolidates the findings, extracts entities, and
-generates a draft report — all auditable, all in one button.</p>
+generates a draft report  -  all auditable, all in one button.</p>
 <p><strong>To run:</strong></p>
 <ol>
 <li>Pick an investigation from the dropdown (or click one in
-<em>Recent investigations</em> below — clicking sets the selection).</li>
+<em>Recent investigations</em> below  -  clicking sets the selection).</li>
 <li>Toggle the agent groups you want to run. The defaults are
-<code>identity</code>, <code>infrastructure</code>, <code>social</code> — three covers most
+<code>identity</code>, <code>infrastructure</code>, <code>social</code>  -  three covers most
 targets.</li>
 <li>(Optional) override the AI adapter by passing
 <code>?adapter=nvidia</code> in the URL or <code>adapter:&quot;nvidia&quot;</code> in the
@@ -406,26 +406,26 @@ active adapter is the one in <code>.env</code>.</li>
 <p>While the pipeline runs:</p>
 <ul>
 <li>Each stage in the right-hand panel transitions
-<code>idle → running → done</code>.</li>
+<code>idle -> running -> done</code>.</li>
 <li>A <code>Loader2</code> spinner shows what&#39;s currently in flight.</li>
 </ul>
-<p>When the run completes (typically 30–90 seconds on hosted LLMs),
+<p>When the run completes (typically 30-90 seconds on hosted LLMs),
 the <em>Pipeline complete</em> card appears with the counts:</p>
 <ul>
-<li><strong>findings</strong> — how many discrete signals were produced.</li>
-<li><strong>entities</strong> — how many people / orgs / domains / IPs were
+<li><strong>findings</strong>  -  how many discrete signals were produced.</li>
+<li><strong>entities</strong>  -  how many people / orgs / domains / IPs were
 extracted from those findings.</li>
-<li><strong>relations</strong> — how many directed connections between entities
+<li><strong>relations</strong>  -  how many directed connections between entities
 were inferred.</li>
-<li><strong>report</strong> — a draft markdown report tied to the investigation.</li>
+<li><strong>report</strong>  -  a draft markdown report tied to the investigation.</li>
 </ul>
-<p>The next step — and this is what makes forenix-oss different — is
-the <strong>Open forensic case →</strong> button.</p>
+<p>The next step  -  and this is what makes forenix-oss different  -  is
+the <strong>Open forensic case -></strong> button.</p>
 <hr>
-<h2>6. Workflow 2 — Bridge findings to a forensic case</h2>
+<h2>6. Workflow 2  -  Bridge findings to a forensic case</h2>
 <p>This is the workflow that turns OSINT into evidence.</p>
 <h3>6.1 What the bridge does</h3>
-<p>Clicking <strong>Open forensic case →</strong> does five things in one
+<p>Clicking <strong>Open forensic case -></strong> does five things in one
 transaction:</p>
 <ol>
 <li><strong>Mints a Case</strong> with an auto-generated <code>CASE-YYYY-NNN</code>
@@ -433,7 +433,7 @@ number, status <code>open</code>, priority inherited from the
 investigation.</li>
 <li><strong>Creates a <code>main</code> branch</strong> on that case (forensic cases are
 structured like a Git repo).</li>
-<li><strong>Sets <code>Investigation.caseId</code></strong> — the link that powers the
+<li><strong>Sets <code>Investigation.caseId</code></strong>  -  the link that powers the
 green bridge chip you saw earlier.</li>
 <li><strong>Promotes every finding</strong> to an Evidence row, computes a
 SHA-256 over the finding&#39;s content, and adds an initial <code>add:</code>
@@ -448,16 +448,16 @@ stays valid throughout.</p>
 <p><img src="file:///home/alim/Desktop/my_github_portfolio/repos/forenix-oss/docs/manual_screenshots/41-case-detail.png" alt="Bridged case detail"></p>
 <p>Top to bottom:</p>
 <ul>
-<li><strong>Case header</strong> — number, status, priority, progress bar.</li>
-<li><strong>Linked investigations card</strong> — every investigation that
+<li><strong>Case header</strong>  -  number, status, priority, progress bar.</li>
+<li><strong>Linked investigations card</strong>  -  every investigation that
 feeds this case. Click any row to jump back to its
 investigation detail.</li>
-<li><strong>Stat row</strong> — evidence, branches, merge requests, assignees.</li>
-<li><strong>Evidence list</strong> — and this is the heart of the page. Each
+<li><strong>Stat row</strong>  -  evidence, branches, merge requests, assignees.</li>
+<li><strong>Evidence list</strong>  -  and this is the heart of the page. Each
 evidence row shows:<ul>
 <li>name, type, MIME, description,</li>
 <li><strong>truncated SHA-256 hash</strong> in monospace,</li>
-<li><strong>status chip</strong> — <code>collected</code> / <code>verified</code> / <code>sealed</code>,</li>
+<li><strong>status chip</strong>  -  <code>collected</code> / <code>verified</code> / <code>sealed</code>,</li>
 <li>a <strong>Seal</strong> button (we&#39;ll get to it),</li>
 <li>and the <strong>full commit chain inline</strong>.</li>
 </ul>
@@ -465,11 +465,11 @@ evidence row shows:<ul>
 </ul>
 <p><img src="file:///home/alim/Desktop/my_github_portfolio/repos/forenix-oss/docs/manual_screenshots/42-case-detail-full.png" alt="Case detail, full page"></p>
 <ul>
-<li><strong>Branches sidebar</strong> — every branch on this case (<code>main</code>,
+<li><strong>Branches sidebar</strong>  -  every branch on this case (<code>main</code>,
 <code>evidence-review</code>, etc.), each colour-coded.</li>
-<li><strong>Assignees + agents</strong> — humans and AI agents working on this
+<li><strong>Assignees + agents</strong>  -  humans and AI agents working on this
 case.</li>
-<li><strong>Recent audit entries</strong> — the last 10 audit-chain rows
+<li><strong>Recent audit entries</strong>  -  the last 10 audit-chain rows
 scoped to this case.</li>
 </ul>
 <h3>6.3 The Cases list</h3>
@@ -480,7 +480,7 @@ high-level counts. Click any card to drill in. The inline filter
 matches across <code>title</code>, <code>caseNumber</code>, <code>status</code>, and <code>priority</code>.</p>
 <p><img src="file:///home/alim/Desktop/my_github_portfolio/repos/forenix-oss/docs/manual_screenshots/43-cases-filter.png" alt="Filtering the cases list"></p>
 <hr>
-<h2>7. Workflow 3 — Evidence + chain of custody</h2>
+<h2>7. Workflow 3  -  Evidence + chain of custody</h2>
 <p>Evidence is the unit of forensic work. Each Evidence row carries
 a content hash + a commit history. Forenix-oss is one of the very
 few platforms where every change to a piece of evidence shows up
@@ -495,7 +495,7 @@ inventory the state of an entire investigation.</p>
 parent case, commit count, added-at. Filter works across all of
 these.</p>
 <h3>7.2 Seal an evidence row</h3>
-<p>A <code>sealed</code> evidence row is immutable — no further commits are
+<p>A <code>sealed</code> evidence row is immutable  -  no further commits are
 accepted, and the row&#39;s hash is locked into the chain.</p>
 <p>To seal, click the <strong>Seal</strong> button on the right side of any
 evidence card on the case-detail page. The status chip flips to
@@ -518,7 +518,7 @@ verified state, and time.</li>
 </ul>
 <p>This is the page you&#39;d put in front of a sceptical reviewer.</p>
 <hr>
-<h2>8. Workflow 4 — Verify the audit chain</h2>
+<h2>8. Workflow 4  -  Verify the audit chain</h2>
 <p>The audit chain is what makes forenix-oss claim &quot;court-grade
 custody.&quot; It&#39;s a SHA-256 forward chain over every state-changing
 write.</p>
@@ -529,12 +529,12 @@ write.</p>
 <ul>
 <li>the SHA-256 hash of the row itself (monospace, truncated for
 display);</li>
-<li>the <strong>previous row&#39;s hash</strong> inline directly below — visual
+<li>the <strong>previous row&#39;s hash</strong> inline directly below  -  visual
 proof of the chain;</li>
 <li>the action (<code>pipeline_started</code>, <code>agent_identity_completed</code>,
-<code>promote_finding_to_evidence</code>, <code>seal_evidence</code>, …);</li>
-<li>the entity it acted on (Investigation / Case / Finding / …);</li>
-<li>the scope — clickable jump links to the investigation and/or
+<code>promote_finding_to_evidence</code>, <code>seal_evidence</code>, ...);</li>
+<li>the entity it acted on (Investigation / Case / Finding / ...);</li>
+<li>the scope  -  clickable jump links to the investigation and/or
 case;</li>
 <li>the relative time.</li>
 </ul>
@@ -553,10 +553,10 @@ table in <code>createdAt</code> order, recomputes every row&#39;s hash from the
 previous row&#39;s <code>hash</code>, and reports the result.</p>
 <p><img src="file:///home/alim/Desktop/my_github_portfolio/repos/forenix-oss/docs/manual_screenshots/142-integrity-verified.png" alt="Integrity, verified"></p>
 <p>The green panel above is the real screenshot from a verified
-chain on the demo dataset — <em>21 entries, every hash recomputes to
+chain on the demo dataset  -  <em>21 entries, every hash recomputes to
 the stored value</em>.</p>
 <p>If verification fails, the panel turns red and shows the row id
-where the chain broke, the expected hash, and the stored hash —
+where the chain broke, the expected hash, and the stored hash  - 
 all the information a forensic investigator needs to triage the
 event.</p>
 <h3>8.3 Verifying the chain offline</h3>
@@ -576,20 +576,20 @@ print(&quot;chain OK&quot;)
 </code></pre>
 <p>12 lines of Python. That&#39;s the entire trust anchor.</p>
 <hr>
-<h2>9. Workflow 5 — Generate and read reports</h2>
+<h2>9. Workflow 5  -  Generate and read reports</h2>
 <h3>9.1 The Reports list</h3>
 <p>Click <strong>Reports</strong> in the sidebar.</p>
 <p><img src="file:///home/alim/Desktop/my_github_portfolio/repos/forenix-oss/docs/manual_screenshots/120-reports-list.png" alt="Reports list"></p>
-<p>The list shows every report — both <em>investigation</em> reports
+<p>The list shows every report  -  both <em>investigation</em> reports
 (sectioned JSON, the Argus shape) and <em>case</em> reports (markdown,
 the ForenX shape). Each card shows source, status, finding count,
 generator, and timestamps. Click <strong>Open</strong> to read.</p>
 <h3>9.2 Reading a report</h3>
 <p>The detail view auto-detects whether the report has <code>sections</code>
-(JSON) or <code>content</code> (markdown) — or both — and renders each
+(JSON) or <code>content</code> (markdown)  -  or both  -  and renders each
 accordingly.</p>
 <p><img src="file:///home/alim/Desktop/my_github_portfolio/repos/forenix-oss/docs/manual_screenshots/121-report-detail.png" alt="Report detail"></p>
-<p>For an analyst, this is the closest thing to a &quot;deliverable&quot; —
+<p>For an analyst, this is the closest thing to a &quot;deliverable&quot;  - 
 copy/paste the section text into your write-up, or export the
 markdown directly.</p>
 <h3>9.3 How a report gets generated</h3>
@@ -598,15 +598,15 @@ Pipeline runner. The active AI adapter is called with
 <code>generateReport(investigation, findings)</code> and asked to produce a
 markdown report in this shape:</p>
 <ul>
-<li><code># Executive Summary</code> — 3-5 sentences.</li>
-<li><code>## Findings</code> — grouped by agent group.</li>
-<li><code>## Entity overview</code> — names mentioned in the findings.</li>
-<li><code>## Recommended next steps</code> — 3-5 bullet points.</li>
+<li><code># Executive Summary</code>  -  3-5 sentences.</li>
+<li><code>## Findings</code>  -  grouped by agent group.</li>
+<li><code>## Entity overview</code>  -  names mentioned in the findings.</li>
+<li><code>## Recommended next steps</code>  -  3-5 bullet points.</li>
 </ul>
 <p>The report is stored on the <code>Report</code> table with <code>source = &quot;investigation&quot;</code> and gets attached to the parent investigation.
-You don&#39;t need to do anything — just run the pipeline.</p>
+You don&#39;t need to do anything  -  just run the pipeline.</p>
 <hr>
-<h2>10. Feature reference — every view</h2>
+<h2>10. Feature reference  -  every view</h2>
 <p>This section is a sweep across every view. For each one we
 explain <em>what it is</em>, <em>what problem it solves</em>, and <em>what it
 deliberately does not claim to do</em>.</p>
@@ -647,9 +647,9 @@ metadata + hash; bytes will land in Phase 8).</li>
 <h3>10.5 Evidence</h3>
 <ul>
 <li><strong>What:</strong> the cross-case evidence inventory.</li>
-<li><strong>Solves:</strong> &quot;find all evidence with hash starting <code>0ca…</code>&quot; /
+<li><strong>Solves:</strong> &quot;find all evidence with hash starting <code>0ca...</code>&quot; /
 &quot;show me every unverified item across all cases.&quot;</li>
-<li><strong>Does not:</strong> pivot/group yet — it&#39;s a flat table.</li>
+<li><strong>Does not:</strong> pivot/group yet  -  it&#39;s a flat table.</li>
 </ul>
 <h3>10.6 Branch Graph</h3>
 <p><img src="file:///home/alim/Desktop/my_github_portfolio/repos/forenix-oss/docs/manual_screenshots/60-branch-graph.png" alt="Branch graph"></p>
@@ -670,7 +670,7 @@ target.&quot;</li>
 <h3>10.8 Network Graph</h3>
 <p><img src="file:///home/alim/Desktop/my_github_portfolio/repos/forenix-oss/docs/manual_screenshots/80-network-graph.png" alt="Network graph"></p>
 <ul>
-<li><strong>What:</strong> cross-case knowledge graph — users, agents,
+<li><strong>What:</strong> cross-case knowledge graph  -  users, agents,
 investigations, cases, evidence, entities, all on one canvas.</li>
 <li><strong>Solves:</strong> seeing what connects two cases or two analysts.</li>
 <li><strong>Does not:</strong> zoom / pan yet; labels overlap above ~250 nodes.</li>
@@ -680,7 +680,7 @@ investigations, cases, evidence, entities, all on one canvas.</li>
 <ul>
 <li><strong>What:</strong> cadenced re-runs of an investigation pipeline.</li>
 <li><strong>Solves:</strong> keeping targets fresh after the report ships.</li>
-<li><strong>Does not:</strong> actually wake the monitor — the background
+<li><strong>Does not:</strong> actually wake the monitor  -  the background
 scheduler is Phase 7. The data layer is ready.</li>
 </ul>
 <h3>10.10 Verification</h3>
@@ -722,7 +722,7 @@ the system; you can&#39;t insert a row out-of-band).</li>
 <ul>
 <li><strong>What:</strong> one-button replay of the entire chain.</li>
 <li><strong>Solves:</strong> proving tamper-evidence.</li>
-<li><strong>Does not:</strong> use Merkle batching yet — linear replay is fast
+<li><strong>Does not:</strong> use Merkle batching yet  -  linear replay is fast
 enough for sub-10M-row chains.</li>
 </ul>
 <h3>10.15 Reviews</h3>
@@ -731,18 +731,18 @@ enough for sub-10M-row chains.</li>
 <li><strong>What:</strong> list of merge requests across all cases.</li>
 <li><strong>Solves:</strong> second-pair-of-eyes review before evidence is
 sealed.</li>
-<li><strong>Does not:</strong> offer inline merge/approve buttons yet — that
+<li><strong>Does not:</strong> offer inline merge/approve buttons yet  -  that
 ships in Phase 4 polish.</li>
 </ul>
 <hr>
 <h2>11. Working with the AI adapters</h2>
 <p>forenix-oss ships with six AI adapters. You can switch between
 them by editing one line in <code>.env</code>:</p>
-<pre><code class="language-env">AI_ADAPTER=mock         # default — deterministic seeded output
+<pre><code class="language-env">AI_ADAPTER=mock         # default  -  deterministic seeded output
 # AI_ADAPTER=ollama     # local Ollama HTTP API
 # AI_ADAPTER=glm        # Zhipu AI GLM-4 / GLM-5
 # AI_ADAPTER=claude     # Anthropic Claude (SaaS-gated)
-# AI_ADAPTER=openrouter # OpenRouter proxy → many models
+# AI_ADAPTER=openrouter # OpenRouter proxy -> many models
 # AI_ADAPTER=nvidia     # NVIDIA NIM hosted catalogue
 </code></pre>
 <p>After changing the value, restart the dev server. The top-bar
@@ -754,8 +754,8 @@ the pipeline-run body to override for a single run:</p>
   -d &#39;{&quot;agentGroups&quot;:[&quot;identity&quot;,&quot;social&quot;],&quot;adapter&quot;:&quot;openrouter&quot;}&#39; \
   http://localhost:3000/api/pipeline/run/&lt;INVESTIGATION_ID&gt;
 </code></pre>
-<p>Use this when you want to A/B two models on the same target —
-say, NVIDIA&#39;s Llama-3.3-70B vs OpenRouter&#39;s <code>gpt-oss-120b:free</code> —
+<p>Use this when you want to A/B two models on the same target  - 
+say, NVIDIA&#39;s Llama-3.3-70B vs OpenRouter&#39;s <code>gpt-oss-120b:free</code>  - 
 and compare findings side-by-side.</p>
 <h3>11.2 Picking an adapter</h3>
 <table>
@@ -775,7 +775,7 @@ and compare findings side-by-side.</p>
 </tr>
 <tr>
 <td><code>openrouter</code></td>
-<td>the most flexibility — one key, dozens of models</td>
+<td>the most flexibility  -  one key, dozens of models</td>
 </tr>
 <tr>
 <td><code>nvidia</code></td>
@@ -807,12 +807,12 @@ and compare findings side-by-side.</p>
 <tr>
 <td><code>nvidia</code></td>
 <td>free dev tier</td>
-<td>≈ 45-60 s</td>
+<td>~ 45-60 s</td>
 </tr>
 <tr>
 <td><code>openrouter</code> (<code>gpt-oss-120b:free</code>)</td>
 <td>$0</td>
-<td>≈ 80 s</td>
+<td>~ 80 s</td>
 </tr>
 <tr>
 <td><code>openrouter</code> (paid models)</td>
@@ -876,7 +876,7 @@ adapter you use. The adapter swap only affects the <em>quality</em> and
 <ul>
 <li>Type to filter across nav items, investigations, cases, and
 reports.</li>
-<li><strong>↑ / ↓</strong> to navigate.</li>
+<li><strong>^ / v</strong> to navigate.</li>
 <li><strong>⏎ Enter</strong> to open.</li>
 <li><strong>Esc</strong> to close.</li>
 </ul>
@@ -884,11 +884,11 @@ reports.</li>
 case or investigation by number/title.</p>
 <h3>12.3 Other useful shortcuts</h3>
 <ul>
-<li><strong>Click any audit row&#39;s investigation/case scope chip</strong> —
+<li><strong>Click any audit row&#39;s investigation/case scope chip</strong>  - 
 switches view + activates the right detail panel in one click.</li>
-<li><strong>Click the bridge chip on an investigation</strong> — opens its
+<li><strong>Click the bridge chip on an investigation</strong>  -  opens its
 linked case.</li>
-<li><strong>Click a finding&#39;s <em>promote → evidence</em> button</strong> — does the
+<li><strong>Click a finding&#39;s <em>promote -> evidence</em> button</strong>  -  does the
 promotion + writes the audit row + invalidates the queries that
 feed the surrounding UI.</li>
 </ul>
@@ -913,12 +913,12 @@ is the same workflow as Git, and for the same reason.</p>
 <h3>13.4 Filter before scrolling</h3>
 <p>Every list view supports an inline filter. Use it. The platform
 scales to thousands of investigations and tens of thousands of
-findings — scrolling does not.</p>
+findings  -  scrolling does not.</p>
 <h3>13.5 Trust the chain</h3>
 <p>When the Integrity view turns green, it is genuinely green. The
 chain is cheap to verify (linear pass over a single table) and
 trivial to reproduce offline. Don&#39;t accept &quot;trust us&quot; answers
-from anyone — including us.</p>
+from anyone  -  including us.</p>
 <hr>
 <h2>14. Troubleshooting</h2>
 <h3>14.1 The dev server doesn&#39;t start</h3>
@@ -927,11 +927,11 @@ bun run db:push  # re-apply the schema
 bun run db:seed  # re-seed
 bun run dev
 </code></pre>
-<p>If <code>bun</code> isn&#39;t installed, you can use <code>node</code> directly — <code>next dev</code> works the same. The seed script requires <code>tsx</code>, which is
+<p>If <code>bun</code> isn&#39;t installed, you can use <code>node</code> directly  -  <code>next dev</code> works the same. The seed script requires <code>tsx</code>, which is
 already in <code>devDependencies</code>.</p>
 <h3>14.2 The Audit Integrity view turns red</h3>
 <p>The chain has been mutated outside the platform. Do <strong>not</strong> try
-to &quot;fix&quot; it — the integrity guarantee depends on this being
+to &quot;fix&quot; it  -  the integrity guarantee depends on this being
 impossible to fix invisibly. Instead:</p>
 <ol>
 <li>Note the <code>brokenAt</code> row id and timestamp.</li>
@@ -939,7 +939,7 @@ impossible to fix invisibly. Instead:</p>
 writes around that timestamp.</li>
 <li>Escalate per your incident-response policy.</li>
 </ol>
-<p>The chain remains broken until the next legitimate write — at
+<p>The chain remains broken until the next legitimate write  -  at
 which point the <code>brokenAt</code> row&#39;s prevHash is no longer the
 &quot;tip&quot; of the chain, but it remains visible to all future
 verifies.</p>
@@ -957,12 +957,12 @@ whatever you set as your log path).</li>
 <p>You haven&#39;t seeded the database. Run:</p>
 <pre><code class="language-bash">bun run db:seed
 </code></pre>
-<p>…or create one with the <strong>+ New</strong> button on the Investigations
+<p>...or create one with the <strong>+ New</strong> button on the Investigations
 view.</p>
 <h3>14.5 &quot;Pipeline 500&quot; right after the run</h3>
 <p>The platform completed the run but failed to serialize the
 response (we&#39;ve fixed every BigInt path in 0.1, but a future
-field might trip this again). The chain is still valid — refresh
+field might trip this again). The chain is still valid  -  refresh
 the investigation detail to see the findings landed.</p>
 <hr>
 <h2>15. Frequently asked questions</h2>
@@ -971,11 +971,11 @@ the investigation detail to see the findings landed.</p>
 to the configured AI adapter&#39;s API endpoint (you control that
 via <code>.env</code>).</p>
 <h3>Can I use a locally-hosted LLM?</h3>
-<p>Yes — the <code>ollama</code> adapter is built for exactly that. Pull a
+<p>Yes  -  the <code>ollama</code> adapter is built for exactly that. Pull a
 model with <code>ollama pull qwen2.5:7b-instruct</code>, set
 <code>AI_ADAPTER=ollama</code>, restart the dev server.</p>
 <h3>Can a non-technical team member use this?</h3>
-<p>Yes — the entire daily workflow is in the web UI. The only thing
+<p>Yes  -  the entire daily workflow is in the web UI. The only thing
 you need a terminal for is the initial install + the seed. After
 that, point your browser at <code>localhost:3000</code> and never look back.</p>
 <h3>How big can the audit chain get?</h3>
@@ -990,7 +990,7 @@ For zero outbound traffic, use <code>ollama</code> or <code>mock</code>.</p>
 <h3>Can I cite a forenix-oss case in a court filing?</h3>
 <p>The chain-of-custody methodology is documented and reproducible
 (see <code>docs/07-SECURITY.md</code>). Whether a court accepts it is a
-local matter — we&#39;d love to hear from any user who runs this
+local matter  -  we&#39;d love to hear from any user who runs this
 through their first admissibility argument.</p>
 <hr>
 <h2>16. Glossary</h2>
@@ -1003,7 +1003,7 @@ through their first admissibility argument.</p>
 </thead>
 <tbody><tr>
 <td><strong>Adapter</strong></td>
-<td>A concrete implementation of the AI interface — <code>mock</code>, <code>ollama</code>, <code>glm</code>, <code>claude</code>, <code>openrouter</code>, <code>nvidia</code>. Pluggable, swappable with one env var.</td>
+<td>A concrete implementation of the AI interface  -  <code>mock</code>, <code>ollama</code>, <code>glm</code>, <code>claude</code>, <code>openrouter</code>, <code>nvidia</code>. Pluggable, swappable with one env var.</td>
 </tr>
 <tr>
 <td><strong>Agent group</strong></td>
@@ -1035,7 +1035,7 @@ through their first admissibility argument.</p>
 </tr>
 <tr>
 <td><strong>Entity</strong></td>
-<td>A normalised actor in the OSINT graph — person, org, domain, IP, email, phone, account, location.</td>
+<td>A normalised actor in the OSINT graph  -  person, org, domain, IP, email, phone, account, location.</td>
 </tr>
 <tr>
 <td><strong>Evidence</strong></td>
@@ -1059,7 +1059,7 @@ through their first admissibility argument.</p>
 </tr>
 <tr>
 <td><strong>Pipeline</strong></td>
-<td>The end-to-end run that orchestrates <code>analyzePipeline → extractEntities → generateReport</code> over the AI adapter.</td>
+<td>The end-to-end run that orchestrates <code>analyzePipeline -> extractEntities -> generateReport</code> over the AI adapter.</td>
 </tr>
 <tr>
 <td><strong>Promote</strong></td>

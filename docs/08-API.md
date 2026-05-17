@@ -1,10 +1,10 @@
-# API Reference — forenix-oss
+# API Reference  -  forenix-oss
 
-All routes are JSON. Response shape is always `{ data: … }` or
+All routes are JSON. Response shape is always `{ data: ... }` or
 `{ error: code, details?: msg }`. POST/PUT/PATCH bodies are
 Zod-validated; an invalid body returns `400 invalid_body`.
 
-Authentication is **not yet enforced** in 0.1 — every route is
+Authentication is **not yet enforced** in 0.1  -  every route is
 open in the OSS build. SaaS adds session cookies + RBAC checks.
 
 ---
@@ -34,15 +34,15 @@ Returns every investigation, newest first.
 {
   "data": [
     {
-      "id": "cmp…",
-      "title": "INV-2025-019 — Northwind Holdings",
+      "id": "cmp...",
+      "title": "INV-2025-019  -  Northwind Holdings",
       "target": "northwind-holdings.io",
       "targetType": "domain",
       "status": "complete",
       "priority": "high",
       "createdAt": "2026-05-13T01:08:45.223Z",
-      "updatedAt": "…",
-      "caseId": "cmp…",
+      "updatedAt": "...",
+      "caseId": "cmp...",
       "_count": { "findings": 3, "monitors": 1, "reports": 1 }
     }
   ]
@@ -55,7 +55,7 @@ Body (Zod):
 
 ```jsonc
 {
-  "title": "INV-2025-021 — example.com",
+  "title": "INV-2025-021  -  example.com",
   "target": "example.com",
   "targetType": "domain",        // person | organization | domain | ip | username | phone | image | compound
   "objective": "1-line statement of intent",
@@ -63,7 +63,7 @@ Body (Zod):
 }
 ```
 
-Response: `201` with the created row in `{ data: … }`. Writes one
+Response: `201` with the created row in `{ data: ... }`. Writes one
 audit row (`create_investigation`).
 
 ### `GET /api/investigations/:id`
@@ -94,13 +94,13 @@ Response `201`:
 ```jsonc
 {
   "data": {
-    "investigationId": "…",
+    "investigationId": "...",
     "adapter": "nvidia",
     "agentGroups": ["identity","infrastructure","social"],
     "findings": 11,
     "entities": 5,
     "relations": 7,
-    "report": { "id": "…", "title": "…" }
+    "report": { "id": "...", "title": "..." }
   }
 }
 ```
@@ -128,7 +128,7 @@ Response `201`:
 ```jsonc
 {
   "data": {
-    "case": { "id": "…", "caseNumber": "CASE-2026-002", "title": "…", "status": "open" },
+    "case": { "id": "...", "caseNumber": "CASE-2026-002", "title": "...", "status": "open" },
     "promoted": 13,
     "alreadyLinked": false
   }
@@ -167,8 +167,8 @@ Body:
 
 ```jsonc
 {
-  "title": "Operation …",
-  "description": "…",
+  "title": "Operation ...",
+  "description": "...",
   "priority": "medium"
 }
 ```
@@ -181,13 +181,13 @@ Full detail: evidence rows with inline commit chain, branches, MRs,
 assignments, agents, linked investigations, reports, metrics, last
 50 audit rows.
 
-`Evidence.size` is BigInt — coerced to string on the wire.
+`Evidence.size` is BigInt  -  coerced to string on the wire.
 
 ---
 
 ## Evidence
 
-### `GET /api/evidence?caseId=…`
+### `GET /api/evidence?caseId=...`
 
 Without `caseId`: every evidence row across every case. With
 `caseId`: just that case's items. Each row carries
@@ -202,7 +202,7 @@ No body. Flips `status="sealed"`, writes a `seal` commit on
 
 ## Entities
 
-### `GET /api/entities?investigationId=…`
+### `GET /api/entities?investigationId=...`
 
 Returns every entity + every relation. When `investigationId` is
 omitted, returns the global graph (capped at 500 relations + 200
@@ -211,11 +211,11 @@ unattached entities).
 ```jsonc
 {
   "data": {
-    "entities": [{ "id": "…", "name": "…", "type": "person", "properties": {…} }],
+    "entities": [{ "id": "...", "name": "...", "type": "person", "properties": {...} }],
     "relations": [
-      { "id": "…", "from": "<entityId>", "to": "<entityId>",
+      { "id": "...", "from": "<entityId>", "to": "<entityId>",
         "relationType": "owns", "confidence": "confirmed",
-        "investigationId": "…" }
+        "investigationId": "..." }
     ]
   }
 }
@@ -241,7 +241,7 @@ Reports detail merges Argus-style `sections` (JSON) and ForenX-style
 
 ## Audit + integrity
 
-### `GET /api/audit?investigationId=…&caseId=…&limit=…`
+### `GET /api/audit?investigationId=...&caseId=...&limit=...`
 
 Audit rows in `createdAt` ascending order. `limit` caps at 1000.
 
@@ -272,14 +272,14 @@ or, on failure:
 ### `GET /api/network`
 
 Union of users, agents, investigations, cases, evidence, entities
-with derived edges (case → evidence, inv → case bridge, finding →
+with derived edges (case -> evidence, inv -> case bridge, finding ->
 evidence promotion, entity relations, case assignments, agent
 assignments).
 
 ```jsonc
 {
   "data": {
-    "nodes": [{ "id": "user:abc", "kind": "user", "label": "…", "meta": {…} }],
+    "nodes": [{ "id": "user:abc", "kind": "user", "label": "...", "meta": {...} }],
     "edges": [{ "from": "user:abc", "to": "case:xyz", "type": "lead" }]
   }
 }
@@ -303,4 +303,4 @@ assignments).
 | `400` | Body validation failed |
 | `404` | Not found |
 | `409` | Conflict (e.g., already promoted, already sealed) |
-| `500` | Unhandled server error — check the dev log |
+| `500` | Unhandled server error  -  check the dev log |

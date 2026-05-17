@@ -1,10 +1,10 @@
-# forenix-oss — User Manual
+# forenix-oss  -  User Manual
 
-*Version 0.1 · 2026-05*
+*Version 0.1 | 2026-05*
 
 Welcome to forenix-oss. This manual is for the analyst, the
 forensic examiner, and the team lead who'll be using the platform
-day to day. We assume zero prior knowledge — by the end of this
+day to day. We assume zero prior knowledge  -  by the end of this
 document you'll understand every feature, the workflow it serves,
 and the keystrokes that make it fast.
 
@@ -20,12 +20,12 @@ mocked-up in Figma.
 2. [Before you start](#2-before-you-start)
 3. [Your first launch](#3-your-first-launch)
 4. [The workspace, in 60 seconds](#4-the-workspace-in-60-seconds)
-5. [Workflow 1 — Your first OSINT investigation](#5-workflow-1--your-first-osint-investigation)
-6. [Workflow 2 — Bridge findings to a forensic case](#6-workflow-2--bridge-findings-to-a-forensic-case)
-7. [Workflow 3 — Evidence + chain of custody](#7-workflow-3--evidence--chain-of-custody)
-8. [Workflow 4 — Verify the audit chain](#8-workflow-4--verify-the-audit-chain)
-9. [Workflow 5 — Generate and read reports](#9-workflow-5--generate-and-read-reports)
-10. [Feature reference — every view](#10-feature-reference--every-view)
+5. [Workflow 1  -  Your first OSINT investigation](#5-workflow-1--your-first-osint-investigation)
+6. [Workflow 2  -  Bridge findings to a forensic case](#6-workflow-2--bridge-findings-to-a-forensic-case)
+7. [Workflow 3  -  Evidence + chain of custody](#7-workflow-3--evidence--chain-of-custody)
+8. [Workflow 4  -  Verify the audit chain](#8-workflow-4--verify-the-audit-chain)
+9. [Workflow 5  -  Generate and read reports](#9-workflow-5--generate-and-read-reports)
+10. [Feature reference  -  every view](#10-feature-reference--every-view)
 11. [Working with the AI adapters](#11-working-with-the-ai-adapters)
 12. [Keyboard shortcuts + command palette](#12-keyboard-shortcuts--command-palette)
 13. [Tips for new analysts](#13-tips-for-new-analysts)
@@ -42,10 +42,10 @@ mocked-up in Figma.
 forenix-oss is an open-source platform that fuses two workflows
 that have always lived in separate tools:
 
-- **OSINT (Open-Source Intelligence)** — discovering, organising
+- **OSINT (Open-Source Intelligence)**  -  discovering, organising
   and reasoning about a target using publicly-available
   information.
-- **Digital forensics** — taking material that may be entered into
+- **Digital forensics**  -  taking material that may be entered into
   evidence, hashing it, tracking every change, and proving the
   custody chain hasn't been tampered with.
 
@@ -76,8 +76,8 @@ By the end of this manual you'll be able to:
    under chain of custody.
 3. Verify the integrity of the audit chain yourself.
 4. Use every secondary view (network graph, monitors, AI lab,
-   reports, …) and know what problem each one solves.
-5. Switch between AI adapters (mock, NVIDIA, OpenRouter, …) and
+   reports, ...) and know what problem each one solves.
+5. Switch between AI adapters (mock, NVIDIA, OpenRouter, ...) and
    understand the tradeoffs.
 
 ---
@@ -107,14 +107,14 @@ By the end of this manual you'll be able to:
 forenix-oss ships with a seed script that creates a complete demo
 workspace in one command:
 
-- **3 users** — `Admin`, `Jay Investigator`, `Sam Analyst`.
+- **3 users**  -  `Admin`, `Jay Investigator`, `Sam Analyst`.
 - **2 investigations**:
-  - `INV-2025-019 — Northwind Holdings` (status: `complete`,
-    bridged to `CASE-2025-007 — Operation Sandstone`).
-  - `INV-2025-020 — Mira Volkov` (status: `running` / `complete`
+  - `INV-2025-019  -  Northwind Holdings` (status: `complete`,
+    bridged to `CASE-2025-007  -  Operation Sandstone`).
+  - `INV-2025-020  -  Mira Volkov` (status: `running` / `complete`
     after the live demo run).
 - **1 seeded case** with 3 evidence items, 2 branches, and 6
-  commits — plus a second case auto-created when the live demo
+  commits  -  plus a second case auto-created when the live demo
   bridges the second investigation.
 - A valid 9-row hash-chained audit log to start with; the
   chain grows naturally as you operate.
@@ -122,7 +122,7 @@ workspace in one command:
 Every screenshot in this manual was taken **after** running the
 live demo, so the numbers and findings you see are the real
 output of hosted Large Language Models. Your numbers will look
-slightly different — the model returns slightly different findings
+slightly different  -  the model returns slightly different findings
 on every run, by design.
 
 ---
@@ -142,7 +142,7 @@ bun run dev
 ```
 
 Open <http://localhost:3000>. (The screenshots in this manual were
-taken at port 3737 — the port is configurable.)
+taken at port 3737  -  the port is configurable.)
 
 ### 3.2 First screen
 
@@ -159,7 +159,7 @@ What you're looking at:
 - **Top bar (centre).** The current view's name + the active AI
   adapter chip + the version + the online status.
 - **Stat cards.** Investigations, Cases, Active monitors, AI
-  adapter. Each is wired to a live query — refresh and the
+  adapter. Each is wired to a live query  -  refresh and the
   numbers update.
 - **Recent investigations + Open cases.** Sortable preview rows
   pulled straight from the database.
@@ -172,22 +172,22 @@ straight into the detail panel.
 ## 4. The workspace, in 60 seconds
 
 The whole platform is one page (`/`) with a sidebar-driven view
-router. Switching views is **instant** — no route load, no
+router. Switching views is **instant**  -  no route load, no
 re-fetch unless you ask.
 
 ### 4.1 Sidebar
 
 ![Sidebar tour](manual_screenshots/01-sidebar-tour.png)
 
-- **Brand** (top-left) — the platform name + the "OSINT ×
+- **Brand** (top-left)  -  the platform name + the "OSINT x
   Forensics" tagline.
-- **Search** button — opens the global command palette (⌘K).
-- **OSINT section** — Dashboard, Investigations, Entity Graph,
+- **Search** button  -  opens the global command palette (⌘K).
+- **OSINT section**  -  Dashboard, Investigations, Entity Graph,
   Monitors, Verification, Reports.
-- **Pipeline section** — the bridge runner.
-- **Forensics section** — Cases, Evidence, Network Graph,
+- **Pipeline section**  -  the bridge runner.
+- **Forensics section**  -  Cases, Evidence, Network Graph,
   Branch Graph, AI Lab, Integrity, Audit, Reviews.
-- **Collapse toggle** (bottom-left) — slim mode with just icons.
+- **Collapse toggle** (bottom-left)  -  slim mode with just icons.
 
 ![Sidebar, collapsed](manual_screenshots/03-sidebar-collapsed.png)
 
@@ -198,11 +198,11 @@ re-fetch unless you ask.
 The top bar always shows:
 
 - the **active view's title** (left);
-- the **active AI adapter** (right) — useful when you've switched
+- the **active AI adapter** (right)  -  useful when you've switched
   to a real model and want to verify the chip says `nvidia` or
   `openrouter`;
 - the **version** of the platform;
-- the **online** status — green when the database + adapter are
+- the **online** status  -  green when the database + adapter are
   reachable.
 
 ### 4.3 Command palette (⌘K)
@@ -225,7 +225,7 @@ gets non-trivial.
 
 ---
 
-## 5. Workflow 1 — Your first OSINT investigation
+## 5. Workflow 1  -  Your first OSINT investigation
 
 This is the workflow you'll run dozens of times a week. We'll
 walk through it slowly the first time.
@@ -243,43 +243,43 @@ What you see:
   chip (if it's been linked to a forensic case), and the time it
   was last updated.
 - A filter input above the table lets you type to narrow the
-  list — it matches against title, target, target type, status,
+  list  -  it matches against title, target, target type, status,
   and priority.
 - A **+ New** button opens the create-form.
 
 ### 5.2 Open one to see the detail
 
-Click any row — let's pick **INV-2025-019 — Northwind Holdings**.
+Click any row  -  let's pick **INV-2025-019  -  Northwind Holdings**.
 
 ![Investigation detail](manual_screenshots/20-investigation-detail.png)
 
 What you're looking at:
 
-- **Header strip** — target, target type, status, priority. All
+- **Header strip**  -  target, target type, status, priority. All
   the at-a-glance metadata.
 - **Bridge card (the green one).** This investigation is already
-  linked to `CASE-2025-007 — Operation Sandstone`. Click it and
+  linked to `CASE-2025-007  -  Operation Sandstone`. Click it and
   the view switches straight into the case.
 
 ![The bridge chip in close-up](manual_screenshots/21-investigation-bridge-chip.png)
 
-- **Stat row** — findings, entities, monitors, reports for this
+- **Stat row**  -  findings, entities, monitors, reports for this
   investigation.
-- **Findings list** — every signal an agent produced, grouped by
+- **Findings list**  -  every signal an agent produced, grouped by
   category. Each finding shows its confidence chip, priority,
   source, the reasoning trace, and (if it's been promoted) the
   evidence hash.
 - **Action buttons on each finding row:**
-  - **verify** — flips the finding's confidence from `unverified`
+  - **verify**  -  flips the finding's confidence from `unverified`
     to `confirmed` and records you as the verifier. Writes a
     `verify_finding` audit row.
-  - **promote → evidence** — only visible if the investigation is
+  - **promote -> evidence**  -  only visible if the investigation is
     bridged to a case AND the finding hasn't been promoted yet.
     Creates an Evidence row with its own initial commit and
     stamps `Finding.evidenceId`.
-- **Monitors / Reports** — two side-by-side cards listing the
+- **Monitors / Reports**  -  two side-by-side cards listing the
   monitor cadences and the published reports.
-- **Audit trail** (bottom) — every state change for this
+- **Audit trail** (bottom)  -  every state change for this
   investigation, in chain order.
 
 ### 5.3 Run the pipeline against a fresh target
@@ -291,14 +291,14 @@ Switch to the **Pipeline** view (sidebar, or ⌘5).
 The Pipeline runner is the headline feature. It takes an existing
 investigation, fans out the AI agents in parallel against the
 target, consolidates the findings, extracts entities, and
-generates a draft report — all auditable, all in one button.
+generates a draft report  -  all auditable, all in one button.
 
 **To run:**
 
 1. Pick an investigation from the dropdown (or click one in
-   *Recent investigations* below — clicking sets the selection).
+   *Recent investigations* below  -  clicking sets the selection).
 2. Toggle the agent groups you want to run. The defaults are
-   `identity`, `infrastructure`, `social` — three covers most
+   `identity`, `infrastructure`, `social`  -  three covers most
    targets.
 3. (Optional) override the AI adapter by passing
    `?adapter=nvidia` in the URL or `adapter:"nvidia"` in the
@@ -311,31 +311,31 @@ generates a draft report — all auditable, all in one button.
 While the pipeline runs:
 
 - Each stage in the right-hand panel transitions
-  `idle → running → done`.
+  `idle -> running -> done`.
 - A `Loader2` spinner shows what's currently in flight.
 
-When the run completes (typically 30–90 seconds on hosted LLMs),
+When the run completes (typically 30-90 seconds on hosted LLMs),
 the *Pipeline complete* card appears with the counts:
 
-- **findings** — how many discrete signals were produced.
-- **entities** — how many people / orgs / domains / IPs were
+- **findings**  -  how many discrete signals were produced.
+- **entities**  -  how many people / orgs / domains / IPs were
   extracted from those findings.
-- **relations** — how many directed connections between entities
+- **relations**  -  how many directed connections between entities
   were inferred.
-- **report** — a draft markdown report tied to the investigation.
+- **report**  -  a draft markdown report tied to the investigation.
 
-The next step — and this is what makes forenix-oss different — is
-the **Open forensic case →** button.
+The next step  -  and this is what makes forenix-oss different  -  is
+the **Open forensic case ->** button.
 
 ---
 
-## 6. Workflow 2 — Bridge findings to a forensic case
+## 6. Workflow 2  -  Bridge findings to a forensic case
 
 This is the workflow that turns OSINT into evidence.
 
 ### 6.1 What the bridge does
 
-Clicking **Open forensic case →** does five things in one
+Clicking **Open forensic case ->** does five things in one
 transaction:
 
 1. **Mints a Case** with an auto-generated `CASE-YYYY-NNN`
@@ -343,7 +343,7 @@ transaction:
    investigation.
 2. **Creates a `main` branch** on that case (forensic cases are
    structured like a Git repo).
-3. **Sets `Investigation.caseId`** — the link that powers the
+3. **Sets `Investigation.caseId`**  -  the link that powers the
    green bridge chip you saw earlier.
 4. **Promotes every finding** to an Evidence row, computes a
    SHA-256 over the finding's content, and adds an initial `add:`
@@ -362,26 +362,26 @@ After the bridge, you land on the new case. It looks like this:
 
 Top to bottom:
 
-- **Case header** — number, status, priority, progress bar.
-- **Linked investigations card** — every investigation that
+- **Case header**  -  number, status, priority, progress bar.
+- **Linked investigations card**  -  every investigation that
   feeds this case. Click any row to jump back to its
   investigation detail.
-- **Stat row** — evidence, branches, merge requests, assignees.
-- **Evidence list** — and this is the heart of the page. Each
+- **Stat row**  -  evidence, branches, merge requests, assignees.
+- **Evidence list**  -  and this is the heart of the page. Each
   evidence row shows:
   - name, type, MIME, description,
   - **truncated SHA-256 hash** in monospace,
-  - **status chip** — `collected` / `verified` / `sealed`,
+  - **status chip**  -  `collected` / `verified` / `sealed`,
   - a **Seal** button (we'll get to it),
   - and the **full commit chain inline**.
 
 ![Case detail, full page](manual_screenshots/42-case-detail-full.png)
 
-- **Branches sidebar** — every branch on this case (`main`,
+- **Branches sidebar**  -  every branch on this case (`main`,
   `evidence-review`, etc.), each colour-coded.
-- **Assignees + agents** — humans and AI agents working on this
+- **Assignees + agents**  -  humans and AI agents working on this
   case.
-- **Recent audit entries** — the last 10 audit-chain rows
+- **Recent audit entries**  -  the last 10 audit-chain rows
   scoped to this case.
 
 ### 6.3 The Cases list
@@ -398,7 +398,7 @@ matches across `title`, `caseNumber`, `status`, and `priority`.
 
 ---
 
-## 7. Workflow 3 — Evidence + chain of custody
+## 7. Workflow 3  -  Evidence + chain of custody
 
 Evidence is the unit of forensic work. Each Evidence row carries
 a content hash + a commit history. Forenix-oss is one of the very
@@ -421,7 +421,7 @@ these.
 
 ### 7.2 Seal an evidence row
 
-A `sealed` evidence row is immutable — no further commits are
+A `sealed` evidence row is immutable  -  no further commits are
 accepted, and the row's hash is locked into the chain.
 
 To seal, click the **Seal** button on the right side of any
@@ -452,7 +452,7 @@ This is the page you'd put in front of a sceptical reviewer.
 
 ---
 
-## 8. Workflow 4 — Verify the audit chain
+## 8. Workflow 4  -  Verify the audit chain
 
 The audit chain is what makes forenix-oss claim "court-grade
 custody." It's a SHA-256 forward chain over every state-changing
@@ -468,12 +468,12 @@ The table shows every audit row in chain order. Per row:
 
 - the SHA-256 hash of the row itself (monospace, truncated for
   display);
-- the **previous row's hash** inline directly below — visual
+- the **previous row's hash** inline directly below  -  visual
   proof of the chain;
 - the action (`pipeline_started`, `agent_identity_completed`,
-  `promote_finding_to_evidence`, `seal_evidence`, …);
-- the entity it acted on (Investigation / Case / Finding / …);
-- the scope — clickable jump links to the investigation and/or
+  `promote_finding_to_evidence`, `seal_evidence`, ...);
+- the entity it acted on (Investigation / Case / Finding / ...);
+- the scope  -  clickable jump links to the investigation and/or
   case;
 - the relative time.
 
@@ -500,11 +500,11 @@ previous row's `hash`, and reports the result.
 ![Integrity, verified](manual_screenshots/142-integrity-verified.png)
 
 The green panel above is the real screenshot from a verified
-chain on the demo dataset — *21 entries, every hash recomputes to
+chain on the demo dataset  -  *21 entries, every hash recomputes to
 the stored value*.
 
 If verification fails, the panel turns red and shows the row id
-where the chain broke, the expected hash, and the stored hash —
+where the chain broke, the expected hash, and the stored hash  - 
 all the information a forensic investigator needs to triage the
 event.
 
@@ -531,7 +531,7 @@ print("chain OK")
 
 ---
 
-## 9. Workflow 5 — Generate and read reports
+## 9. Workflow 5  -  Generate and read reports
 
 ### 9.1 The Reports list
 
@@ -539,7 +539,7 @@ Click **Reports** in the sidebar.
 
 ![Reports list](manual_screenshots/120-reports-list.png)
 
-The list shows every report — both *investigation* reports
+The list shows every report  -  both *investigation* reports
 (sectioned JSON, the Argus shape) and *case* reports (markdown,
 the ForenX shape). Each card shows source, status, finding count,
 generator, and timestamps. Click **Open** to read.
@@ -547,12 +547,12 @@ generator, and timestamps. Click **Open** to read.
 ### 9.2 Reading a report
 
 The detail view auto-detects whether the report has `sections`
-(JSON) or `content` (markdown) — or both — and renders each
+(JSON) or `content` (markdown)  -  or both  -  and renders each
 accordingly.
 
 ![Report detail](manual_screenshots/121-report-detail.png)
 
-For an analyst, this is the closest thing to a "deliverable" —
+For an analyst, this is the closest thing to a "deliverable"  - 
 copy/paste the section text into your write-up, or export the
 markdown directly.
 
@@ -563,18 +563,18 @@ Pipeline runner. The active AI adapter is called with
 `generateReport(investigation, findings)` and asked to produce a
 markdown report in this shape:
 
-- `# Executive Summary` — 3-5 sentences.
-- `## Findings` — grouped by agent group.
-- `## Entity overview` — names mentioned in the findings.
-- `## Recommended next steps` — 3-5 bullet points.
+- `# Executive Summary`  -  3-5 sentences.
+- `## Findings`  -  grouped by agent group.
+- `## Entity overview`  -  names mentioned in the findings.
+- `## Recommended next steps`  -  3-5 bullet points.
 
 The report is stored on the `Report` table with `source =
 "investigation"` and gets attached to the parent investigation.
-You don't need to do anything — just run the pipeline.
+You don't need to do anything  -  just run the pipeline.
 
 ---
 
-## 10. Feature reference — every view
+## 10. Feature reference  -  every view
 
 This section is a sweep across every view. For each one we
 explain *what it is*, *what problem it solves*, and *what it
@@ -620,9 +620,9 @@ deliberately does not claim to do*.
 ### 10.5 Evidence
 
 - **What:** the cross-case evidence inventory.
-- **Solves:** "find all evidence with hash starting `0ca…`" /
+- **Solves:** "find all evidence with hash starting `0ca...`" /
   "show me every unverified item across all cases."
-- **Does not:** pivot/group yet — it's a flat table.
+- **Does not:** pivot/group yet  -  it's a flat table.
 
 ### 10.6 Branch Graph
 
@@ -646,7 +646,7 @@ deliberately does not claim to do*.
 
 ![Network graph](manual_screenshots/80-network-graph.png)
 
-- **What:** cross-case knowledge graph — users, agents,
+- **What:** cross-case knowledge graph  -  users, agents,
   investigations, cases, evidence, entities, all on one canvas.
 - **Solves:** seeing what connects two cases or two analysts.
 - **Does not:** zoom / pan yet; labels overlap above ~250 nodes.
@@ -657,7 +657,7 @@ deliberately does not claim to do*.
 
 - **What:** cadenced re-runs of an investigation pipeline.
 - **Solves:** keeping targets fresh after the report ships.
-- **Does not:** actually wake the monitor — the background
+- **Does not:** actually wake the monitor  -  the background
   scheduler is Phase 7. The data layer is ready.
 
 ### 10.10 Verification
@@ -704,7 +704,7 @@ deliberately does not claim to do*.
 
 - **What:** one-button replay of the entire chain.
 - **Solves:** proving tamper-evidence.
-- **Does not:** use Merkle batching yet — linear replay is fast
+- **Does not:** use Merkle batching yet  -  linear replay is fast
   enough for sub-10M-row chains.
 
 ### 10.15 Reviews
@@ -714,7 +714,7 @@ deliberately does not claim to do*.
 - **What:** list of merge requests across all cases.
 - **Solves:** second-pair-of-eyes review before evidence is
   sealed.
-- **Does not:** offer inline merge/approve buttons yet — that
+- **Does not:** offer inline merge/approve buttons yet  -  that
   ships in Phase 4 polish.
 
 ---
@@ -725,11 +725,11 @@ forenix-oss ships with six AI adapters. You can switch between
 them by editing one line in `.env`:
 
 ```env
-AI_ADAPTER=mock         # default — deterministic seeded output
+AI_ADAPTER=mock         # default  -  deterministic seeded output
 # AI_ADAPTER=ollama     # local Ollama HTTP API
 # AI_ADAPTER=glm        # Zhipu AI GLM-4 / GLM-5
 # AI_ADAPTER=claude     # Anthropic Claude (SaaS-gated)
-# AI_ADAPTER=openrouter # OpenRouter proxy → many models
+# AI_ADAPTER=openrouter # OpenRouter proxy -> many models
 # AI_ADAPTER=nvidia     # NVIDIA NIM hosted catalogue
 ```
 
@@ -747,8 +747,8 @@ curl -X POST -H "content-type: application/json" \
   http://localhost:3000/api/pipeline/run/<INVESTIGATION_ID>
 ```
 
-Use this when you want to A/B two models on the same target —
-say, NVIDIA's Llama-3.3-70B vs OpenRouter's `gpt-oss-120b:free` —
+Use this when you want to A/B two models on the same target  - 
+say, NVIDIA's Llama-3.3-70B vs OpenRouter's `gpt-oss-120b:free`  - 
 and compare findings side-by-side.
 
 ### 11.2 Picking an adapter
@@ -757,7 +757,7 @@ and compare findings side-by-side.
 |---|---|
 | `mock` | demos, dev, screenshots, tests |
 | `ollama` | air-gapped deployments / local-only workflows |
-| `openrouter` | the most flexibility — one key, dozens of models |
+| `openrouter` | the most flexibility  -  one key, dozens of models |
 | `nvidia` | high-quality 70B models on a free dev tier |
 | `glm` | sovereign-China deployments / GLM-4 quality preference |
 | `claude` | SaaS premium tier only |
@@ -767,8 +767,8 @@ and compare findings side-by-side.
 | Adapter | Cost (this build) | Latency (3-group run) |
 |---|---|---|
 | `mock` | $0 | < 1 s |
-| `nvidia` | free dev tier | ≈ 45-60 s |
-| `openrouter` (`gpt-oss-120b:free`) | $0 | ≈ 80 s |
+| `nvidia` | free dev tier | ~ 45-60 s |
+| `openrouter` (`gpt-oss-120b:free`) | $0 | ~ 80 s |
 | `openrouter` (paid models) | $0.20 - $5 per 1M tokens | 15-30 s |
 
 The audit chain stays valid identically regardless of which
@@ -801,7 +801,7 @@ adapter you use. The adapter swap only affects the *quality* and
 
 - Type to filter across nav items, investigations, cases, and
   reports.
-- **↑ / ↓** to navigate.
+- **^ / v** to navigate.
 - **⏎ Enter** to open.
 - **Esc** to close.
 
@@ -810,11 +810,11 @@ case or investigation by number/title.
 
 ### 12.3 Other useful shortcuts
 
-- **Click any audit row's investigation/case scope chip** —
+- **Click any audit row's investigation/case scope chip**  - 
   switches view + activates the right detail panel in one click.
-- **Click the bridge chip on an investigation** — opens its
+- **Click the bridge chip on an investigation**  -  opens its
   linked case.
-- **Click a finding's *promote → evidence* button** — does the
+- **Click a finding's *promote -> evidence* button**  -  does the
   promotion + writes the audit row + invalidates the queries that
   feed the surrounding UI.
 
@@ -848,14 +848,14 @@ is the same workflow as Git, and for the same reason.
 
 Every list view supports an inline filter. Use it. The platform
 scales to thousands of investigations and tens of thousands of
-findings — scrolling does not.
+findings  -  scrolling does not.
 
 ### 13.5 Trust the chain
 
 When the Integrity view turns green, it is genuinely green. The
 chain is cheap to verify (linear pass over a single table) and
 trivial to reproduce offline. Don't accept "trust us" answers
-from anyone — including us.
+from anyone  -  including us.
 
 ---
 
@@ -870,14 +870,14 @@ bun run db:seed  # re-seed
 bun run dev
 ```
 
-If `bun` isn't installed, you can use `node` directly — `next
+If `bun` isn't installed, you can use `node` directly  -  `next
 dev` works the same. The seed script requires `tsx`, which is
 already in `devDependencies`.
 
 ### 14.2 The Audit Integrity view turns red
 
 The chain has been mutated outside the platform. Do **not** try
-to "fix" it — the integrity guarantee depends on this being
+to "fix" it  -  the integrity guarantee depends on this being
 impossible to fix invisibly. Instead:
 
 1. Note the `brokenAt` row id and timestamp.
@@ -885,7 +885,7 @@ impossible to fix invisibly. Instead:
    writes around that timestamp.
 3. Escalate per your incident-response policy.
 
-The chain remains broken until the next legitimate write — at
+The chain remains broken until the next legitimate write  -  at
 which point the `brokenAt` row's prevHash is no longer the
 "tip" of the chain, but it remains visible to all future
 verifies.
@@ -909,14 +909,14 @@ You haven't seeded the database. Run:
 bun run db:seed
 ```
 
-…or create one with the **+ New** button on the Investigations
+...or create one with the **+ New** button on the Investigations
 view.
 
 ### 14.5 "Pipeline 500" right after the run
 
 The platform completed the run but failed to serialize the
 response (we've fixed every BigInt path in 0.1, but a future
-field might trip this again). The chain is still valid — refresh
+field might trip this again). The chain is still valid  -  refresh
 the investigation detail to see the findings landed.
 
 ---
@@ -931,13 +931,13 @@ via `.env`).
 
 ### Can I use a locally-hosted LLM?
 
-Yes — the `ollama` adapter is built for exactly that. Pull a
+Yes  -  the `ollama` adapter is built for exactly that. Pull a
 model with `ollama pull qwen2.5:7b-instruct`, set
 `AI_ADAPTER=ollama`, restart the dev server.
 
 ### Can a non-technical team member use this?
 
-Yes — the entire daily workflow is in the web UI. The only thing
+Yes  -  the entire daily workflow is in the web UI. The only thing
 you need a terminal for is the initial install + the seed. After
 that, point your browser at `localhost:3000` and never look back.
 
@@ -958,7 +958,7 @@ For zero outbound traffic, use `ollama` or `mock`.
 
 The chain-of-custody methodology is documented and reproducible
 (see `docs/07-SECURITY.md`). Whether a court accepts it is a
-local matter — we'd love to hear from any user who runs this
+local matter  -  we'd love to hear from any user who runs this
 through their first admissibility argument.
 
 ---
@@ -967,7 +967,7 @@ through their first admissibility argument.
 
 | Term | Meaning |
 |---|---|
-| **Adapter** | A concrete implementation of the AI interface — `mock`, `ollama`, `glm`, `claude`, `openrouter`, `nvidia`. Pluggable, swappable with one env var. |
+| **Adapter** | A concrete implementation of the AI interface  -  `mock`, `ollama`, `glm`, `claude`, `openrouter`, `nvidia`. Pluggable, swappable with one env var. |
 | **Agent group** | A bundle of OSINT agents that share a focus (e.g. `identity`, `infrastructure`). The pipeline runs the agents inside a group in parallel. |
 | **Audit chain** | The SHA-256 forward chain over the `AuditLog` table. The trust anchor of the platform. |
 | **Branch** | A named line of evidence-commit history under a case. Each case has a `main` branch by default. |
@@ -975,13 +975,13 @@ through their first admissibility argument.
 | **Case** | A forensic workspace. Owns Evidence, Branches, MRs, Assignments. |
 | **Commit** | A versioned change to a piece of Evidence. Carries a SHA-256, a parent hash, an author, and a change-type. |
 | **Confidence** | A finding's likelihood label: `confirmed`, `probable`, `unverified`, `disputed`, `false`. |
-| **Entity** | A normalised actor in the OSINT graph — person, org, domain, IP, email, phone, account, location. |
+| **Entity** | A normalised actor in the OSINT graph  -  person, org, domain, IP, email, phone, account, location. |
 | **Evidence** | A row in the forensic side of the schema. Carries a content hash + commit history. Can be `collected` / `verified` / `sealed`. |
 | **Finding** | A discrete OSINT signal produced by an agent. Lives on the Investigation; can be promoted to Evidence. |
 | **Investigation** | The OSINT collection workspace, bound to a *target*. |
 | **Merge Request** | A request to merge one Branch into another, gated by review. |
 | **Monitor** | A cadenced re-run schedule for an Investigation. |
-| **Pipeline** | The end-to-end run that orchestrates `analyzePipeline → extractEntities → generateReport` over the AI adapter. |
+| **Pipeline** | The end-to-end run that orchestrates `analyzePipeline -> extractEntities -> generateReport` over the AI adapter. |
 | **Promote** | The act of turning a Finding into an Evidence row (one click in the UI). |
 | **Reasoning trace** | The agent's free-text explanation of why it produced a finding. Stored on the Finding. |
 | **Report** | A structured deliverable. Sectioned JSON (Argus-side) or markdown (ForenX-side). |

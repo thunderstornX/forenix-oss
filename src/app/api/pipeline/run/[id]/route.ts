@@ -16,7 +16,7 @@ import { z } from "zod";
 
 import { getAdapter } from "@/lib/ai/adapter";
 
-// Vercel function ceiling — extend to the Hobby/Pro max so the
+// Vercel function ceiling  -  extend to the Hobby/Pro max so the
 // pipeline doesn't get killed mid-run on a slow hosted LLM.
 export const maxDuration = 60;
 import type {
@@ -51,7 +51,7 @@ const Body = z.object({
 function syntheticSearchResults(target: string, group: AgentGroup): SearchResult[] {
   return [
     {
-      title: `${group} signal — ${target}`,
+      title: `${group} signal  -  ${target}`,
       url: `https://search.example.local/q=${encodeURIComponent(target)}&g=${group}`,
       snippet: `Synthetic candidate snippet for ${target} under the ${group} agent group.`,
       source: "synthetic",
@@ -217,7 +217,7 @@ export async function POST(
   );
   const report = await prisma.report.create({
     data: {
-      title: `${inv.title} — Pipeline Report`,
+      title: `${inv.title}  -  Pipeline Report`,
       source: "investigation",
       investigationId: id,
       type: "summary",

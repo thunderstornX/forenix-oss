@@ -40,7 +40,7 @@ export function DashboardView() {
     },
     {
       label: "AI adapter",
-      value: health.data?.adapter ?? "—",
+      value: health.data?.adapter ?? " - ",
       sub: health.data?.status === "ok" ? "online" : "starting",
       icon: <Activity className="h-4 w-4" />,
       tone: "text-[var(--accent)]",
@@ -50,7 +50,7 @@ export function DashboardView() {
   return (
     <ViewShell
       title="Dashboard"
-      subtitle="One pane over both workflows — OSINT investigations and forensic cases."
+      subtitle="One pane over both workflows  -  OSINT investigations and forensic cases."
     >
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         {stats.map((s) => (
@@ -81,7 +81,7 @@ export function DashboardView() {
                 <div className="min-w-0">
                   <div className="truncate text-[13px] text-[var(--foreground)]">{i.title}</div>
                   <div className="text-[11px] text-[var(--foreground-muted)]">
-                    target: <span className="font-mono">{i.target}</span> · {i.targetType}
+                    target: <span className="font-mono">{i.target}</span> | {i.targetType}
                   </div>
                 </div>
                 <div className="shrink-0 text-right">
@@ -92,7 +92,7 @@ export function DashboardView() {
             ))}
             {invItems.length === 0 && (
               <li className="rounded border border-dashed border-[var(--border)] p-3 text-center text-[12px] text-[var(--foreground-muted)]">
-                no investigations yet — run <span className="font-mono">bun run db:seed</span>.
+                no investigations yet  -  run <span className="font-mono">bun run db:seed</span>.
               </li>
             )}
           </ul>
@@ -111,7 +111,7 @@ export function DashboardView() {
                 <div className="min-w-0">
                   <div className="truncate text-[13px] text-[var(--foreground)]">{c.title}</div>
                   <div className="text-[11px] text-[var(--foreground-muted)]">
-                    <span className="font-mono">{c.caseNumber}</span> · {c._count.evidence} ev / {c._count.investigations} inv
+                    <span className="font-mono">{c.caseNumber}</span> | {c._count.evidence} ev / {c._count.investigations} inv
                   </div>
                 </div>
                 <div className="shrink-0 text-right">

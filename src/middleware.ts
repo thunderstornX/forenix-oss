@@ -1,5 +1,5 @@
 /**
- * Middleware — every request that's not on a public route gets
+ * Middleware  -  every request that's not on a public route gets
  * checked against the next-auth JWT.  Unauthenticated requests get
  * bounced to /sign-in.
  */
@@ -11,7 +11,7 @@ const PUBLIC_ROUTES = new Set<string>([
   "/favicon.ico",
   "/robots.txt",
 ]);
-// /accept-invite is gated, but in a different way — the page itself
+// /accept-invite is gated, but in a different way  -  the page itself
 // only needs an authenticated user (so they know who's accepting).
 // Keep it under the middleware umbrella.
 const PUBLIC_PREFIXES = [

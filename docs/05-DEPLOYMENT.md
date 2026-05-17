@@ -1,4 +1,4 @@
-# Deployment Plan — forenix-oss
+# Deployment Plan  -  forenix-oss
 
 This document describes every supported deployment topology, from
 laptop-only demo to production multi-region.
@@ -13,7 +13,7 @@ laptop-only demo to production multi-region.
 | **D. SaaS (forenix-oss.com)** | premium | Kubernetes | postgres + RDS | claude (paid) + openrouter |
 | **E. Air-gapped** | gov / regulated | Docker compose offline | postgres | ollama only |
 
-## 2. Topology A — Laptop demo
+## 2. Topology A  -  Laptop demo
 
 ```bash
 git clone https://github.com/thunderstornX/forenix-oss
@@ -28,7 +28,7 @@ bun run dev
 Opens at http://localhost:3000 with the `mock` adapter and a
 9-row hash-chained audit log.
 
-## 3. Topology B — Single VM (Docker)
+## 3. Topology B  -  Single VM (Docker)
 
 ```yaml
 # docker-compose.yml (planned, ships in Phase 8)
@@ -60,7 +60,7 @@ secrets:
 Minimum host: 2 vCPU / 4 GB RAM / 20 GB disk. Add 8 GB if you run
 Ollama on the same box.
 
-## 4. Topology C — Small team with Nginx
+## 4. Topology C  -  Small team with Nginx
 
 ```mermaid
 flowchart LR
@@ -77,17 +77,17 @@ flowchart LR
   with `ollama pull qwen2.5:7b-instruct`.
 - Backups: `pg_dump` daily + `tar`-the-data-volume weekly.
 
-## 5. Topology D — SaaS
+## 5. Topology D  -  SaaS
 
 ```mermaid
 flowchart LR
   CF[Cloudflare] --> ALB[AWS ALB]
-  ALB --> ECS[ECS Fargate × N]
+  ALB --> ECS[ECS Fargate x N]
   ECS --> RDS[(RDS Postgres Multi-AZ)]
   ECS --> S3[(S3 evidence bytes)]
   ECS --> OpenRouter[OpenRouter API]
   ECS --> Anthropic[Anthropic API]
-  ECS --> Stripe[Stripe — billing]
+  ECS --> Stripe[Stripe  -  billing]
 
   Sentry[Sentry] -.-> ECS
   GrafanaCloud[Grafana Cloud] -.-> ECS
@@ -100,7 +100,7 @@ flowchart LR
 - Stripe billing gated by `SAAS_MODE=true`.
 - Sentry for errors, Grafana Cloud for traces/metrics.
 
-## 6. Topology E — Air-gapped
+## 6. Topology E  -  Air-gapped
 
 - Build the container image on an internet-connected box; copy as
   a `.tar` to the air-gapped network.
@@ -114,24 +114,24 @@ flowchart LR
 
 | Name | Required | Default | Notes |
 |---|---|---|---|
-| `DATABASE_URL` | ✅ | — | `file:./dev.db` or `postgresql://…` |
-| `AI_ADAPTER` | ⚪ | `mock` | `mock` / `ollama` / `glm` / `claude` / `openrouter` / `nvidia` |
-| `SAAS_MODE` | ⚪ | `false` | `true` unlocks ClaudeAdapter + premium features |
-| `OPENROUTER_API_KEY` | when `AI_ADAPTER=openrouter` | — | https://openrouter.ai |
-| `OPENROUTER_MODEL` | ⚪ | `deepseek/deepseek-chat` | any model on OpenRouter |
-| `OPENROUTER_REFERER` | ⚪ | repo URL | OpenRouter wants this for analytics |
-| `OPENROUTER_TITLE` | ⚪ | `forenix-oss` | shows in OpenRouter dashboard |
-| `NVIDIA_API_KEY` | when `AI_ADAPTER=nvidia` | — | https://build.nvidia.com |
-| `NVIDIA_MODEL` | ⚪ | `meta/llama-3.1-70b-instruct` | any NIM model |
-| `ANTHROPIC_API_KEY` | when `AI_ADAPTER=claude` | — | https://console.anthropic.com |
-| `OLLAMA_HOST` | ⚪ | `http://localhost:11434` | local Ollama URL |
-| `OLLAMA_MODEL` | ⚪ | `qwen2.5:7b-instruct` | tag of any pulled model |
-| `ZHIPU_API_KEY` | when `AI_ADAPTER=glm` | — | https://open.bigmodel.cn |
+| `DATABASE_URL` | [x] |  -  | `file:./dev.db` or `postgresql://...` |
+| `AI_ADAPTER` | * | `mock` | `mock` / `ollama` / `glm` / `claude` / `openrouter` / `nvidia` |
+| `SAAS_MODE` | * | `false` | `true` unlocks ClaudeAdapter + premium features |
+| `OPENROUTER_API_KEY` | when `AI_ADAPTER=openrouter` |  -  | https://openrouter.ai |
+| `OPENROUTER_MODEL` | * | `deepseek/deepseek-chat` | any model on OpenRouter |
+| `OPENROUTER_REFERER` | * | repo URL | OpenRouter wants this for analytics |
+| `OPENROUTER_TITLE` | * | `forenix-oss` | shows in OpenRouter dashboard |
+| `NVIDIA_API_KEY` | when `AI_ADAPTER=nvidia` |  -  | https://build.nvidia.com |
+| `NVIDIA_MODEL` | * | `meta/llama-3.1-70b-instruct` | any NIM model |
+| `ANTHROPIC_API_KEY` | when `AI_ADAPTER=claude` |  -  | https://console.anthropic.com |
+| `OLLAMA_HOST` | * | `http://localhost:11434` | local Ollama URL |
+| `OLLAMA_MODEL` | * | `qwen2.5:7b-instruct` | tag of any pulled model |
+| `ZHIPU_API_KEY` | when `AI_ADAPTER=glm` |  -  | https://open.bigmodel.cn |
 
-## 8. Migration plan (SQLite → Postgres)
+## 8. Migration plan (SQLite -> Postgres)
 
 1. Set `DATABASE_URL="postgresql://..."` in `.env`.
-2. `bun prisma migrate dev --name init` — generates the migration.
+2. `bun prisma migrate dev --name init`  -  generates the migration.
 3. `bun prisma db push` if you prefer the schema-sync path.
 4. Re-seed: `bun run db:seed`.
 5. If migrating an existing SQLite DB, dump + replay through
@@ -143,7 +143,7 @@ flowchart LR
 ### 9.1 Health probe
 
 ```
-GET /api/health → { status, adapter, version, saasMode }
+GET /api/health -> { status, adapter, version, saasMode }
 ```
 
 Wire it into your liveness / readiness checks.
@@ -178,8 +178,8 @@ Audit chain survives migrations because the chain is computed over
 
 | Metric | Target |
 |---|---|
-| RPO (data loss window) | ≤ 5 min via WAL streaming |
-| RTO (recovery time) | ≤ 60 min on the SaaS tier |
+| RPO (data loss window) | <= 5 min via WAL streaming |
+| RTO (recovery time) | <= 60 min on the SaaS tier |
 | Chain integrity proof | always recoverable from the audit table alone |
 
 ## 11. Observability
@@ -201,4 +201,4 @@ Audit chain survives migrations because the chain is computed over
 - `SAAS_MODE=true` gates billing/org logic so OSS deployments
   never touch payment code paths.
 - Audit chain is the single source of truth for "what happened
-  when, in what order" — restore it before restoring evidence.
+  when, in what order"  -  restore it before restoring evidence.

@@ -26,7 +26,7 @@ export function AuditView() {
       subtitle="Append-only chain across both workflows. Every write computes sha256(prevHash | action | entity | entityId | iso(t))."
       actions={
         <>
-          <FilterInput value={filter} onChange={setFilter} placeholder="action, entity, hash…" />
+          <FilterInput value={filter} onChange={setFilter} placeholder="action, entity, hash..." />
           <span className="text-[11px] text-[var(--foreground-muted)]">{rows.length} entries</span>
         </>
       }
@@ -64,7 +64,7 @@ export function AuditView() {
                     </div>
                     {r.prevHash && (
                       <div className="ml-4 mt-0.5 text-[10px] text-[var(--foreground-muted)]">
-                        ← <span className="font-mono">{shortHash(r.prevHash)}</span>
+                        prev: <span className="font-mono">{shortHash(r.prevHash)}</span>
                       </div>
                     )}
                   </td>
@@ -95,7 +95,7 @@ export function AuditView() {
                       </button>
                     )}
                     {!r.investigationId && !r.caseId && (
-                      <span className="text-[10px] text-[var(--foreground-muted)]">—</span>
+                      <span className="text-[10px] text-[var(--foreground-muted)]"> - </span>
                     )}
                   </td>
                   <td className="px-3 py-2 align-top text-[11px] text-[var(--foreground-muted)]">

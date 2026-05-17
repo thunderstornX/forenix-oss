@@ -50,10 +50,10 @@ export function IntegrityView() {
             </div>
             <div className="mt-1 text-base font-semibold text-[var(--foreground)]">
               {ok
-                ? `${data!.entries} entries — every hash recomputes to the stored value.`
+                ? `${data!.entries} entries  -  every hash recomputes to the stored value.`
                 : data
                 ? `Broken at row ${shortHash(data.brokenAt)} of ${data.entries}.`
-                : "Replaying…"}
+                : "Replaying..."}
             </div>
             {data && !data.ok && (
               <div className="mt-3 grid grid-cols-1 gap-2 text-[11px] sm:grid-cols-2">
@@ -81,7 +81,7 @@ export function IntegrityView() {
           Replay walks the table in <code className="font-mono">createdAt</code> order,
           recomputes each row's hash from the previous row's hash, and stops at the first
           mismatch. <code className="font-mono">GENESIS_HASH</code> is 32 zero bytes,
-          hex-encoded. The walk is cheap — a single
+          hex-encoded. The walk is cheap  -  a single
           <code className="font-mono"> findMany</code> + a CPU loop.
         </p>
       </div>

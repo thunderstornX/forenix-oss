@@ -1,5 +1,5 @@
 /**
- * Subprocess: sherlock — find a username across 400+ social
+ * Subprocess: sherlock  -  find a username across 400+ social
  * networks. https://github.com/sherlock-project/sherlock
  *
  * Install:  pip install sherlock-project

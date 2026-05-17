@@ -2,7 +2,7 @@
  * Symmetric encryption for the API-key vault.
  *
  * AES-256-GCM. The key is derived from AUTH_SECRET (same secret that
- * signs the next-auth JWT) via SHA-256 — that way there's a single
+ * signs the next-auth JWT) via SHA-256  -  that way there's a single
  * authoritative secret on every deployment.
  *
  * Rotating AUTH_SECRET means re-encrypting the vault (manual
@@ -52,9 +52,9 @@ export function decrypt(payload: EncryptedPayload): string {
   return dec.toString("utf-8");
 }
 
-/** Return a redacted preview ("sk-…1234") so the admin UI can show
+/** Return a redacted preview ("sk-...1234") so the admin UI can show
  *  *that* a key is set without exposing it. */
 export function preview(plaintext: string): string {
-  if (plaintext.length < 8) return "…";
-  return plaintext.slice(0, 3) + "…" + plaintext.slice(-4);
+  if (plaintext.length < 8) return "...";
+  return plaintext.slice(0, 3) + "..." + plaintext.slice(-4);
 }

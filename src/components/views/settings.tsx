@@ -42,7 +42,7 @@ export function SettingsView() {
       <ViewShell title="Settings">
         <div className="glass rounded-lg p-6 text-[12px] text-[var(--foreground-muted)]">
           <Loader2 className="mb-2 h-4 w-4 animate-spin" />
-          Loading…
+          Loading...
         </div>
       </ViewShell>
     );
@@ -57,7 +57,7 @@ export function SettingsView() {
       actions={
         <span className="flex items-center gap-2 text-[11px] text-[var(--foreground-muted)]">
           version <span className="font-mono text-[var(--foreground)]">{s.version}</span>
-          {" · "}
+          {" | "}
           SAAS_MODE {s.saasMode ? <CheckCircle2 className="h-3 w-3 text-[var(--accent)]" /> : <span className="text-[var(--foreground-muted)]">false</span>}
         </span>
       }
@@ -95,7 +95,7 @@ export function SettingsView() {
                   )}
                 </td>
                 <td className="px-2 py-1.5 font-mono text-[11px] text-[var(--foreground-muted)]">
-                  {a.modelValue ?? "—"}
+                  {a.modelValue ?? " - "}
                 </td>
                 <td className="px-2 py-1.5">
                   {a.active ? (
@@ -123,12 +123,12 @@ export function SettingsView() {
         <div className="space-y-2 text-[12px] text-[var(--foreground-muted)]">
           <p>
             <span className="font-medium text-[var(--foreground)]">Permanent</span>{" "}
-            — edit <code className="font-mono">.env</code>, set{" "}
+             -  edit <code className="font-mono">.env</code>, set{" "}
             <code className="font-mono">AI_ADAPTER=&lt;name&gt;</code>, and restart the dev server.
           </p>
           <p>
             <span className="font-medium text-[var(--foreground)]">Per-call</span>{" "}
-            — pass <code className="font-mono">adapter</code> in a pipeline POST body:
+             -  pass <code className="font-mono">adapter</code> in a pipeline POST body:
           </p>
           <pre className="overflow-x-auto rounded bg-[var(--background-elev-2)] p-3 font-mono text-[11px] text-[var(--foreground)]">
 {`curl -X POST -H "content-type: application/json" \\
@@ -137,7 +137,7 @@ export function SettingsView() {
           </pre>
           <p>
             The factory will <b>never</b> fall through to a paid adapter on a
-            bad value — it falls back to <code className="font-mono">mock</code>.
+            bad value  -  it falls back to <code className="font-mono">mock</code>.
           </p>
         </div>
       </section>

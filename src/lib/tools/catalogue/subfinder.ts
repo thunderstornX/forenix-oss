@@ -1,6 +1,6 @@
 /**
- * Subprocess: subfinder (ProjectDiscovery) — passive subdomain
- * enumeration across 30+ free sources (Wayback, CRT, AlienVault, …).
+ * Subprocess: subfinder (ProjectDiscovery)  -  passive subdomain
+ * enumeration across 30+ free sources (Wayback, CRT, AlienVault, ...).
  * Fast and quiet (no DNS queries against the target).
  * https://github.com/projectdiscovery/subfinder
  *

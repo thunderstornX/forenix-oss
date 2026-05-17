@@ -15,7 +15,7 @@ export function FilterInput({ value, onChange, placeholder }: Props) {
       <input
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder ?? "Filter…"}
+        placeholder={placeholder ?? "Filter..."}
         className="w-44 bg-transparent text-[var(--foreground)] outline-none placeholder:text-[var(--foreground-muted)]"
       />
     </label>

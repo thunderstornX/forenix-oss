@@ -1,5 +1,5 @@
 /**
- * Subprocess: httpx (ProjectDiscovery) — fast HTTP probe over a
+ * Subprocess: httpx (ProjectDiscovery)  -  fast HTTP probe over a
  * list of hosts. Returns status code, title, tech-stack, content-
  * length, redirect chain. Pairs perfectly with subfinder.
  * https://github.com/projectdiscovery/httpx

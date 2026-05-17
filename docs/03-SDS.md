@@ -1,4 +1,4 @@
-# Software Design Specification — forenix-oss
+# Software Design Specification  -  forenix-oss
 
 | Document | Software Design Specification (SDS) |
 | Version | 0.1 |
@@ -121,7 +121,7 @@ src/
     │       ├── claude.ts         # Anthropic (stub, premium-gated)
     │       ├── openrouter.ts     # OpenRouter (live)
     │       └── nvidia.ts         # NVIDIA NIM (live)
-    ├── audit.ts                  # server-only — appendAudit + verifyAuditChain
+    ├── audit.ts                  # server-only  -  appendAudit + verifyAuditChain
     ├── audit-chain.ts            # pure SHA-256 helpers (importable from seed)
     ├── db.ts                     # PrismaClient singleton
     ├── hooks.ts                  # TanStack Query hooks
@@ -131,9 +131,9 @@ src/
 
 ### 2.2 Import rules
 
-- `src/components/` may import from `src/lib/{store,hooks,utils,…}`
+- `src/components/` may import from `src/lib/{store,hooks,utils,...}`
   but **not** from `src/lib/ai/*` (those are server-only).
-- `src/app/api/**/route.ts` may import from `src/lib/{db,audit,ai,…}`
+- `src/app/api/**/route.ts` may import from `src/lib/{db,audit,ai,...}`
   freely.
 - `prisma/seed.ts` may import from `src/lib/audit-chain.ts` only
   (no server-only modules).
@@ -169,8 +169,8 @@ erDiagram
 ```
 
 Two new bridge columns make the merge work:
-- `Investigation.caseId` — optional FK to Case.
-- `Finding.evidenceId` — optional FK to Evidence.
+- `Investigation.caseId`  -  optional FK to Case.
+- `Finding.evidenceId`  -  optional FK to Evidence.
 
 The `Report` model carries a `source: "investigation" | "case"`
 discriminator so both projects' Reports live on one table.
@@ -179,10 +179,10 @@ discriminator so both projects' Reports live on one table.
 
 ```mermaid
 flowchart LR
-  Genesis["GENESIS = 32 × 0x00"] --> R0
+  Genesis["GENESIS = 32 x 0x00"] --> R0
   R0["row 0"] -->|hash_0| R1["row 1"]
   R1 -->|hash_1| R2["row 2"]
-  R2 -->|hash_2| RN["…"]
+  R2 -->|hash_2| RN["..."]
 
   subgraph hash[ "hash_n = sha256(...)" ]
     A["prevHash"]
@@ -259,7 +259,7 @@ sequenceDiagram
 Every adapter implements the same four-method interface
 (`src/lib/ai/types.ts`). The factory caches the first construction
 per process. A bad `AI_ADAPTER` value **never** falls through to a
-paid adapter — it falls back to `mock`.
+paid adapter  -  it falls back to `mock`.
 
 Four adapters are wired against the same OpenAI-compatible helper
 (`src/lib/ai/chat-completions.ts`) so adding a 7th provider is a
@@ -269,23 +269,23 @@ single file:
 // New adapter template:
 export class XAdapter implements AIAdapter {
   readonly name = "x";
-  async analyzePipeline(…) { return chatAnalyzePipeline(backend(), …); }
-  async extractEntities(…) { return chatExtractEntities(backend(), …); }
-  async tagEvidence(…)     { return chatTagEvidence(backend(), …); }
-  async generateReport(…)  { return chatGenerateReport(backend(), …); }
+  async analyzePipeline(...) { return chatAnalyzePipeline(backend(), ...); }
+  async extractEntities(...) { return chatExtractEntities(backend(), ...); }
+  async tagEvidence(...)     { return chatTagEvidence(backend(), ...); }
+  async generateReport(...)  { return chatGenerateReport(backend(), ...); }
 }
 ```
 
 ## 7. State management
 
-- **Server data** → TanStack Query (`src/lib/hooks.ts`).
-- **UI state** → Zustand with `persist` (`src/lib/store.ts`).
-- **Form state** → component-local `useState`.
+- **Server data** -> TanStack Query (`src/lib/hooks.ts`).
+- **UI state** -> Zustand with `persist` (`src/lib/store.ts`).
+- **Form state** -> component-local `useState`.
 - **No Redux, no Context for state.**
 
 Cache invalidation is explicit: every mutation lists the query
 keys it invalidates (see `useCreateInvestigation`,
-`useRunPipeline`, `useSealEvidence`, …).
+`useRunPipeline`, `useSealEvidence`, ...).
 
 ## 8. Styling architecture
 
@@ -304,7 +304,7 @@ No CSS-in-JS, no styled-components, no per-component css modules.
 - Server routes return `{ error: code, details: msg }` with the
   right HTTP status; the client surfaces it via `toast.error()`.
 - The hash-chain code paths are designed so a route failure cannot
-  leave the chain in an inconsistent state — `appendAudit()`
+  leave the chain in an inconsistent state  -  `appendAudit()`
   reads the previous row inside the same transactional context
   Prisma provides.
 - Adapter failures bubble up through the route; the investigation
@@ -323,10 +323,10 @@ No CSS-in-JS, no styled-components, no per-component css modules.
 
 ## 11. Extension points
 
-- New AI adapter → drop a file in `src/lib/ai/adapters/`, add to
+- New AI adapter -> drop a file in `src/lib/ai/adapters/`, add to
   the factory switch.
-- New view → drop a file in `src/components/views/`, add to `NAV`,
+- New view -> drop a file in `src/components/views/`, add to `NAV`,
   add to the `ViewRouter` switch.
-- New API resource → drop a `route.ts` under `src/app/api/`.
-- New audit action → just call `appendAudit({ action, entity, … })`
+- New API resource -> drop a `route.ts` under `src/app/api/`.
+- New audit action -> just call `appendAudit({ action, entity, ... })`
   inside the mutating code path.

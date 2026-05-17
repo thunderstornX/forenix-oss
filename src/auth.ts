@@ -1,5 +1,5 @@
 /**
- * next-auth v5 setup — credentials provider + JWT sessions.
+ * next-auth v5 setup  -  credentials provider + JWT sessions.
  *
  * We deliberately go JWT (not database sessions) so the dev DB
  * stays Prisma-only and the Vercel / serverless deployment doesn't

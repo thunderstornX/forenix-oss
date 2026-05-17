@@ -4,7 +4,7 @@ import tsPlugin from "@typescript-eslint/eslint-plugin";
 import reactHooks from "eslint-plugin-react-hooks";
 
 /**
- * Flat ESLint config tuned for Next 16 + ESLint 10 — we deliberately
+ * Flat ESLint config tuned for Next 16 + ESLint 10  -  we deliberately
  * skip `next lint` (deprecated) and the legacy-config compat dance
  * which trips on circular plugin refs in ESLint 10.
  */
@@ -81,7 +81,7 @@ export default [
   {
     files: ["prisma/seed.ts"],
     rules: {
-      // The seed is a long imperative script — disable noisy rules.
+      // The seed is a long imperative script  -  disable noisy rules.
       "@typescript-eslint/no-non-null-assertion": "off",
     },
   },

@@ -34,7 +34,7 @@ export function AILabView() {
   return (
     <ViewShell
       title="AI Lab"
-      subtitle="Agents and the tasks they've executed. Every task carries its raw input, raw output, and a 0–1 confidence."
+      subtitle="Agents and the tasks they've executed. Every task carries its raw input, raw output, and a 0-1 confidence."
       actions={<span className="text-[11px] text-[var(--foreground-muted)]">{rows.length} agents</span>}
     >
       <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
@@ -108,7 +108,7 @@ export function AILabView() {
                       </div>
                       {t.output && (
                         <pre className="mt-1 max-h-24 overflow-y-auto whitespace-pre-wrap rounded bg-[var(--background-elev-2)] p-2 font-mono text-[10px] text-[var(--foreground-muted)]">
-                          {t.output.length > 320 ? t.output.slice(0, 320) + "…" : t.output}
+                          {t.output.length > 320 ? t.output.slice(0, 320) + "..." : t.output}
                         </pre>
                       )}
                     </li>

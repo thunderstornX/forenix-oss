@@ -1,5 +1,5 @@
 /**
- * Subprocess: tesseract — OCR text extraction from an image URL.
+ * Subprocess: tesseract  -  OCR text extraction from an image URL.
  * https://github.com/tesseract-ocr/tesseract
  *
  * Install:  apt install tesseract-ocr

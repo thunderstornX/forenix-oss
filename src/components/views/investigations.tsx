@@ -50,7 +50,7 @@ export function InvestigationsView() {
       subtitle="Active OSINT investigations. Promote findings to a forensic case once the pipeline completes."
       actions={
         <>
-          <FilterInput value={filter} onChange={setFilter} placeholder="Filter…" />
+          <FilterInput value={filter} onChange={setFilter} placeholder="Filter..." />
           <button
             type="button"
             onClick={() => setOpen((o) => !o)}
@@ -73,7 +73,7 @@ export function InvestigationsView() {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               className="mt-1 w-full rounded border border-[var(--border)] bg-[var(--background-elev)] px-2.5 py-1.5 text-[13px] outline-none focus:border-[var(--accent)]"
-              placeholder="INV-2025-021 — …"
+              placeholder="INV-2025-021  -  ..."
             />
           </label>
           <label className="block">
@@ -159,7 +159,7 @@ export function InvestigationsView() {
                       → case
                     </span>
                   ) : (
-                    <span className="text-[11px] text-[var(--foreground-muted)]">—</span>
+                    <span className="text-[11px] text-[var(--foreground-muted)]"> - </span>
                   )}
                 </td>
                 <td className="px-4 py-2.5 text-[11px] text-[var(--foreground-muted)]">{relTime(i.updatedAt)}</td>
@@ -176,7 +176,7 @@ export function InvestigationsView() {
             {list.isLoading && (
               <tr>
                 <td colSpan={6} className="p-6 text-center text-[12px] text-[var(--foreground-muted)]">
-                  Loading…
+                  Loading...
                 </td>
               </tr>
             )}

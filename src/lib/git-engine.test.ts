@@ -1,5 +1,5 @@
 /**
- * git-engine tests — real Git semantics on top of isomorphic-git.
+ * git-engine tests  -  real Git semantics on top of isomorphic-git.
  *
  * Each test uses a fresh case repo under a temp dir so they don't
  * interfere with each other or the developer's real case-repos.

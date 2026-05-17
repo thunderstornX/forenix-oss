@@ -9,7 +9,7 @@
  *   - Evidence
  *   - Entities (OSINT side)
  *
- * …plus every relation we can derive: case assignments, agent
+ * ...plus every relation we can derive: case assignments, agent
  * assignments, investigation→case bridges, finding→evidence
  * bridges, entity relations.
  */
@@ -56,7 +56,7 @@ export async function GET() {
     nodes.push({ id: `agent:${a.id}`, kind: "agent", label: a.name, meta: { type: a.type, status: a.status } });
   }
   for (const c of cases) {
-    nodes.push({ id: `case:${c.id}`, kind: "case", label: `${c.caseNumber} · ${c.title}`, meta: { status: c.status } });
+    nodes.push({ id: `case:${c.id}`, kind: "case", label: `${c.caseNumber} | ${c.title}`, meta: { status: c.status } });
   }
   for (const i of investigations) {
     nodes.push({ id: `inv:${i.id}`, kind: "investigation", label: i.title, meta: { target: i.target, status: i.status } });

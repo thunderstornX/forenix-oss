@@ -39,7 +39,7 @@ export async function POST(request: Request) {
       details: { teamId: body.teamId, email: body.email, role: body.role },
     });
     // Token is the *only* time we return the secret. Email-less in 0.1
-    // — caller copies the link and forwards it manually.
+    //  -  caller copies the link and forwards it manually.
     return Response.json({ data: { ...invite } }, { status: 201 });
   } catch (err) {
     return httpErrorResponse(err);

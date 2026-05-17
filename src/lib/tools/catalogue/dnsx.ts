@@ -1,5 +1,5 @@
 /**
- * Subprocess: dnsx (ProjectDiscovery) — DNS toolkit. Resolves A,
+ * Subprocess: dnsx (ProjectDiscovery)  -  DNS toolkit. Resolves A,
  * AAAA, MX, NS, TXT, CNAME, SOA records in one pass.
  * https://github.com/projectdiscovery/dnsx
  *

@@ -3,7 +3,7 @@
  *
  * Every forensic Case owns a real Git repository on disk. Each
  * Evidence row materialises as a JSON file in the repo. Branch
- * operations, commits, and merges are real Git operations — not
+ * operations, commits, and merges are real Git operations  -  not
  * database illusions.
  *
  * Layout per case (CASE_REPO_ROOT env, default ./case-repos):
@@ -12,11 +12,11 @@
  *     ├── .git/                  ← bare-style git directory
  *     ├── evidence/
  *     │   ├── <evidenceId>.json
- *     │   └── …
+ *     │   └── ...
  *     └── README.md               ← case description, branch-rooted
  *
  * `headHash` and `parentHash` on the existing Branch / EvidenceCommit
- * tables remain — they now hold actual git oids (40-char hex SHA-1)
+ * tables remain  -  they now hold actual git oids (40-char hex SHA-1)
  * rather than ad-hoc SHA-256 strings. This is a non-breaking change
  * at the schema level.
  *
@@ -27,7 +27,7 @@
  */
 // NOTE: this module uses `node:fs`, so any accidental import from a
 // "use client" component will fail at Next.js build time. That's the
-// implicit boundary — no separate `server-only` marker needed (and
+// implicit boundary  -  no separate `server-only` marker needed (and
 // the marker breaks bun-test).
 
 import { promises as fs } from "node:fs";
@@ -44,7 +44,7 @@ const AUTHOR = {
 
 /**
  * Vercel's serverless filesystem is read-only except for /tmp, and
- * /tmp is wiped on cold-start — so per-case Git repos can't survive
+ * /tmp is wiped on cold-start  -  so per-case Git repos can't survive
  * across invocations there. We expose this flag so callers can fall
  * back to db-only commit records when running on Vercel.
  *
@@ -72,7 +72,7 @@ export async function ensureCaseRepo(
     await git.resolveRef({ fs: fs as never, dir, ref: "HEAD" });
     return; // already initialised
   } catch {
-    // not initialised — fall through to init below
+    // not initialised  -  fall through to init below
   }
   await mkdir(dir, { recursive: true });
   await git.init({ fs: fs as never, dir, defaultBranch: "main" });
@@ -81,7 +81,7 @@ export async function ensureCaseRepo(
   const readme = [
     `# ${opts.title ?? caseId}`,
     "",
-    opts.description ?? "Forensic case repository — managed by forenix-oss.",
+    opts.description ?? "Forensic case repository  -  managed by forenix-oss.",
     "",
     "Every evidence item lives in `evidence/<id>.json`. Each commit",
     "is a chain-of-custody event. Branches are real refs. Merges are",
@@ -283,7 +283,7 @@ export async function readFileAtCommit(
   }
 }
 
-/** Delete the entire case repo (DESTRUCTIVE — used by tests + case archival). */
+/** Delete the entire case repo (DESTRUCTIVE  -  used by tests + case archival). */
 export async function deleteCaseRepo(caseId: string): Promise<void> {
   await rm(caseDir(caseId), { recursive: true, force: true });
 }

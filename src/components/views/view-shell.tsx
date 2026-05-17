@@ -13,7 +13,7 @@ interface Props {
 }
 
 /**
- * Common scaffolding for every view — title row + optional actions
+ * Common scaffolding for every view  -  title row + optional actions
  * + body. Keeps the views visually consistent without each one
  * re-implementing the layout.
  */

@@ -1,5 +1,5 @@
 /**
- * Subprocess: yt-dlp — extract metadata from a video/social-media URL
+ * Subprocess: yt-dlp  -  extract metadata from a video/social-media URL
  * without downloading the actual video. Surfaces: uploader, channel,
  * title, description, upload date, view counts, tags, comments
  * (when public).

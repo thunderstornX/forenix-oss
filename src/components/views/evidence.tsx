@@ -15,7 +15,7 @@ const KB = 1024, MB = KB * 1024, GB = MB * 1024;
 
 function formatSize(s: string): string {
   const n = Number(s);
-  if (!Number.isFinite(n) || n === 0) return "—";
+  if (!Number.isFinite(n) || n === 0) return " - ";
   if (n < KB) return `${n} B`;
   if (n < MB) return `${(n / KB).toFixed(1)} KB`;
   if (n < GB) return `${(n / MB).toFixed(1)} MB`;
@@ -38,7 +38,7 @@ export function EvidenceView() {
       subtitle="Every piece of evidence across every open case. Each row links back to its parent case and its hash-chained commits."
       actions={
         <>
-          <FilterInput value={filter} onChange={setFilter} placeholder="Filter…" />
+          <FilterInput value={filter} onChange={setFilter} placeholder="Filter..." />
           <span className="text-[11px] text-[var(--foreground-muted)]">{rows.length} items</span>
         </>
       }

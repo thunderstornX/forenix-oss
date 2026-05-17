@@ -1,6 +1,6 @@
 /**
  * Pure-function tests for the OpenAI-compatible adapter helpers.
- * No network — we just exercise the JSON-extraction / shape-cleaning
+ * No network  -  we just exercise the JSON-extraction / shape-cleaning
  * code paths that every real adapter relies on.
  */
 import { describe, it, expect } from "bun:test";

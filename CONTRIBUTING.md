@@ -1,7 +1,7 @@
 # Contributing to forenix-oss
 
 Thanks for the interest. This document covers the contribution
-flow — issues, pull requests, the test / typecheck / lint loop,
+flow  -  issues, pull requests, the test / typecheck / lint loop,
 and the rules we'd like every PR to follow.
 
 ## Quick start
@@ -39,9 +39,9 @@ CI runs all of these on every push. A red CI blocks merge.
 - Commit messages use Conventional Commits:
   - `feat: short imperative summary`
   - `fix(component): what broke and how`
-  - `docs: …`
-  - `chore: …` (tooling, CI, dependencies)
-  - `refactor: …`, `test: …`, `perf: …` as needed.
+  - `docs: ...`
+  - `chore: ...` (tooling, CI, dependencies)
+  - `refactor: ...`, `test: ...`, `perf: ...` as needed.
 - One logical change per commit. We prefer atomic commits over
   big mash-ups.
 
@@ -63,7 +63,7 @@ CI runs all of these on every push. A red CI blocks merge.
   trust-anchor story rests on it.
 - Premium-only features in core paths. SaaS-premium features
   gate behind `SAAS_MODE=true`; nothing else.
-- UI framework swaps (no shadcn → MUI swaps, etc.).
+- UI framework swaps (no shadcn -> MUI swaps, etc.).
 
 ## The two non-negotiables
 
@@ -99,9 +99,9 @@ on a parsing path that isn't already covered.
 
 ## Code style
 
-- TypeScript strict — no `any` unless commented and obviously
+- TypeScript strict  -  no `any` unless commented and obviously
   unavoidable.
-- Prefer `cn(…classes)` over conditional strings. We import
+- Prefer `cn(...classes)` over conditional strings. We import
   `cn` from `@/lib/utils`.
 - Server-only modules (those touching Prisma or environment
   secrets) get `import "server-only"` at the top.
@@ -114,5 +114,5 @@ Don't open a public issue for security bugs. See `SECURITY.md`.
 
 ## Community standards
 
-We follow the Contributor Covenant 2.1 — see
+We follow the Contributor Covenant 2.1  -  see
 `CODE_OF_CONDUCT.md`.

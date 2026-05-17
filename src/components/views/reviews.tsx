@@ -26,12 +26,12 @@ export function ReviewsView() {
     try {
       const res = await merge.mutateAsync(id) as { data: { gitOid: string; fastForward: boolean } };
       toast.success(
-        `Merged ${res.data.fastForward ? "(fast-forward)" : "(3-way)"} · ${res.data.gitOid.slice(0, 8)}`,
+        `Merged ${res.data.fastForward ? "(fast-forward)" : "(3-way)"} | ${res.data.gitOid.slice(0, 8)}`,
       );
     } catch (e) {
       const msg = (e as Error).message;
       if (msg.includes("merge_conflict")) {
-        toast.error("Merge conflict — see audit log for affected files.");
+        toast.error("Merge conflict  -  see audit log for affected files.");
       } else {
         toast.error(msg);
       }

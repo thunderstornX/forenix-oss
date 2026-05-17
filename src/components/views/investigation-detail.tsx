@@ -47,7 +47,7 @@ export function InvestigationDetail({ investigationId }: Props) {
   if (detail.isLoading) {
     return (
       <ViewShell title="Investigation">
-        <div className="glass rounded-lg p-6 text-[12px] text-[var(--foreground-muted)]">Loading…</div>
+        <div className="glass rounded-lg p-6 text-[12px] text-[var(--foreground-muted)]">Loading...</div>
       </ViewShell>
     );
   }
@@ -100,11 +100,11 @@ export function InvestigationDetail({ investigationId }: Props) {
                 Forensic case
               </div>
               <div className="text-[13px] text-[var(--foreground)]">
-                {inv.case.title} · <span className="font-mono text-[12px]">{inv.case.caseNumber}</span>
+                {inv.case.title} | <span className="font-mono text-[12px]">{inv.case.caseNumber}</span>
               </div>
             </div>
           </div>
-          <span className="text-[11px] text-[var(--forensic)] group-hover:underline">open →</span>
+          <span className="text-[11px] text-[var(--forensic)] group-hover:underline">open</span>
         </button>
       )}
 
@@ -176,7 +176,7 @@ export function InvestigationDetail({ investigationId }: Props) {
           ))}
           {inv.findings.length === 0 && (
             <li className="rounded border border-dashed border-[var(--border)] p-4 text-center text-[12px] text-[var(--foreground-muted)]">
-              No findings yet — run the pipeline.
+              No findings yet  -  run the pipeline.
             </li>
           )}
         </ul>
@@ -194,7 +194,7 @@ export function InvestigationDetail({ investigationId }: Props) {
                   <span className="text-[10px] uppercase tracking-[0.18em] text-[var(--accent)]">{m.cadence}</span>
                 </div>
                 <div className="mt-0.5 text-[10px] text-[var(--foreground-muted)]">
-                  next run: {m.nextRunAt ? relTime(m.nextRunAt) : "—"}
+                  next run: {m.nextRunAt ? relTime(m.nextRunAt) : " - "}
                 </div>
               </li>
             ))}
@@ -211,7 +211,7 @@ export function InvestigationDetail({ investigationId }: Props) {
                 <div className="min-w-0">
                   <div className="truncate text-[12px] text-[var(--foreground)]">{r.title}</div>
                   <div className="text-[10px] text-[var(--foreground-muted)]">
-                    {r.type} · {r.findingCount} findings
+                    {r.type} | {r.findingCount} findings
                   </div>
                 </div>
                 <StatusChip text={r.status} />
@@ -380,8 +380,8 @@ function SatTraceCard({ trace }: { trace: string }) {
             {parsed.inputs.slice(0, 4).map((inp, i) => (
               <li key={i}>
                 <span className="font-mono">{inp.sourceId ?? "?"}</span>
-                {typeof inp.credibility === "number" ? ` · cred=${inp.credibility}/5` : ""}
-                {inp.summary ? ` — ${inp.summary.slice(0, 120)}` : ""}
+                {typeof inp.credibility === "number" ? ` | cred=${inp.credibility}/5` : ""}
+                {inp.summary ? `  -  ${inp.summary.slice(0, 120)}` : ""}
               </li>
             ))}
           </ul>

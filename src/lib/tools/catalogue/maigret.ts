@@ -1,5 +1,5 @@
 /**
- * Subprocess: maigret — sherlock+++. Searches 3000+ sites for a
+ * Subprocess: maigret  -  sherlock+++. Searches 3000+ sites for a
  * username, classifies hits, and provides extra metadata when
  * available. https://github.com/soxoj/maigret
  *

@@ -1,4 +1,4 @@
-# Security + Threat Model — forenix-oss
+# Security + Threat Model  -  forenix-oss
 
 > "Forensic chain-of-custody" is a marketing word until you can
 > prove it cryptographically. This document documents the proof.
@@ -7,23 +7,23 @@
 
 | # | Asset | Sensitivity |
 |---|---|---|
-| A1 | Audit log (hash chain) | **Critical** — invalidating it breaks the entire product claim |
-| A2 | Evidence rows + commit history | **High** — the case stands or falls on this |
-| A3 | Investigation findings | **Medium** — pre-evidence, but still confidential to the analyst |
-| A4 | User credentials | **High** — controls all of the above |
-| A5 | LLM API keys | **High** — billing risk + can be used to attribute LLM output |
-| A6 | LLM provider responses | **Low–Medium** — raw model output, not verified |
+| A1 | Audit log (hash chain) | **Critical**  -  invalidating it breaks the entire product claim |
+| A2 | Evidence rows + commit history | **High**  -  the case stands or falls on this |
+| A3 | Investigation findings | **Medium**  -  pre-evidence, but still confidential to the analyst |
+| A4 | User credentials | **High**  -  controls all of the above |
+| A5 | LLM API keys | **High**  -  billing risk + can be used to attribute LLM output |
+| A6 | LLM provider responses | **Low-Medium**  -  raw model output, not verified |
 
 ## 2. Threat model (STRIDE)
 
 | Threat | Category | Example | Mitigation |
 |---|---|---|---|
 | Audit-log tampering | **Tampering** | Adversary edits a row to hide an action | SHA-256 forward chain; any edit breaks the chain at the next replay |
-| Reordering of audit rows | **Tampering** | Adversary swaps two rows to suggest a different timeline | `createdAt` is a chain input → reordering breaks hash recomputation |
+| Reordering of audit rows | **Tampering** | Adversary swaps two rows to suggest a different timeline | `createdAt` is a chain input -> reordering breaks hash recomputation |
 | Hash-truncation collision attack | **Tampering** | Attacker produces a benign row hash that collides with a sealed row | Full 256-bit hash stored; UI truncates *display* only |
 | Evidence forging | **Tampering** | Adversary inserts an Evidence row from outside the API | All writes go through routes that audit-log; out-of-band inserts surface as audit-gap rows |
 | Adapter MITM | **Tampering** | Adversary intercepts an LLM API call | HTTPS only; pinned adapter base URLs; document SHA-256 of model output in the audit row |
-| Replay attack on POST | **Spoofing** | Adversary replays a "promote_finding" request | Per-finding `evidenceId` is checked — already-promoted findings return 409 |
+| Replay attack on POST | **Spoofing** | Adversary replays a "promote_finding" request | Per-finding `evidenceId` is checked  -  already-promoted findings return 409 |
 | Credential theft | **Spoofing** | Adversary obtains a user's session | Session cookies are httpOnly + secure; SaaS tier adds optional SSO + MFA |
 | Adapter env leak | **Information disclosure** | Adversary reads `.env` | `.env` is gitignored; secrets handed in via env at run time |
 | LLM key reuse | **Information disclosure** | Forensic exports include the API key by accident | API keys are never emitted in any response or log line |
@@ -32,10 +32,10 @@
 | DoS via long LLM hang | **Denial of service** | Provider stalls indefinitely | Adapter requests have a 90 s AbortController timeout |
 | Privilege escalation | **Elevation of privilege** | Investigator edits an admin-only field | RBAC ships in the SaaS premium tier; OSS tier treats all users as one role with the disclaimer documented |
 
-## 3. Audit chain — formal spec
+## 3. Audit chain  -  formal spec
 
 ```
-GENESIS = sha256_zero = 0x0000…0000 (32 bytes, hex-encoded)
+GENESIS = sha256_zero = 0x0000...0000 (32 bytes, hex-encoded)
 
 hash(row_n) =
     sha256(
@@ -68,7 +68,7 @@ UI surface: `/integrity` view.
 - **Authorship.** The chain proves *that* an action happened, not
   *who* performed it. Authorship comes from authentication +
   RBAC, which is layered on top.
-- **Causality.** Two rows with close timestamps are independent —
+- **Causality.** Two rows with close timestamps are independent  - 
   the chain doesn't prove one caused the other.
 - **Truthfulness of content.** A row faithfully records that
   "promote_finding_to_evidence was invoked"; it does not assert
@@ -136,13 +136,13 @@ PY
 
 ## 6. Backups + recovery
 
-- **Postgres** — PITR + WAL streaming (RPO ≤ 5 min).
-- **SQLite** — daily backups + the user is responsible for
+- **Postgres**  -  PITR + WAL streaming (RPO <= 5 min).
+- **SQLite**  -  daily backups + the user is responsible for
   rotation.
-- **Audit chain** — the same `audit` table backup carries the
+- **Audit chain**  -  the same `audit` table backup carries the
   chain proof. Restoring an earlier snapshot truncates the chain
   but does not invalidate it.
-- **Verification after restore** — run `GET /api/audit/verify`
+- **Verification after restore**  -  run `GET /api/audit/verify`
   immediately after restore; the chain should return `ok: true`
   with the appropriate `entries` count.
 
@@ -152,15 +152,15 @@ PY
 > design choices that make compliance attainable, not
 > certifications.
 
-- **ISO 27001** — append-only audit + RBAC (SaaS) + DR plan +
+- **ISO 27001**  -  append-only audit + RBAC (SaaS) + DR plan +
   documented incident response are all aligned with Annex A.
-- **GDPR / UK GDPR** — single-tenant deployment + per-row deletion
+- **GDPR / UK GDPR**  -  single-tenant deployment + per-row deletion
   via Prisma is straightforward; the audit chain remains intact
   on delete because deletes are themselves audit rows.
-- **NIST 800-53** — AU-9 (Protection of Audit Information),
+- **NIST 800-53**  -  AU-9 (Protection of Audit Information),
   AU-10 (Non-Repudiation), CM-6 (Configuration Settings) are
   directly served by the chain + the `SAAS_MODE` flag.
-- **eDiscovery (FRCP)** — exported reports + the audit-chain
+- **eDiscovery (FRCP)**  -  exported reports + the audit-chain
   attestation jointly support custodial-chain admissibility.
 
 ## 8. Reporting a vulnerability

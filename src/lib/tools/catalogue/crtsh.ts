@@ -1,8 +1,8 @@
 /**
- * HTTP: crt.sh — certificate transparency log search.
+ * HTTP: crt.sh  -  certificate transparency log search.
  *
  * No API key. Returns subdomains and TLS certs issued for a
- * domain (or wildcard). Cheap, fast, runs everywhere — works on
+ * domain (or wildcard). Cheap, fast, runs everywhere  -  works on
  * Vercel because it's just HTTPS.
  */
 import type { Tool } from "../types";

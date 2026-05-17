@@ -4,7 +4,7 @@
  * Three dispatchers depending on tool.kind:
  *   - subprocess: spawn the OSINT CLI, capture stdout+stderr, cap
  *     output bytes, kill on timeout.
- *   - http: nothing special — the tool's execute() makes its own
+ *   - http: nothing special  -  the tool's execute() makes its own
  *     fetch call. We just enforce overall timeout via abort.
  *   - builtin: pure JS function, no I/O concerns.
  *
@@ -63,7 +63,7 @@ function truncate(value: unknown, maxBytes: number): unknown {
   return {
     truncated: true,
     bytes: maxBytes,
-    payload: sliced + "…",
+    payload: sliced + "...",
   };
 }
 
@@ -119,7 +119,7 @@ export async function spawnTool(args: {
 
 /** When running on Vercel, ship the call to WORKER_URL and trust it.
  *  The worker is expected to expose POST /run with shape:
- *    { tool: "<name>", args: {...} } → { output: any }
+ *    { tool: "<name>", args: {...} } -> { output: any }
  */
 async function delegateToWorker(tool: Tool, call: ToolCall): Promise<unknown> {
   const base = process.env.WORKER_URL!;

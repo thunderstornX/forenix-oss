@@ -2,7 +2,7 @@
  * Singleton Prisma client.
  *
  * Next.js dev-server hot-reloading would otherwise instantiate a new
- * client on every recompile and exhaust connection limits — pinning
+ * client on every recompile and exhaust connection limits  -  pinning
  * it on `globalThis` is the documented workaround.
  */
 import "server-only";

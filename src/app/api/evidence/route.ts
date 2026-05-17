@@ -27,7 +27,7 @@ export async function GET(request: Request) {
       },
     });
 
-    // Evidence.size is BigInt — coerce to string on the wire.
+    // Evidence.size is BigInt  -  coerce to string on the wire.
     const serialized = rows.map((r) => ({ ...r, size: r.size.toString() }));
     const { data, nextCursor } = paginateSlice(serialized, page.limit);
     return Response.json({ data, nextCursor });

@@ -191,7 +191,7 @@ export function CommandPalette() {
             value={query}
             onChange={(e) => { setQuery(e.target.value); setHighlight(0); }}
             onKeyDown={onKey}
-            placeholder="Search investigations, cases, reports, views…"
+            placeholder="Search investigations, cases, reports, views..."
             className="w-full bg-transparent text-[13px] text-[var(--foreground)] outline-none placeholder:text-[var(--foreground-muted)]"
           />
           <kbd className="rounded bg-[var(--background-elev-2)] px-1.5 py-0.5 font-mono text-[10px] text-[var(--foreground-muted)]">
@@ -246,7 +246,7 @@ export function CommandPalette() {
         </ul>
 
         <div className="flex items-center justify-between border-t border-[var(--border)] px-3 py-1.5 text-[10px] text-[var(--foreground-muted)]">
-          <span><kbd className="font-mono">↑↓</kbd> navigate · <kbd className="font-mono">⏎</kbd> open</span>
+          <span><kbd className="font-mono">^v</kbd> navigate | <kbd className="font-mono">⏎</kbd> open</span>
           <span>⌘K to toggle</span>
         </div>
       </div>

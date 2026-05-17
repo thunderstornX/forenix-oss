@@ -1,9 +1,9 @@
 /**
  * Shared helpers for OpenAI-compatible chat-completions endpoints
- * (OpenRouter, NVIDIA NIM, Groq, Together, Ollama's OpenAI mode, …).
+ * (OpenRouter, NVIDIA NIM, Groq, Together, Ollama's OpenAI mode, ...).
  *
  * Both `OpenRouterAdapter` and `NVIDIAAdapter` reuse the same JSON
- * extraction + prompt scaffolds — the only differences are the URL,
+ * extraction + prompt scaffolds  -  the only differences are the URL,
  * the auth header, and the model id.
  *
  * NOTE: every adapter built on top of this module MUST live behind
@@ -84,7 +84,7 @@ export async function chatComplete(
       throw new Error(`${backend.name} error: ${data.error.message ?? "unknown"}`);
     }
     // Some routes return only `reasoning` and no `content` for reasoning
-    // models. Treat that as recoverable — return "" and let the caller
+    // models. Treat that as recoverable  -  return "" and let the caller
     // handle (extractJson + the per-call try/catch both already do).
     const content = data.choices?.[0]?.message?.content ?? "";
     if (!content) {
@@ -97,7 +97,7 @@ export async function chatComplete(
 }
 
 /**
- * Robust JSON extraction — handles ```json fences, prose around the
+ * Robust JSON extraction  -  handles ```json fences, prose around the
  * JSON, trailing commas, and prose after the closing brace.
  *
  * Strategy:
@@ -105,7 +105,7 @@ export async function chatComplete(
  *   2. Find the first `{` (or `[`) and the matching closer by walking
  *      braces with quote/escape awareness.
  *   3. Try strict JSON.parse first. On failure, strip trailing commas
- *      (`,}` → `}`, `,]` → `]`) and retry. That covers the two most
+ *      (`,}` -> `}`, `,]` -> `]`) and retry. That covers the two most
  *      common LLM JSON-emission glitches.
  */
 export function extractJson<T = unknown>(raw: string): T {
@@ -145,7 +145,7 @@ export function extractJson<T = unknown>(raw: string): T {
     try {
       return JSON.parse(repaired) as T;
     } catch {
-      // Bubble the original error — more diagnostic than the repaired one.
+      // Bubble the original error  -  more diagnostic than the repaired one.
       throw err;
     }
   }
@@ -219,7 +219,7 @@ export async function chatAnalyzePipeline(
   const { injectVaultKeys } = await import("@/lib/vault");
 
   // Decrypt admin-set API keys into process.env so the registry's
-  // isToolAvailable() check sees them. Cheap — 30 s in-memory cache.
+  // isToolAvailable() check sees them. Cheap  -  30 s in-memory cache.
   try { await injectVaultKeys(); } catch { /* vault not yet ready */ }
 
   const tools = availableToolsForGroup(agentGroup);
@@ -228,16 +228,16 @@ export async function chatAnalyzePipeline(
     `Agent group: ${agentGroup}`,
     "",
     tools.length > 0
-      ? "You have OSINT tools available. Plan a short sequence of tool calls — start with a web search or crt.sh lookup to ground the target, then drill down with specialised tools (sherlock for usernames, holehe for emails, theHarvester for domains, etc.). Once you have real evidence, emit findings.\n"
+      ? "You have OSINT tools available. Plan a short sequence of tool calls  -  start with a web search or crt.sh lookup to ground the target, then drill down with specialised tools (sherlock for usernames, holehe for emails, theHarvester for domains, etc.). Once you have real evidence, emit findings.\n"
       : (searchResults.length > 0
           ? "Sources (" + searchResults.length + "):\n" +
-            searchResults.slice(0, 12).map((s, i) => `  [${i + 1}] ${s.title} — ${s.url}\n      ${s.snippet}`).join("\n") + "\n"
-          : "No external data is available in this environment — base your findings on prior reasoning only.\n"),
+            searchResults.slice(0, 12).map((s, i) => `  [${i + 1}] ${s.title}  -  ${s.url}\n      ${s.snippet}`).join("\n") + "\n"
+          : "No external data is available in this environment  -  base your findings on prior reasoning only.\n"),
     "",
     "When you have enough evidence, return STRICT JSON only (no prose, no fences) matching the schema in the system prompt. Produce 2-4 findings, each grounded in tool output where possible.",
   ].join("\n");
 
-  // SAT-grounded system prompt per agent group — replaces the
+  // SAT-grounded system prompt per agent group  -  replaces the
   // bland SYSTEM_PIPELINE and forces a structured SatTrace.
   const { satPromptFor } = await import("./sat-prompts");
   const system = satPromptFor(agentGroup);
@@ -279,8 +279,8 @@ export async function chatAnalyzePipeline(
   try {
     parsed = extractJson<Parsed>(raw);
   } catch (err) {
-    // Some models — particularly larger reasoning-flavoured ones routed
-    // through OpenRouter — occasionally return prose-only output after
+    // Some models  -  particularly larger reasoning-flavoured ones routed
+    // through OpenRouter  -  occasionally return prose-only output after
     // running tools. Don't 500 the pipeline: return a single sentinel
     // finding that captures what the LLM said + the error, so the
     // analyst can see what happened and rerun.
@@ -290,7 +290,7 @@ export async function chatAnalyzePipeline(
         {
           title: `${agentGroup} pipeline returned unstructured output`,
           description:
-            (raw.trim() || `(no model output — adapter "${backend.name}" model "${backend.model}" produced no content)`).slice(0, 1100),
+            (raw.trim() || `(no model output  -  adapter "${backend.name}" model "${backend.model}" produced no content)`).slice(0, 1100),
           confidence: "unverified",
           priority: "low",
           sourceName: `${backend.name}/${agentGroup}/raw`,
@@ -335,7 +335,7 @@ export async function chatExtractEntities(
   backend: ChatBackend,
   findings: Finding[],
 ): Promise<EntityExtractionResult> {
-  const lines = findings.slice(0, 30).map((f, i) => `[${i + 1}] (${f.agentGroup}) ${f.title} — ${f.description}`);
+  const lines = findings.slice(0, 30).map((f, i) => `[${i + 1}] (${f.agentGroup}) ${f.title}  -  ${f.description}`);
   const userMsg = `Extract entities + relations referenced across these findings:\n${lines.join("\n")}`;
 
   const raw = await chatComplete(
@@ -418,7 +418,7 @@ export async function chatGenerateReport(
   findings: Finding[],
 ): Promise<string> {
   const findingsBlock = findings.slice(0, 50)
-    .map((f) => `- (${f.agentGroup}, ${f.priority}, ${f.confidence}) **${f.title}** — ${f.description}`)
+    .map((f) => `- (${f.agentGroup}, ${f.priority}, ${f.confidence}) **${f.title}**  -  ${f.description}`)
     .join("\n");
 
   const userMsg = [
@@ -434,9 +434,9 @@ export async function chatGenerateReport(
     ``,
     `Output sections in this order:`,
     `1. # Executive Summary (3-5 sentences)`,
-    `2. ## Findings — grouped by agent group, bullet each`,
-    `3. ## Entity overview — names mentioned in the findings, no relations needed`,
-    `4. ## Recommended next steps — 3-5 concrete bullet points`,
+    `2. ## Findings  -  grouped by agent group, bullet each`,
+    `3. ## Entity overview  -  names mentioned in the findings, no relations needed`,
+    `4. ## Recommended next steps  -  3-5 concrete bullet points`,
     ``,
     `Do not invent findings that aren't in the list above.`,
   ].join("\n");

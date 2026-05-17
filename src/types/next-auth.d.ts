@@ -1,5 +1,5 @@
 /**
- * Module augmentation — adds `id` + `role` to the session/user shape
+ * Module augmentation  -  adds `id` + `role` to the session/user shape
  * so TypeScript knows our extra fields exist after our jwt/session
  * callbacks have set them.
  */

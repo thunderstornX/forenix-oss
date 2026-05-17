@@ -41,7 +41,7 @@ export function CaseDetail({ caseId }: Props) {
   if (detail.isLoading) {
     return (
       <ViewShell title="Case">
-        <div className="glass rounded-lg p-6 text-[12px] text-[var(--foreground-muted)]">Loading…</div>
+        <div className="glass rounded-lg p-6 text-[12px] text-[var(--foreground-muted)]">Loading...</div>
       </ViewShell>
     );
   }
@@ -123,7 +123,7 @@ export function CaseDetail({ caseId }: Props) {
                 <div className="min-w-0">
                   <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.18em] text-[var(--foreground-muted)]">
                     <Archive className="h-3 w-3 text-[var(--forensic)]" />
-                    {ev.type} · {ev.mimeType ?? "n/a"}
+                    {ev.type} | {ev.mimeType ?? "n/a"}
                   </div>
                   <div className="mt-0.5 text-[13px] text-[var(--foreground)]">{ev.name}</div>
                   {ev.description && (
@@ -194,7 +194,7 @@ export function CaseDetail({ caseId }: Props) {
                   <span className="rounded bg-[var(--accent-soft)] px-1 py-0.5 text-[9px] text-[var(--accent-strong)]">main</span>
                 )}
                 <span className="ml-auto text-[10px] text-[var(--foreground-muted)]">
-                  {b._count.commits} commits · {b._count.merges} MRs
+                  {b._count.commits} commits | {b._count.merges} MRs
                 </span>
               </li>
             ))}

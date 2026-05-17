@@ -1,4 +1,4 @@
-# Demo script — forenix-oss
+# Demo script  -  forenix-oss
 
 A guided walkthrough you can hand to a reviewer (or follow yourself
 in a screen-share). Target runtime: **12 minutes**.
@@ -14,26 +14,26 @@ bun run dev
 ```
 
 Open http://localhost:3000 in a Chromium-based browser at
-1440×900.
+1440x900.
 
 If you want to demo a real LLM run:
 ```bash
 # In .env:
 AI_ADAPTER=mock                           # leave on mock for stable demo
-OPENROUTER_API_KEY=sk-or-…                # required for the live run later
-NVIDIA_API_KEY=nvapi-…                    # required for the live run later
+OPENROUTER_API_KEY=sk-or-...                # required for the live run later
+NVIDIA_API_KEY=nvapi-...                    # required for the live run later
 ```
 
 ---
 
-## 1. Dashboard (1 min) — *"both workflows on one screen"*
+## 1. Dashboard (1 min)  -  *"both workflows on one screen"*
 
 Open the **Dashboard** (⌘1).
 
 - Point out the four stat cards: investigations, cases, monitors,
   active adapter. All pulled live from the database.
-- Show the *Recent investigations* row labelled "INV-2025-019 —
-  Northwind Holdings" and note the **green case chip** — that's
+- Show the *Recent investigations* row labelled "INV-2025-019  - 
+  Northwind Holdings" and note the **green case chip**  -  that's
   the bridge.
 - Say: *"One pane. Two workflows. Everything you'll see in the
   next ten minutes is wired to this single dashboard."*
@@ -43,63 +43,63 @@ Open the **Dashboard** (⌘1).
 Click **Investigations** (⌘2), then click the **INV-2025-019** row.
 
 - Show the header strip (target / type / status / priority).
-- Show the **Bridge chip** at the top — clicks straight into the
+- Show the **Bridge chip** at the top  -  clicks straight into the
   linked case.
 - Scroll to *Findings* (3 rows on this investigation).
-- On a finding that's not verified, click **verify** → toast
+- On a finding that's not verified, click **verify** -> toast
   *"Finding verified"*; the row updates in place; an audit row
   is appended in the background.
-- Scroll to the bottom *Audit trail* — point out the SHA-256
+- Scroll to the bottom *Audit trail*  -  point out the SHA-256
   hashes in monospace. *"Every action is on the chain."*
 
-## 3. The pipeline (2 min) — *the headline feature*
+## 3. The pipeline (2 min)  -  *the headline feature*
 
 Click **Pipeline** (⌘5).
 
-- Pick **INV-2025-020 — Mira Volkov** from the dropdown.
+- Pick **INV-2025-020  -  Mira Volkov** from the dropdown.
 - Toggle agent groups: keep `identity`, `infrastructure`,
   `social`.
 - (Optional) tell the reviewer this defaults to the mock adapter
-  for speed — and that the same flow runs through any of the six
+  for speed  -  and that the same flow runs through any of the six
   real LLM adapters.
 - Click **Run pipeline**. Stages animate sequentially.
 - When the result card appears: *"Eight findings, four entities,
   three relations, a draft report. All committed to the audit
   chain in one transaction."*
-- Click **Open forensic case →** → switches view to the new case.
+- Click **Open forensic case ->** -> switches view to the new case.
 
-## 4. Forensic case → evidence → branch graph (2 min)
+## 4. Forensic case -> evidence -> branch graph (2 min)
 
 You're now in the new case detail. Talk through:
 
 - The auto-minted **CASE-2026-NNN** number.
-- The **Linked investigations** card — click to jump back if you
+- The **Linked investigations** card  -  click to jump back if you
   want.
 - The **Evidence list**: each row carries its own commit chain
-  inline. Point out *"add: promoted from finding …"* on the first
+  inline. Point out *"add: promoted from finding ..."* on the first
   commit and *"seal"* on subsequent commits.
-- Click **Seal** on one row → status flips to `sealed`, a `seal`
+- Click **Seal** on one row -> status flips to `sealed`, a `seal`
   commit appears, audit row written.
 
 Then click **Branch Graph** (⌘8) and pick *Operation Sandstone*.
 
 - *"This is a real git-style commit graph over evidence. Two
-  branches — `main` and `evidence-review`. Verified commits get
+  branches  -  `main` and `evidence-review`. Verified commits get
   a green ring."*
 
-## 5. Audit + Integrity (2 min) — *the trust anchor*
+## 5. Audit + Integrity (2 min)  -  *the trust anchor*
 
 Click **Audit** (sidebar).
 
 - Show the full audit table. Each row has its SHA-256 hash + the
   previous row's hash inline.
-- Type "pipeline" into the filter — only pipeline-related rows
+- Type "pipeline" into the filter  -  only pipeline-related rows
   remain.
 
 Then click **Integrity**.
 
 - Click **Verify chain**.
-- Result card lights up green: *"Chain verified — N entries —
+- Result card lights up green: *"Chain verified  -  N entries  - 
   every hash recomputes to the stored value."*
 - Read aloud the cryptographic method shown on the page:
   `sha256( prev | action | entity | id | iso(t) )`.
@@ -108,17 +108,17 @@ Then click **Integrity**.
 
 ## 6. The graph views (1 min)
 
-- **Entity Graph** (⌘3) — radial-by-type SVG. Confidence-weighted
+- **Entity Graph** (⌘3)  -  radial-by-type SVG. Confidence-weighted
   relation lines.
-- **Network Graph** — cross-case canvas. Users, agents,
+- **Network Graph**  -  cross-case canvas. Users, agents,
   investigations, cases, evidence, entities. *"This is what the
   shape of an active investigative workload looks like."*
 
 ## 7. AI Lab + Reports (1 min)
 
-- **AI Lab** (⌘9) — show one agent card with its recent tasks +
+- **AI Lab** (⌘9)  -  show one agent card with its recent tasks +
   raw output preview + confidence percentage.
-- **Reports** — open the *Northwind Holdings — Investigation
+- **Reports**  -  open the *Northwind Holdings  -  Investigation
   Summary* report. *"Sectioned JSON when generated by an Argus-
   side report. Markdown when generated by a case-side report. We
   render whichever shape we get."*
@@ -127,8 +127,8 @@ Then click **Integrity**.
 
 Press **⌘K** anywhere.
 
-- Type *"sandstone"* → the Operation Sandstone case shows up.
-- Press Enter → straight into the case detail.
+- Type *"sandstone"* -> the Operation Sandstone case shows up.
+- Press Enter -> straight into the case detail.
 
 ## 9. Live LLM (optional, 2 min)
 
@@ -144,7 +144,7 @@ curl -X POST -H "content-type: application/json" \
 
 Wait ~45 s. Refresh the Investigation detail.
 
-- Show the *real* findings — they're more specific, more
+- Show the *real* findings  -  they're more specific, more
   hallucinatory in places, with reasoning traces visible in the
   source URLs.
 - Make the point: *"Same audit chain. Same evidence-promotion
@@ -155,6 +155,6 @@ Wait ~45 s. Refresh the Investigation detail.
 End on the **Integrity** view with the green "chain verified"
 panel visible. Quote the slide:
 
-> "OSINT × Forensics, one workflow, one chain."
+> "OSINT x Forensics, one workflow, one chain."
 
 Then take questions.

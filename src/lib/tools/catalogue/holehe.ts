@@ -1,5 +1,5 @@
 /**
- * Subprocess: holehe — check which sites an email is registered on.
+ * Subprocess: holehe  -  check which sites an email is registered on.
  * https://github.com/megadose/holehe
  *
  * Install:  pip install holehe

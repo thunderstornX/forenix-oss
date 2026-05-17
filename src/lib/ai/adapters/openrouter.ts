@@ -1,13 +1,13 @@
 /**
- * OpenRouterAdapter — single key, many upstream models.
+ * OpenRouterAdapter  -  single key, many upstream models.
  *
  * OpenRouter is an OpenAI-compatible proxy that routes a single API
  * key to dozens of upstream providers (Anthropic, OpenAI, Mistral,
- * Meta, DeepSeek, Qwen, …). One key, the user picks the model.
+ * Meta, DeepSeek, Qwen, ...). One key, the user picks the model.
  *
  * Setup:
  *   1. Sign up at https://openrouter.ai
- *   2. Create an API key → set OPENROUTER_API_KEY=sk-or-…
+ *   2. Create an API key → set OPENROUTER_API_KEY=sk-or-...
  *   3. Pick a model with OPENROUTER_MODEL (default below is a
  *      cost-effective free-tier-friendly model).
  *   4. AI_ADAPTER=openrouter bun dev

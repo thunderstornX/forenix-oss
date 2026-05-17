@@ -1,5 +1,5 @@
 /**
- * Subprocess: exiftool — extract metadata from an image URL.
+ * Subprocess: exiftool  -  extract metadata from an image URL.
  * https://exiftool.org
  *
  * Use case: download an image referenced in an investigation,

@@ -73,10 +73,10 @@ function AdminConsole() {
       actions={
         <span className="text-[11px] text-[var(--foreground-muted)]">
           chain: {integ.data?.data && integ.data.data.ok
-            ? `green · ${integ.data.data.entries} rows`
+            ? `green | ${integ.data.data.entries} rows`
             : integ.data?.data
             ? "BROKEN"
-            : "checking…"}
+            : "checking..."}
         </span>
       }
     >
@@ -363,7 +363,7 @@ function InvitesPanel() {
         <form onSubmit={submit} className="mb-3 grid grid-cols-1 gap-2 rounded border border-[var(--border)] bg-[var(--background-elev)] p-3 sm:grid-cols-4">
           <select value={teamId} onChange={(e) => setTeamId(e.target.value)} required
             className="rounded border border-[var(--border)] bg-[var(--background-elev-2)] px-2 py-1.5 text-[12px]">
-            <option value="">— team —</option>
+            <option value=""> -  team  - </option>
             {teams.data?.data?.map((t) => <option key={t.id} value={t.id}>{t.name}</option>)}
           </select>
           <input value={email} onChange={(e) => setEmail(e.target.value)} required placeholder="Email" type="email"
@@ -433,8 +433,8 @@ interface VaultEntry {
 
 const SUGGESTED_KEYS = [
   { envKey: "SHODAN_API_KEY",  label: "Shodan",      sample: "Shodan host search" },
-  { envKey: "HUNTER_API_KEY",  label: "Hunter.io",   sample: "Domain → emails" },
-  { envKey: "HIBP_API_KEY",    label: "HaveIBeenPwned", sample: "Email → breaches" },
+  { envKey: "HUNTER_API_KEY",  label: "Hunter.io",   sample: "Domain -> emails" },
+  { envKey: "HIBP_API_KEY",    label: "HaveIBeenPwned", sample: "Email -> breaches" },
   { envKey: "CENSYS_API_ID",   label: "Censys ID",   sample: "Internet asset search" },
   { envKey: "CENSYS_API_SECRET", label: "Censys secret", sample: "(pair with the ID)" },
   { envKey: "INTELX_API_KEY",  label: "IntelX",      sample: "Dark/leak corpus search" },
@@ -509,9 +509,9 @@ function VaultPanel() {
             }}
             className="rounded border border-[var(--border)] bg-[var(--background-elev-2)] px-2 py-1.5 text-[12px]"
           >
-            <option value="">— pick a key —</option>
+            <option value=""> -  pick a key  - </option>
             {SUGGESTED_KEYS.map((s) => (
-              <option key={s.envKey} value={s.envKey}>{s.envKey} · {s.sample}</option>
+              <option key={s.envKey} value={s.envKey}>{s.envKey} | {s.sample}</option>
             ))}
             <option value="__custom">other (type your own)</option>
           </select>
@@ -558,7 +558,7 @@ function VaultPanel() {
               <td className="px-2 py-1.5">{v.label}</td>
               <td className="px-2 py-1.5 font-mono text-[11px] text-[var(--foreground-muted)]">{v.redactedValue}</td>
               <td className="px-2 py-1.5 text-[10px] text-[var(--foreground-muted)]">{relTime(v.setAt)}</td>
-              <td className="px-2 py-1.5 text-[10px] text-[var(--foreground-muted)]">{v.rotatedAt ? relTime(v.rotatedAt) : "—"}</td>
+              <td className="px-2 py-1.5 text-[10px] text-[var(--foreground-muted)]">{v.rotatedAt ? relTime(v.rotatedAt) : " - "}</td>
               <td className="px-2 py-1.5">
                 <button
                   type="button"

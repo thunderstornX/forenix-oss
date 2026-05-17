@@ -72,7 +72,7 @@ function BranchGraphForCase({ caseId }: { caseId: string }) {
   if (detail.isLoading) {
     return (
       <ViewShell title="Branch graph">
-        <div className="glass rounded-lg p-6 text-[12px] text-[var(--foreground-muted)]">Loading…</div>
+        <div className="glass rounded-lg p-6 text-[12px] text-[var(--foreground-muted)]">Loading...</div>
       </ViewShell>
     );
   }
@@ -101,7 +101,7 @@ function BranchGraphForCase({ caseId }: { caseId: string }) {
       });
     }
   }
-  // Sort by createdAt asc, so commits read top→bottom chronologically.
+  // Sort by createdAt asc, so commits read top->bottom chronologically.
   nodes.sort((a, b) => +new Date(a.createdAt) - +new Date(b.createdAt));
 
   const laneCount = Object.keys(lanes).length || 1;
@@ -112,7 +112,7 @@ function BranchGraphForCase({ caseId }: { caseId: string }) {
 
   return (
     <ViewShell
-      title={`Branch graph — ${c.caseNumber}`}
+      title={`Branch graph  -  ${c.caseNumber}`}
       subtitle={c.title}
       actions={
         <button

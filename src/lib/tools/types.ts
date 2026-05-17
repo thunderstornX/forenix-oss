@@ -1,5 +1,5 @@
 /**
- * Tool registry types — the contract every OSINT tool implements.
+ * Tool registry types  -  the contract every OSINT tool implements.
  *
  * Mirrors the OpenAI function-calling shape so any tool-capable
  * model (Claude / OpenRouter / NVIDIA / Groq / GLM) can use them
@@ -38,7 +38,7 @@ export interface Tool {
     properties: Record<string, JsonSchema>;
     required?: string[];
   };
-  /** Implementation backing — informs the runner how to dispatch. */
+  /** Implementation backing  -  informs the runner how to dispatch. */
   kind: ToolKind;
   /** Which agent groups should see this tool. */
   groups: AgentGroup[];

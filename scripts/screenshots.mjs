@@ -49,7 +49,7 @@ async function shoot(page, file, settle = 900) {
   await page.waitForTimeout(settle);
   const path = join(OUT, file);
   await page.screenshot({ path, fullPage: false });
-  console.log("  →", file);
+  console.log("  ->", file);
 }
 
 // ── Resolve the seeded ids so we can deep-link into a detail panel.
@@ -94,4 +94,4 @@ await page.click('button:has-text("Collapse")');
 await shoot(page, "19-sidebar-collapsed.png");
 
 await browser.close();
-console.log("\ndone →", OUT);
+console.log("\ndone ->", OUT);

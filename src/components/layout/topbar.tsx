@@ -49,7 +49,7 @@ export function Topbar() {
           <Activity size={13} style={{ color: "var(--accent)" }} />
           adapter{" "}
           <span style={{ fontFamily: "var(--font-mono)", color: "var(--fg)" }}>
-            {health?.adapter ?? "—"}
+            {health?.adapter ?? " - "}
           </span>
         </span>
         <span className="fx-row" style={{ gap: 6 }}>
@@ -130,7 +130,7 @@ export function Topbar() {
         {me?.data && (
           <span className="fx-chip fx-chip--accent">
             <UserIcon size={11} />
-            {me.data.name ?? me.data.email} · {me.data.role}
+            {me.data.name ?? me.data.email} | {me.data.role}
           </span>
         )}
 

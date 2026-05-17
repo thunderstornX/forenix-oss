@@ -1,4 +1,4 @@
-# Software Requirements Specification — forenix-oss
+# Software Requirements Specification  -  forenix-oss
 
 | Field | Value |
 |---|---|
@@ -27,22 +27,22 @@ multi-tenancy is a non-breaking migration.
 
 ### 1.3 Definitions
 
-- **Investigation** — an OSINT collection workspace bound to a
+- **Investigation**  -  an OSINT collection workspace bound to a
   *target* (person / org / domain / IP / etc.).
-- **Finding** — a discrete signal produced by an agent group inside
+- **Finding**  -  a discrete signal produced by an agent group inside
   an investigation. Carries confidence + priority.
-- **Entity** — a normalised actor (person / org / domain / IP /
+- **Entity**  -  a normalised actor (person / org / domain / IP /
   email / phone / account / location) shared across investigations.
-- **Case** — a forensic workspace owning evidence and review.
-- **Evidence** — an artefact under chain of custody, carrying a
+- **Case**  -  a forensic workspace owning evidence and review.
+- **Evidence**  -  an artefact under chain of custody, carrying a
   content hash + commit history.
-- **Branch / Commit / MergeRequest** — Git-like primitives over the
+- **Branch / Commit / MergeRequest**  -  Git-like primitives over the
   evidence collection.
-- **Audit row** — an append-only record of an action; carries a
+- **Audit row**  -  an append-only record of an action; carries a
   SHA-256 forward-chain hash.
-- **Adapter** — concrete implementation of the AI interface used by
+- **Adapter**  -  concrete implementation of the AI interface used by
   the pipeline.
-- **Bridge** — the act of opening a Case from an Investigation,
+- **Bridge**  -  the act of opening a Case from an Investigation,
   setting `Investigation.caseId`, and optionally promoting findings
   to Evidence.
 
@@ -108,7 +108,7 @@ all authenticated users as a single role.)
 | FR-PIPE-3 | After all agents complete, `extractEntities()` runs over the combined findings |
 | FR-PIPE-4 | Then `generateReport()` produces a markdown report tied to the investigation |
 | FR-PIPE-5 | Every step writes an audit row and the chain stays valid |
-| FR-PIPE-6 | Investigation status transitions: `draft → running → complete` (or `failed`) |
+| FR-PIPE-6 | Investigation status transitions: `draft -> running -> complete` (or `failed`) |
 
 ### 3.3 Case lifecycle
 
@@ -148,7 +148,7 @@ all authenticated users as a single role.)
 | NFR-P-1 | List endpoints respond < 200 ms p95 on the seeded dataset |
 | NFR-P-2 | Audit-chain verification across 10 000 rows < 5 s |
 | NFR-P-3 | Pipeline run with mock adapter < 1 s end-to-end |
-| NFR-P-4 | Pipeline run with hosted LLM (NVIDIA / OpenRouter) ≤ 90 s |
+| NFR-P-4 | Pipeline run with hosted LLM (NVIDIA / OpenRouter) <= 90 s |
 
 ### 4.2 Reliability
 
@@ -156,7 +156,7 @@ all authenticated users as a single role.)
 |---|---|
 | NFR-R-1 | A single adapter failure must not corrupt the audit chain |
 | NFR-R-2 | Re-seeding a fresh database always produces a valid chain |
-| NFR-R-3 | Re-running a pipeline against an already-running investigation is idempotent at the finding level (no duplicate writes) — *future enhancement* |
+| NFR-R-3 | Re-running a pipeline against an already-running investigation is idempotent at the finding level (no duplicate writes)  -  *future enhancement* |
 
 ### 4.3 Security
 
@@ -182,7 +182,7 @@ all authenticated users as a single role.)
 | ID | Requirement |
 |---|---|
 | NFR-PT-1 | The same code path runs on Linux, macOS, Windows-WSL |
-| NFR-PT-2 | Database is swappable (SQLite ↔ Postgres) via Prisma alone |
+| NFR-PT-2 | Database is swappable (SQLite <-> Postgres) via Prisma alone |
 
 ## 5. External interfaces
 
@@ -246,9 +246,9 @@ A release ships when **all** of the following hold:
 6. The dev server boots and renders every view without runtime
    errors in the browser console.
 7. A live OpenRouter run completes against `INV-2025-020`,
-   producing ≥ 3 findings, ≥ 2 entities, with a clean chain.
+   producing >= 3 findings, >= 2 entities, with a clean chain.
 8. A live NVIDIA run completes against `INV-2025-019`, producing
-   ≥ 3 findings, ≥ 2 entities, with a clean chain.
+   >= 3 findings, >= 2 entities, with a clean chain.
 
-(Items 7+8 are *demonstrated* in this build — see `docs/FEATURES.md`
+(Items 7+8 are *demonstrated* in this build  -  see `docs/FEATURES.md`
 §17.)

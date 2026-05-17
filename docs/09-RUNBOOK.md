@@ -1,4 +1,4 @@
-# Operational Runbook — forenix-oss
+# Operational Runbook  -  forenix-oss
 
 The day-2 ops book. What to do when something breaks, and what to
 check on a routine cadence.
@@ -21,7 +21,7 @@ Both should return immediately with `ok:true`. If verify is
 - Confirm the active `AI_ADAPTER` is what you expect.
 - Confirm sealed evidence count has not decreased: a decrease
   means someone unsealed (which the API forbids) or a manual
-  database edit happened — both demand investigation.
+  database edit happened  -  both demand investigation.
 
 ## 3. Incident: audit chain broken
 
@@ -40,12 +40,12 @@ Both should return immediately with `ok:true`. If verify is
    ```
 3. Is the `brokenAt` row's `prevHash` equal to the previous row's
    `hash`?
-   - If **no** → a row was inserted/edited/deleted out of band.
-   - If **yes** → the row's own `hash` was corrupted.
+   - If **no** -> a row was inserted/edited/deleted out of band.
+   - If **yes** -> the row's own `hash` was corrupted.
 4. **Do not** try to "fix" the chain by recomputing. The integrity
    guarantee is exactly that this is impossible to fix invisibly.
 5. Escalate per your incident-response policy. The chain remains
-   broken until the next legitimate write — at that point, the
+   broken until the next legitimate write  -  at that point, the
    `brokenAt` row's prevHash is no longer the "tip" of the chain,
    but it remains visible to all future verifies.
 
@@ -70,7 +70,7 @@ Both should return immediately with `ok:true`. If verify is
    ```bash
    AI_ADAPTER=openrouter OPENROUTER_MODEL=openai/gpt-oss-120b:free bun run dev
    ```
-4. The Investigation will be stuck in `running` — set it back to
+4. The Investigation will be stuck in `running`  -  set it back to
    `draft` with a one-off Prisma update if necessary. Note that
    this write *also* gets audited.
 
@@ -80,18 +80,18 @@ Both should return immediately with `ok:true`. If verify is
 
 **Triage.**
 
-1. The dev log contains the raw model response — copy it.
+1. The dev log contains the raw model response  -  copy it.
 2. Re-test the model directly (curl above) to confirm it routinely
    returns non-JSON when asked for JSON.
 3. Either:
-   - Switch model (`OPENROUTER_MODEL=…`).
+   - Switch model (`OPENROUTER_MODEL=...`).
    - Tighten the prompt in `src/lib/ai/chat-completions.ts`
      (`SYSTEM_PIPELINE`, `SYSTEM_ENTITIES`).
 4. The current `extractJson` already handles ```json fences and
    prose preambles; failures usually mean the model is genuinely
    off-spec.
 
-## 6. Routine — re-seed the demo
+## 6. Routine  -  re-seed the demo
 
 ```bash
 bun run db:seed
@@ -101,7 +101,7 @@ This wipes every row using Prisma `deleteMany` (no `--force-reset`
 so it bypasses the Prisma agent guard) and re-seeds to a clean
 baseline with 9 audit rows.
 
-## 7. Routine — capture fresh screenshots
+## 7. Routine  -  capture fresh screenshots
 
 ```bash
 bun run dev                  # in one terminal
@@ -110,9 +110,9 @@ HOST=http://localhost:3000 bun run scripts/manual_screenshots.mjs
 ```
 
 Output lands in `docs/manual_screenshots/`. The script signs in
-as the seeded admin automatically — no manual auth needed.
+as the seeded admin automatically  -  no manual auth needed.
 
-## 8. Routine — rotate an LLM key
+## 8. Routine  -  rotate an LLM key
 
 1. Generate a new key in the provider's console.
 2. Edit `.env` (do **not** commit).
@@ -121,7 +121,7 @@ as the seeded admin automatically — no manual auth needed.
 5. `POST /api/pipeline/run/:id` with a 1-finding agent-group set
    to confirm the new key works.
 
-## 9. Routine — upgrade Node / Bun / Prisma
+## 9. Routine  -  upgrade Node / Bun / Prisma
 
 ```bash
 bun upgrade                  # bun runtime
@@ -132,7 +132,7 @@ bun run lint                 # confirm
 bun run db:seed              # confirm
 ```
 
-If anything fails, the upgrade is the suspect — pin back and file
+If anything fails, the upgrade is the suspect  -  pin back and file
 an issue.
 
 ## 10. Emergency stop

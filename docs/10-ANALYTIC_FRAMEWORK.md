@@ -1,9 +1,9 @@
 # Analytic Framework
 
 > Why forenix-oss isn't just an LLM that hallucinates plausible
-> findings — and how we're going to enforce that.
+> findings  -  and how we're going to enforce that.
 
-## 1. The Director–Worker pattern (OpenClaw heritage)
+## 1. The Director-Worker pattern (OpenClaw heritage)
 
 The OSINT execution model mirrors the
 [openclaw-osint-stalker](https://github.com/lidorshimoni/openclaw-osint-stalker)
@@ -20,8 +20,8 @@ plugin's split:
            ▼
 ┌───────────────────────────────────────────────────────────────┐
 │   Worker pool                                                  │
-│   ── runs subprocess tools (Maigret, Sherlock, Holehe, …)      │
-│   ── runs HTTP-API tools (Shodan, Censys, Hunter, IntelX, …)   │
+│   ── runs subprocess tools (Maigret, Sherlock, Holehe, ...)      │
+│   ── runs HTTP-API tools (Shodan, Censys, Hunter, IntelX, ...)   │
 │   ── returns structured results                                │
 └───────────────────────────────────────────────────────────────┘
 ```
@@ -38,7 +38,7 @@ Director gracefully degrades to API-only tools.
 ## 2. Structured Analytic Techniques (Coulthart / Heuer / Pherson)
 
 The LLM Director is not allowed to produce free-form output. Every
-finding must carry a **SAT trace** — a structured record of which
+finding must carry a **SAT trace**  -  a structured record of which
 analytic technique was applied, what hypotheses were considered,
 and what evidence supports each one.
 
@@ -48,38 +48,38 @@ Source: CIA *Tradecraft Primer* (April 2009), Heuer & Pherson
 (2010+), and Stephen Coulthart's evaluative work at the SUNY
 Albany OSI Lab.
 
-#### Diagnostic — make reasoning transparent
+#### Diagnostic  -  make reasoning transparent
 
-1. **Key Assumptions Check (KAC)** — surface every assumption the
+1. **Key Assumptions Check (KAC)**  -  surface every assumption the
    analysis rests on, then test whether each one still holds.
-2. **Quality of Information Check (QoIC)** — score each source on
+2. **Quality of Information Check (QoIC)**  -  score each source on
    credibility, accuracy, and recency before it informs a finding.
-3. **Indicators or Signposts of Change** — name the observable
+3. **Indicators or Signposts of Change**  -  name the observable
    events that would confirm or refute each hypothesis going
    forward.
-4. **Analysis of Competing Hypotheses (ACH)** — enumerate every
+4. **Analysis of Competing Hypotheses (ACH)**  -  enumerate every
    plausible explanation, score each piece of evidence against each
    hypothesis, weight by *disconfirmation* not confirmation.
 
-#### Contrarian — challenge current thinking
+#### Contrarian  -  challenge current thinking
 
-5. **Devil's Advocacy** — argue the strongest case against the
+5. **Devil's Advocacy**  -  argue the strongest case against the
    dominant view.
-6. **Team A / Team B Analysis** — partition reviewers into
+6. **Team A / Team B Analysis**  -  partition reviewers into
    adversarial teams arguing opposing positions.
-7. **High-Impact / Low-Probability Analysis** — examine tail-risk
+7. **High-Impact / Low-Probability Analysis**  -  examine tail-risk
    scenarios that consensus dismisses.
-8. **"What If?" Analysis** — invert the conclusion and reason
+8. **"What If?" Analysis**  -  invert the conclusion and reason
    backwards.
 
-#### Imaginative — alternatives and futures
+#### Imaginative  -  alternatives and futures
 
-9. **Structured Brainstorming** — facilitator-led divergent
+9. **Structured Brainstorming**  -  facilitator-led divergent
    ideation.
-10. **Outside-In Thinking** — start from environmental drivers, not
+10. **Outside-In Thinking**  -  start from environmental drivers, not
     the target.
-11. **Red Team Analysis** — adopt the adversary's perspective.
-12. **Alternative Futures Analysis** — sketch multiple plausible
+11. **Red Team Analysis**  -  adopt the adversary's perspective.
+12. **Alternative Futures Analysis**  -  sketch multiple plausible
     end-states.
 
 ### Mapping SATs to agent groups
@@ -92,7 +92,7 @@ Albany OSI Lab.
 | `social` | **KAC**, **QoIC**, **Outside-In Thinking** |
 | `geo` | **Indicators**, **QoIC** |
 | `relationships` | **ACH**, **Outside-In Thinking** |
-| `media` | **QoIC** (mandatory — provenance is everything in media), **KAC** |
+| `media` | **QoIC** (mandatory  -  provenance is everything in media), **KAC** |
 
 ### The output contract
 
@@ -117,7 +117,7 @@ interface SatTrace {
 
   outputCandidates: Array<{
     label: string;          // hypothesis or assumption
-    weight: number;         // 0..1 — disconfirmation-weighted, not confirmation
+    weight: number;         // 0..1  -  disconfirmation-weighted, not confirmation
     disconfirmingEvidence: string[];
   }>;
 
@@ -125,7 +125,7 @@ interface SatTrace {
 }
 ```
 
-The Verification view renders this directly — the analyst sees the
+The Verification view renders this directly  -  the analyst sees the
 ACH matrix, the KAC list, and the QoIC source-scoring inline,
 exactly as the LLM produced them.
 
@@ -134,7 +134,7 @@ exactly as the LLM produced them.
 Without SAT-grounded prompting, a 70B LLM with tool use will still
 do what every LLM does: produce confident-sounding prose that may
 or may not survive a court challenge. With it, every finding comes
-with the analytic technique the analyst would have used by hand —
+with the analytic technique the analyst would have used by hand  - 
 which is exactly what makes the output admissible.
 
 This is the layer that turns *"an AI did some OSINT"* into

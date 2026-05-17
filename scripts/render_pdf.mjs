@@ -162,12 +162,12 @@ h2 + p, h3 + p, h4 + p { page-break-before: avoid; }
 
 const cover = `
 <section class="cover">
-  <div class="eyebrow">${TITLE} · v0.1 · 2026-05</div>
+  <div class="eyebrow">${TITLE} | v0.1 | 2026-05</div>
   <h1 class="title">${TITLE}</h1>
   <div class="subtitle">${SUB}</div>
   <div class="meta">
-    <b>Author:</b> Ali Murtaza Bhutto &nbsp;·&nbsp;
-    <b>Repository:</b> github.com/thunderstornX/forenix-oss &nbsp;·&nbsp;
+    <b>Author:</b> Ali Murtaza Bhutto &nbsp;|&nbsp;
+    <b>Repository:</b> github.com/thunderstornX/forenix-oss &nbsp;|&nbsp;
     <b>License:</b> MIT
   </div>
 </section>
@@ -202,8 +202,8 @@ await page.pdf({
   displayHeaderFooter: true,
   headerTemplate: `
     <div style="width:100%;padding:0 18mm;font-size:8pt;color:#5b6473;display:flex;justify-content:space-between;">
-      <span>forenix-oss · ${basename(SRC, ".md")}</span>
-      <span>v0.1 · 2026-05</span>
+      <span>forenix-oss | ${basename(SRC, ".md")}</span>
+      <span>v0.1 | 2026-05</span>
     </div>`,
   footerTemplate: `
     <div style="width:100%;padding:0 18mm;font-size:8pt;color:#5b6473;display:flex;justify-content:space-between;">

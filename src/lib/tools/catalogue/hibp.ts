@@ -1,5 +1,5 @@
 /**
- * HTTP: HaveIBeenPwned — breach lookup for an email. Requires
+ * HTTP: HaveIBeenPwned  -  breach lookup for an email. Requires
  * HIBP_API_KEY ($3.50/mo for unlimited lookups).
  *
  * https://haveibeenpwned.com/API/v3
@@ -25,7 +25,7 @@ export const hibpBreachesTool: Tool = {
       email: { type: "string", description: "Email address." },
       includeUnverified: {
         type: "boolean",
-        description: "Default false — include unverified breaches.",
+        description: "Default false  -  include unverified breaches.",
       },
     },
     required: ["email"],

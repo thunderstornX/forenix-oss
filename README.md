@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/banner.svg" alt="forenix-oss — OSINT × Forensics, one workflow" width="100%"/>
+  <img src="docs/banner.svg" alt="forenix-oss  -  OSINT x Forensics, one workflow" width="100%"/>
 </p>
 
 # forenix-oss
@@ -8,19 +8,19 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Version 0.2.0](https://img.shields.io/badge/version-0.2.0-c97a2f.svg)](CHANGELOG.md)
 
-**An open-source platform that fuses OSINT investigations with Git-style forensic case management. One workflow from public-source lead to chain-of-custody evidence — with a SHA-256 forward-chained audit log on every state change.**
+**An open-source platform that fuses OSINT investigations with Git-style forensic case management. One workflow from public-source lead to chain-of-custody evidence  -  with a SHA-256 forward-chained audit log on every state change.**
 
 ---
 
 ## What this is
 
-Investigators today run on two disconnected toolchains. The OSINT side is Maltego, SpiderFoot, Hunchly, plus a pile of CLI tools (sherlock, theHarvester, holehe, …). The forensic side is EnCase, AXIOM, Cellebrite, Relativity. **The handoff between them is manual** — an analyst finds something on the open web, exports a screenshot, emails it to the case team, and someone records its hash in an Excel sheet.
+Investigators today run on two disconnected toolchains. The OSINT side is Maltego, SpiderFoot, Hunchly, plus a pile of CLI tools (sherlock, theHarvester, holehe, ...). The forensic side is EnCase, AXIOM, Cellebrite, Relativity. **The handoff between them is manual**  -  an analyst finds something on the open web, exports a screenshot, emails it to the case team, and someone records its hash in an Excel sheet.
 
 forenix-oss collapses both halves into one app:
 
-- **A real Git repository per case** — every state change is a commit; reviewers can clone & `git log` the case independently.
+- **A real Git repository per case**  -  every state change is a commit; reviewers can clone & `git log` the case independently.
 - **An LLM-orchestrated tool runner** with 20 OSINT tools wired (sherlock, maigret, subfinder, httpx, dnsx, amass, nuclei, exiftool, yt-dlp, tesseract, gowitness, crt.sh, WHOIS, Shodan, Hunter, HIBP, theHarvester, holehe, DuckDuckGo, generic HTTP fetch).
-- **Structured-Analytic-Technique (SAT) grounding** — every finding carries a Coulthart/Heuer trace (Key Assumptions Check, ACH matrix, indicators, credibility) the LLM is forced to populate.
+- **Structured-Analytic-Technique (SAT) grounding**  -  every finding carries a Coulthart/Heuer trace (Key Assumptions Check, ACH matrix, indicators, credibility) the LLM is forced to populate.
 - **A cryptographic audit chain** verifiable offline in 12 lines of Python.
 
 MIT-licensed. Self-host friendly.
@@ -35,11 +35,11 @@ The project ships three independent deployment shapes from the same codebase:
 |---|---|---|
 | **Self-host (`AI_ADAPTER=mock`)** | Local dev, evaluation, full feature parity on your laptop | `bun install && bun run db:seed && bun run dev` |
 | **Self-host with a real LLM** | Production-grade, full subprocess toolchain, real Git per case | Connect any adapter (`ollama`, `groq`, `openrouter`, `claude`, `nvidia`, `glm`) and install the deep OSS toolchain on the host. See [`docs/05-DEPLOYMENT.md`](docs/05-DEPLOYMENT.md). |
-| **Serverless concept demo (Vercel)** | A lightweight, instant-load preview that gracefully degrades — no subprocess tools, deterministic Git fallback (SHA-256 commit hashes) | One-click via the Vercel button below. See [`docs/VERCEL_DEPLOY.md`](docs/VERCEL_DEPLOY.md). |
+| **Serverless concept demo (Vercel)** | A lightweight, instant-load preview that gracefully degrades  -  no subprocess tools, deterministic Git fallback (SHA-256 commit hashes) | One-click via the Vercel button below. See [`docs/VERCEL_DEPLOY.md`](docs/VERCEL_DEPLOY.md). |
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/thunderstornX/forenix-oss)
 
-The Vercel demo is the easiest way to see the UI; it runs on Neon Postgres with the deterministic `mock` adapter by default. Bring your own LLM key (in `.env` or via the in-app admin vault) to upgrade to real reasoning. Self-host is where the full feature set lives — real Git on disk, real subprocess tools, real OSINT depth.
+The Vercel demo is the easiest way to see the UI; it runs on Neon Postgres with the deterministic `mock` adapter by default. Bring your own LLM key (in `.env` or via the in-app admin vault) to upgrade to real reasoning. Self-host is where the full feature set lives  -  real Git on disk, real subprocess tools, real OSINT depth.
 
 ---
 
@@ -52,7 +52,7 @@ The Vercel demo is the easiest way to see the UI; it runs on Neon Postgres with 
 | **LLM-orchestrated OSINT pipeline** | Pluggable adapter; the LLM picks which of 20 tools to run, captures real tool output, and forces a SAT-grounded reasoning trace per finding. |
 | **Admin-vault for API keys** | AES-256-GCM encrypted at rest. Premium-API keys (Shodan, Hunter, HIBP) injected into tool calls only after an admin sets them. Never in client bundles. |
 | **Teams + RBAC** | Workspace isolation, role-based access (admin / investigator / analyst), invite flow, signed audit attribution. |
-| **Merge requests on evidence branches** | Review what changed before it hits `main` — same model as code review, applied to forensic state. |
+| **Merge requests on evidence branches** | Review what changed before it hits `main`  -  same model as code review, applied to forensic state. |
 
 Full tour with screenshots: [`docs/FEATURES.md`](docs/FEATURES.md).
 
@@ -68,14 +68,14 @@ bun run db:seed            # populates a sample case + audit chain
 bun run dev                # serves at http://localhost:3000
 ```
 
-By default the app uses `AI_ADAPTER=mock` — deterministic stub output, no API key needed, every feature visible.
+By default the app uses `AI_ADAPTER=mock`  -  deterministic stub output, no API key needed, every feature visible.
 
 ### Connecting a real LLM
 
-Pick one (or many — adapters can be overridden per request):
+Pick one (or many  -  adapters can be overridden per request):
 
 ```env
-# OpenAI-compatible providers — one of:
+# OpenAI-compatible providers  -  one of:
 AI_ADAPTER=ollama          # local, free
 AI_ADAPTER=groq            # free tier, no card
 AI_ADAPTER=openrouter      # one key, many models (incl. free tier)
@@ -83,7 +83,7 @@ AI_ADAPTER=nvidia          # NIM endpoint
 AI_ADAPTER=claude          # Anthropic
 AI_ADAPTER=glm             # Z.ai
 
-# Then the corresponding key/model — see each adapter's docstring
+# Then the corresponding key/model  -  see each adapter's docstring
 # in src/lib/ai/adapters/ for the env-var contract.
 ```
 
@@ -153,12 +153,12 @@ Detailed walkthrough with screenshots + what each view does **not** claim: [`doc
 | `mock` | free | Default. Deterministic seeded output for dev + the Vercel concept demo. |
 | `ollama` | free | Local LLM (any tool-capable Llama-class model). |
 | `groq` | free tier, no card | Low-latency hosted inference; good for snappy demos. |
-| `openrouter` | free + paid | One key, many models — including free-tier models with generous limits. |
+| `openrouter` | free + paid | One key, many models  -  including free-tier models with generous limits. |
 | `nvidia` | free dev tier + paid | NVIDIA NIM-compatible endpoints. |
 | `claude` | paid | Anthropic Claude (SaaS-gated). |
 | `glm` | free tier | Z.ai GLM family. |
 
-All adapters share an OpenAI-compatible chat-completions contract; adding a 7th is a single file — see [`src/lib/ai/adapters/`](src/lib/ai/adapters/) for the shape.
+All adapters share an OpenAI-compatible chat-completions contract; adding a 7th is a single file  -  see [`src/lib/ai/adapters/`](src/lib/ai/adapters/) for the shape.
 
 ---
 
@@ -194,28 +194,28 @@ Full security posture + threat model: [`docs/07-SECURITY.md`](docs/07-SECURITY.m
 
 For engineers, auditors, design partners, and the curious:
 
-- [BRD — Business Requirements](docs/01-BRD.md)
-- [SRS — Software Requirements](docs/02-SRS.md)
-- [SDS — Software Design](docs/03-SDS.md)
-- [DFD — Data Flow Diagrams](docs/04-DFD.md)
-- [Deployment Plan](docs/05-DEPLOYMENT.md) · [Vercel-specific notes](docs/VERCEL_DEPLOY.md)
+- [BRD  -  Business Requirements](docs/01-BRD.md)
+- [SRS  -  Software Requirements](docs/02-SRS.md)
+- [SDS  -  Software Design](docs/03-SDS.md)
+- [DFD  -  Data Flow Diagrams](docs/04-DFD.md)
+- [Deployment Plan](docs/05-DEPLOYMENT.md) | [Vercel-specific notes](docs/VERCEL_DEPLOY.md)
 - [Architecture ADRs](docs/06-ARCHITECTURE.md)
 - [Security + Threat Model](docs/07-SECURITY.md)
 - [API Reference](docs/08-API.md)
 - [Operational Runbook](docs/09-RUNBOOK.md)
-- [Analytic Framework — SATs + agent groups](docs/10-ANALYTIC_FRAMEWORK.md)
-- [Tool Stack — every tool wired](docs/11-TOOL_STACK.md)
+- [Analytic Framework  -  SATs + agent groups](docs/10-ANALYTIC_FRAMEWORK.md)
+- [Tool Stack  -  every tool wired](docs/11-TOOL_STACK.md)
 - [Honest Problem-Fit Evaluation](docs/12-PROBLEM_FIT.md)
 - [Feature Catalogue](docs/FEATURES.md) (with screenshots)
-- [One-pager](docs/ONE_PAGER.md) · [Demo Script](docs/DEMO_SCRIPT.md)
-- **[User Manual (PDF)](docs/USER_MANUAL.pdf)** · [markdown source](docs/USER_MANUAL.md)
-- **[How-To Guide (PDF)](docs/HOW_TO.pdf)** · [markdown source](docs/HOW_TO.md)
+- [One-pager](docs/ONE_PAGER.md) | [Demo Script](docs/DEMO_SCRIPT.md)
+- **[User Manual (PDF)](docs/USER_MANUAL.pdf)** | [markdown source](docs/USER_MANUAL.md)
+- **[How-To Guide (PDF)](docs/HOW_TO.pdf)** | [markdown source](docs/HOW_TO.md)
 
 ---
 
 ## Stack
 
-Next.js 16 (App Router, Turbopack) · TypeScript strict · Tailwind 4 · Prisma 6 (SQLite for dev, Postgres for prod) · Zustand + persist · TanStack Query 5 · isomorphic-git · next-auth v5 · lucide-react · sonner · Bun as runtime.
+Next.js 16 (App Router, Turbopack) | TypeScript strict | Tailwind 4 | Prisma 6 (SQLite for dev, Postgres for prod) | Zustand + persist | TanStack Query 5 | isomorphic-git | next-auth v5 | lucide-react | sonner | Bun as runtime.
 
 ---
 
@@ -226,7 +226,7 @@ src/
   app/
     api/                # 23+ route handlers (health, investigations,
                         # pipeline, bridge, findings, cases, evidence,
-                        # audit, reviews, admin vault, …)
+                        # audit, reviews, admin vault, ...)
     layout.tsx          # design-token-driven shell
     page.tsx            # SPA shell with ?view= deep-link support
     globals.css         # OKLCH design tokens + fx-* primitives
@@ -264,8 +264,8 @@ scripts/
   manual_screenshots.mjs  # capture every view via Playwright
 docs/
   banner.svg
-  01-BRD.md … 12-PROBLEM_FIT.md
-  FEATURES.md · ONE_PAGER.md · DEMO_SCRIPT.md · HOW_TO.md
+  01-BRD.md ... 12-PROBLEM_FIT.md
+  FEATURES.md | ONE_PAGER.md | DEMO_SCRIPT.md | HOW_TO.md
   manual_screenshots/   # current screenshot set
   pitch/                # YC deck (pptx + pdf)
 ```
@@ -281,21 +281,21 @@ docs/
 | **SaaS Premium** (planned) | Hosted multi-tenant | Org isolation, SSO, usage metering, advanced OSINT sources, PDF export. |
 | **Enterprise** (planned) | Air-gapped / annual | Custom adapters, in-jurisdiction hosting, SOC 2 attestation. |
 
-`SAAS_MODE=true` is the **only** premium gate — core paths run identically whether it's set or not.
+`SAAS_MODE=true` is the **only** premium gate  -  core paths run identically whether it's set or not.
 
 ---
 
 ## Roadmap
 
-- ✅ Phase 1 — Foundation: adapter pattern, merged schema, seed, app shell, 3 API routes
-- ✅ Phase 2 — Investigation + Case detail with full CRUD + analyst actions
-- ✅ Phase 3 — Pipeline runner + bridge + 7 AI adapters
-- ✅ Phase 4 — Evidence chain-of-custody UI + Integrity Dashboard
-- ✅ Phase 5 — Unified entity / network graph
-- ✅ Phase 6 — AI Lab, Monitors, Verification
-- ✅ Phase 7 — Report viewer + live adapter testing
-- ✅ Phase 8 — Real Git engine (isomorphic-git) + structured SAT prompts + 20-tool registry + AES-encrypted admin vault + light/dark redesign
-- Phase 9 — File-byte evidence storage (R2 / S3 / IPFS) · Scheduled Monitors · Multi-tenant orgs · WebSocket live updates · PDF export of admissible reports
+- [x] Phase 1  -  Foundation: adapter pattern, merged schema, seed, app shell, 3 API routes
+- [x] Phase 2  -  Investigation + Case detail with full CRUD + analyst actions
+- [x] Phase 3  -  Pipeline runner + bridge + 7 AI adapters
+- [x] Phase 4  -  Evidence chain-of-custody UI + Integrity Dashboard
+- [x] Phase 5  -  Unified entity / network graph
+- [x] Phase 6  -  AI Lab, Monitors, Verification
+- [x] Phase 7  -  Report viewer + live adapter testing
+- [x] Phase 8  -  Real Git engine (isomorphic-git) + structured SAT prompts + 20-tool registry + AES-encrypted admin vault + light/dark redesign
+- Phase 9  -  File-byte evidence storage (R2 / S3 / IPFS) | Scheduled Monitors | Multi-tenant orgs | WebSocket live updates | PDF export of admissible reports
 
 ---
 

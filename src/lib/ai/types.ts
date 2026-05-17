@@ -50,7 +50,7 @@ export interface PipelineAnalysis {
   completedAt: string;
   findings: Finding[];
   reasoningTrace: string;
-  /** 0..1 — agent's own confidence in the analysis as a whole. */
+  /** 0..1  -  agent's own confidence in the analysis as a whole. */
   confidence: number;
 }
 
@@ -112,7 +112,7 @@ export type AdapterName =
   | "groq";
 
 /**
- * AIAdapter — every concrete adapter implements this surface.
+ * AIAdapter  -  every concrete adapter implements this surface.
  *
  * NOTE: Implementations are responsible for honouring upstream rate
  * limits and timeouts. Callers should treat all four methods as

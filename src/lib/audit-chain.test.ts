@@ -1,7 +1,7 @@
 /**
  * Pure-function tests for the audit hash chain.
  *
- * Run via `bun test`. Zero Prisma, zero network, zero LLM — just
+ * Run via `bun test`. Zero Prisma, zero network, zero LLM  -  just
  * the SHA-256 chain math.
  */
 import { describe, it, expect } from "bun:test";

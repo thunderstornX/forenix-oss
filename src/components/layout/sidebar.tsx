@@ -58,7 +58,7 @@ export function Sidebar() {
   const { activeView, setView, sidebarCollapsed, toggleSidebar, setCommandPaletteOpen } = useUI();
   const me = useMe();
   const isAdmin = me.data?.data?.role === "admin";
-  const userName = me.data?.data?.name ?? me.data?.data?.email ?? "—";
+  const userName = me.data?.data?.name ?? me.data?.data?.email ?? " - ";
   const initial = userName?.[0]?.toUpperCase() ?? "?";
 
   const visible = NAV.filter((n) => !n.adminOnly || isAdmin);
@@ -75,7 +75,7 @@ export function Sidebar() {
         {!sidebarCollapsed && (
           <div>
             <div className="fx-side__name">forenix-oss</div>
-            <div className="fx-side__tag">osint × forensics</div>
+            <div className="fx-side__tag">osint x forensics</div>
           </div>
         )}
       </div>
@@ -90,7 +90,7 @@ export function Sidebar() {
             <input
               type="text"
               readOnly
-              placeholder="Search cases, evidence, hashes…"
+              placeholder="Search cases, evidence, hashes..."
               onClick={() => setCommandPaletteOpen(true)}
               className="fx-input"
             />

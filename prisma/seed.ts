@@ -3,7 +3,7 @@
  *
  * Produces, on every clean run:
  *   - 3 users (admin, investigator, analyst)
- *   - 2 investigations — one `complete`, with a linked Case
+ *   - 2 investigations  -  one `complete`, with a linked Case
  *   - 1 case with 3 evidence items, 2 EvidenceCommits per item
  *   - 6 findings (2 per investigation, 2 linked to evidence)
  *   - 1 monitor + 1 verification + 1 report per investigation
@@ -209,7 +209,7 @@ async function main() {
         message: `add: ${spec.name}`,
         authorId: investigator.id,
         changeType: "add",
-        diffSummary: `Initial collection — ${spec.size.toString()} bytes`,
+        diffSummary: `Initial collection  -  ${spec.size.toString()} bytes`,
       },
     });
     const c2Hash = sha(`commit:${evidence.id}:2`);
@@ -297,7 +297,7 @@ async function main() {
   console.log("[seed] investigations");
   const inv1 = await prisma.investigation.create({
     data: {
-      title: "INV-2025-019 — Northwind Holdings",
+      title: "INV-2025-019  -  Northwind Holdings",
       target: "northwind-holdings.io",
       targetType: "domain",
       objective:
@@ -313,7 +313,7 @@ async function main() {
   });
   const inv2 = await prisma.investigation.create({
     data: {
-      title: "INV-2025-020 — Mira Volkov",
+      title: "INV-2025-020  -  Mira Volkov",
       target: "Mira Volkov",
       targetType: "person",
       objective:
@@ -327,7 +327,7 @@ async function main() {
     },
   });
 
-  // Findings — 3 per investigation, 2 linked to evidence (one each).
+  // Findings  -  3 per investigation, 2 linked to evidence (one each).
   console.log("[seed] findings");
   await prisma.finding.createMany({
     data: [
@@ -463,7 +463,7 @@ async function main() {
   console.log("[seed] reports");
   await prisma.report.create({
     data: {
-      title: "Northwind Holdings — Investigation Summary",
+      title: "Northwind Holdings  -  Investigation Summary",
       source: "investigation",
       investigationId: inv1.id,
       type: "summary",
@@ -480,7 +480,7 @@ async function main() {
   });
   await prisma.report.create({
     data: {
-      title: "Mira Volkov — Identity Map (draft)",
+      title: "Mira Volkov  -  Identity Map (draft)",
       source: "investigation",
       investigationId: inv2.id,
       type: "summary",
@@ -495,7 +495,7 @@ async function main() {
   });
   await prisma.report.create({
     data: {
-      title: "Operation Sandstone — Forensic Status",
+      title: "Operation Sandstone  -  Forensic Status",
       source: "case",
       caseId: theCase.id,
       type: "technical",
@@ -568,7 +568,7 @@ async function main() {
     ],
   });
 
-  // ───────────────────────── Audit log — hash chain ────────────
+  // ───────────────────────── Audit log  -  hash chain ────────────
   console.log("[seed] audit log (hash chain)");
   type ChainEntry = {
     action: string;
@@ -618,7 +618,7 @@ async function main() {
     auditCount++;
   }
 
-  console.log(`[seed] done — appended ${auditCount} audit entries.`);
+  console.log(`[seed] done  -  appended ${auditCount} audit entries.`);
 }
 
 main()

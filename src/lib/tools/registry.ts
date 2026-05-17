@@ -1,5 +1,5 @@
 /**
- * Tool registry — single source of truth.
+ * Tool registry  -  single source of truth.
  *
  * To add a tool: create a file under catalogue/, import it here,
  * add it to ALL_TOOLS. The factory does the rest.
@@ -16,7 +16,7 @@ import { sherlockTool } from "./catalogue/sherlock";
 import { shodanHostTool } from "./catalogue/shodan";
 import { theHarvesterTool } from "./catalogue/the-harvester";
 import { whoisTool } from "./catalogue/whois";
-// Deep subprocess toolchain — requires self-hosting (a real OS with
+// Deep subprocess toolchain  -  requires self-hosting (a real OS with
 // these binaries installed; see docs/SELF_HOST.md). Gated by
 // canSpawnLocally() below so Vercel deployments transparently skip
 // them.
@@ -32,21 +32,21 @@ import { tesseractTool } from "./catalogue/tesseract";
 import { gowitnessTool } from "./catalogue/gowitness";
 
 export const ALL_TOOLS: readonly Tool[] = [
-  // builtins — work everywhere
+  // builtins  -  work everywhere
   duckDuckGoSearchTool,
   httpFetchTool,
-  // HTTP-API tools (no key) — work on Vercel
+  // HTTP-API tools (no key)  -  work on Vercel
   crtshTool,
   whoisTool,
-  // API-keyed HTTP tools (admin-vault-gated) — work on Vercel
+  // API-keyed HTTP tools (admin-vault-gated)  -  work on Vercel
   shodanHostTool,
   hunterDomainTool,
   hibpBreachesTool,
-  // subprocess tools — self-host (or WORKER_URL on Vercel)
+  // subprocess tools  -  self-host (or WORKER_URL on Vercel)
   sherlockTool,
   holeheTool,
   theHarvesterTool,
-  // Deep subprocess toolchain — self-host only
+  // Deep subprocess toolchain  -  self-host only
   maigretTool,
   subfinderTool,
   httpxTool,

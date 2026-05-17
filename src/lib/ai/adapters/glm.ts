@@ -1,5 +1,5 @@
 /**
- * GLMAdapter — calls Zhipu AI's GLM-4 / GLM-5 series.
+ * GLMAdapter  -  calls Zhipu AI's GLM-4 / GLM-5 series.
  *
  * Sovereign-model option: no US-cloud dependency, but still a
  * managed API.

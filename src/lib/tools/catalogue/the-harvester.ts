@@ -1,5 +1,5 @@
 /**
- * Subprocess: theHarvester — passive recon for emails, subdomains,
+ * Subprocess: theHarvester  -  passive recon for emails, subdomains,
  * hosts, and metadata. https://github.com/laramies/theHarvester
  *
  * Install:  pipx install theHarvester
@@ -21,7 +21,7 @@ export const theHarvesterTool: Tool = {
   description:
     "Run theHarvester to gather emails, subdomains, and hosts for a " +
     "domain from public sources (crtsh, anubis, hackertarget, " +
-    "duckduckgo, …). Use for infrastructure + identity recon.",
+    "duckduckgo, ...). Use for infrastructure + identity recon.",
   parameters: {
     type: "object",
     properties: {
@@ -57,7 +57,7 @@ export const theHarvesterTool: Tool = {
       return {
         domain,
         sources: sources.split(",").map((s) => s.trim()),
-        // Surface the headline arrays only — full JSON is too noisy.
+        // Surface the headline arrays only  -  full JSON is too noisy.
         emails: (parsed.emails as string[]) ?? [],
         hosts: (parsed.hosts as string[]) ?? [],
         subdomains: (parsed.subdomains as string[]) ?? [],

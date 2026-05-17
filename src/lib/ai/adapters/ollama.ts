@@ -1,5 +1,5 @@
 /**
- * OllamaAdapter — talks to a local Ollama HTTP API.
+ * OllamaAdapter  -  talks to a local Ollama HTTP API.
  *
  * Designed for Qwen2.5-7B-instruct (or similar). Used gently so a
  * single workstation can serve all four adapter methods.

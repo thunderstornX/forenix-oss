@@ -2,9 +2,9 @@
  * Server-only RBAC helpers.
  *
  * Three primitives:
- *   requireSession()        — throws { status:401 } if not signed in.
- *   requireRole("admin")    — throws { status:403 } if role mismatches.
- *   actorContext()          — returns userId/role/teamIds for audit
+ *   requireSession()         -  throws { status:401 } if not signed in.
+ *   requireRole("admin")     -  throws { status:403 } if role mismatches.
+ *   actorContext()           -  returns userId/role/teamIds for audit
  *                             writes + team-scoped queries.
  *
  * Role hierarchy:

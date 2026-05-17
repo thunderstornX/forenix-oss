@@ -5,7 +5,7 @@
  * present (redacted), and the SaaS-mode flag. Useful for the
  * Settings view to explain "why is the chip showing X".
  *
- * Note: this never returns actual key values — only "present" booleans.
+ * Note: this never returns actual key values  -  only "present" booleans.
  */
 import { httpErrorResponse, requireSession } from "@/lib/rbac";
 

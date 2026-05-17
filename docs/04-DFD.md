@@ -1,9 +1,9 @@
-# Data Flow Diagrams — forenix-oss
+# Data Flow Diagrams  -  forenix-oss
 
 All diagrams use Mermaid so they render directly on GitHub and in
 any markdown viewer.
 
-## Level 0 — Context diagram
+## Level 0  -  Context diagram
 
 ```mermaid
 flowchart TB
@@ -12,14 +12,14 @@ flowchart TB
   Counsel[(Counsel)] --> App
   Compliance[(Compliance / Audit)] --> App
 
-  App --> LLM["External LLM provider<br/>(NVIDIA / OpenRouter / Ollama / …)"]
+  App --> LLM["External LLM provider<br/>(NVIDIA / OpenRouter / Ollama / ...)"]
   App --> Storage[(Database)]
   App --> SearchAPIs["Search / OSINT sources<br/>(optional, via adapter)"]
   App -. exports .-> ReportFile["PDF / markdown report file"]
   App -. attests .-> ChainProof["Hash-chain attestation"]
 ```
 
-## Level 1 — Major processes
+## Level 1  -  Major processes
 
 ```mermaid
 flowchart LR
@@ -64,7 +64,7 @@ flowchart LR
   P7 -->|verdict| Counsel
 ```
 
-## Level 2 — Pipeline runner detail
+## Level 2  -  Pipeline runner detail
 
 ```mermaid
 flowchart TB
@@ -78,9 +78,9 @@ flowchart TB
   Fan --> A1["analyze identity"]
   Fan --> A2["analyze infrastructure"]
   Fan --> A3["analyze social"]
-  Fan --> An["… (configurable)"]
+  Fan --> An["... (configurable)"]
 
-  A1 --> J["join → all findings"]
+  A1 --> J["join -> all findings"]
   A2 --> J
   A3 --> J
   An --> J
@@ -101,7 +101,7 @@ flowchart TB
   S8 --> Out([201 + summary JSON])
 ```
 
-## Level 2 — Investigation → Case bridge
+## Level 2  -  Investigation -> Case bridge
 
 ```mermaid
 flowchart TB
@@ -127,7 +127,7 @@ flowchart TB
   P12 --> Done([201 + payload])
 ```
 
-## Level 2 — Audit chain verification
+## Level 2  -  Audit chain verification
 
 ```mermaid
 flowchart TB
@@ -145,7 +145,7 @@ flowchart TB
   ForLoop -- exhausted --> OK(["return ok:true<br/>entries:N"])
 ```
 
-## State diagram — Investigation
+## State diagram  -  Investigation
 
 ```mermaid
 stateDiagram-v2
@@ -160,7 +160,7 @@ stateDiagram-v2
   complete --> archived : manual
 ```
 
-## State diagram — Evidence
+## State diagram  -  Evidence
 
 ```mermaid
 stateDiagram-v2
@@ -171,7 +171,7 @@ stateDiagram-v2
   collected --> sealed : direct seal
 ```
 
-## State diagram — Case
+## State diagram  -  Case
 
 ```mermaid
 stateDiagram-v2

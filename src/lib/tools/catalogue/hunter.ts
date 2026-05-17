@@ -1,5 +1,5 @@
 /**
- * HTTP: Hunter.io — domain → emails with confidence scoring.
+ * HTTP: Hunter.io  -  domain → emails with confidence scoring.
  * Requires HUNTER_API_KEY.
  *
  * https://hunter.io/api-documentation

@@ -1,7 +1,7 @@
 /**
  * POST /api/reviews/[id]/merge
  *
- * Real merge — calls the Git engine, returns either a successful
+ * Real merge  -  calls the Git engine, returns either a successful
  * merge (with the new oid + fast-forward flag) or a conflict report
  * (so the UI can render the conflicted files).
  *
@@ -42,7 +42,7 @@ export async function POST(
         {
           error: "merge_unavailable",
           details:
-            "Real Git merges require a writable filesystem. This deployment runs on a serverless host without persistent disk — please self-host or set FORENIX_FORCE_GIT=1 if you accept ephemeral repos.",
+            "Real Git merges require a writable filesystem. This deployment runs on a serverless host without persistent disk  -  please self-host or set FORENIX_FORCE_GIT=1 if you accept ephemeral repos.",
         },
         { status: 503 },
       );
@@ -107,7 +107,7 @@ export async function POST(
         branchId: target.id,
         parentHash: result.fastForward ? null : await getBranchHead(mr.caseId, mr.branch.name),
         commitHash: result.mergeCommit,
-        message: `merge: ${mr.title} (${mr.branch.name} → ${target.name})`,
+        message: `merge: ${mr.title} (${mr.branch.name} -> ${target.name})`,
         authorId: actor.userId,
         changeType: "merge",
         verified: true,
@@ -115,7 +115,7 @@ export async function POST(
         verifiedAt: new Date(),
       },
     }).catch(() => {
-      // Schema may require evidenceId; if so, skip the commit row —
+      // Schema may require evidenceId; if so, skip the commit row  - 
       // the Git history holds the real record either way.
     });
 

@@ -47,9 +47,9 @@ deem inappropriate, threatening, offensive, or harmful.
 
 ## Scope
 
-This Code of Conduct applies within all community spaces — the
+This Code of Conduct applies within all community spaces  -  the
 GitHub repository, issues, pull requests, discussions, and any
-official communication channel — and also applies when an
+official communication channel  -  and also applies when an
 individual is officially representing the community in public
 spaces.
 

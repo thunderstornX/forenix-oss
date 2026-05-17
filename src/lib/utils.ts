@@ -2,7 +2,7 @@ import clsx, { type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
 /**
- * Combined classnames helper — clsx for conditionals, tailwind-merge
+ * Combined classnames helper  -  clsx for conditionals, tailwind-merge
  * to dedupe conflicting tailwind utilities.
  */
 export function cn(...inputs: ClassValue[]): string {
@@ -11,9 +11,9 @@ export function cn(...inputs: ClassValue[]): string {
 
 /** Trim a hash for monospace display: first 8 + ellipsis + last 4. */
 export function shortHash(h?: string | null): string {
-  if (!h) return "—";
+  if (!h) return " - ";
   if (h.length <= 14) return h;
-  return `${h.slice(0, 8)}…${h.slice(-4)}`;
+  return `${h.slice(0, 8)}...${h.slice(-4)}`;
 }
 
 /** Format an ISO date string as relative time ("3 days ago"). */

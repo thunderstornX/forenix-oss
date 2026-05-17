@@ -29,8 +29,8 @@ const VALID: ReadonlySet<AdapterName> = new Set([
 function resolveAdapterName(): AdapterName {
   const raw = (process.env.AI_ADAPTER ?? "mock").toLowerCase() as AdapterName;
   if (!VALID.has(raw)) {
-    // Bad value → fall back to mock, not to a paid adapter.
-    console.warn(`[ai/adapter] Unknown AI_ADAPTER="${raw}" — falling back to "mock".`);
+    // Bad value -> fall back to mock, not to a paid adapter.
+    console.warn(`[ai/adapter] Unknown AI_ADAPTER="${raw}"  -  falling back to "mock".`);
     return "mock";
   }
   return raw;
@@ -60,7 +60,7 @@ function construct(name: AdapterName): AIAdapter {
   }
 }
 
-/** Test-only — used by API routes to surface which adapter is active. */
+/** Test-only  -  used by API routes to surface which adapter is active. */
 export function activeAdapterName(): AdapterName {
   return getAdapter().name;
 }

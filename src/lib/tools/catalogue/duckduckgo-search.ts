@@ -56,7 +56,7 @@ export const duckDuckGoSearchTool: Tool = {
 
     // Cheap parse: the result-block has a class "result__a" anchor,
     // a "result__snippet" div. We don't want to ship a full DOM
-    // parser to the server — regex is enough for this fixed shape.
+    // parser to the server  -  regex is enough for this fixed shape.
     const linkRe = /<a[^>]+class="result__a"[^>]+href="([^"]+)"[^>]*>([\s\S]*?)<\/a>/g;
     const snipRe = /<a[^>]+class="result__snippet"[^>]*>([\s\S]*?)<\/a>/g;
     const links: Array<{ url: string; title: string }> = [];

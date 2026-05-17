@@ -4,7 +4,7 @@
  * Promote a single OSINT finding to a forensic evidence item.
  * Writes a real file in the case's Git repo and commits on main.
  * If the parent investigation isn't linked to a case yet, this
- * fails with 409 — caller should bridge first.
+ * fails with 409  -  caller should bridge first.
  */
 import { createHash } from "node:crypto";
 
@@ -58,7 +58,7 @@ export async function POST(
     const evidence = await prisma.evidence.create({
       data: {
         caseId,
-        name: `Finding ${finding.id.slice(0, 8)} — ${finding.title}`,
+        name: `Finding ${finding.id.slice(0, 8)}  -  ${finding.title}`,
         type: "document",
         mimeType: "application/x-osint-finding",
         description: finding.description,

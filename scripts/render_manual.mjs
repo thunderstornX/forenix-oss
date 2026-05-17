@@ -238,12 +238,12 @@ h2 + p, h3 + p, h4 + p { page-break-before: avoid; }
 
 const cover = `
 <section class="cover">
-  <div class="eyebrow">User Manual · v0.1 · 2026-05</div>
+  <div class="eyebrow">User Manual | v0.1 | 2026-05</div>
   <h1 class="title">forenix-oss</h1>
-  <div class="subtitle">OSINT × Forensics — a step-by-step guide for analysts, examiners, and team leads.</div>
+  <div class="subtitle">OSINT x Forensics  -  a step-by-step guide for analysts, examiners, and team leads.</div>
   <div class="meta">
-    <b>Author:</b> Ali Murtaza Bhutto &nbsp;·&nbsp;
-    <b>Repository:</b> github.com/thunderstornX/forenix-oss &nbsp;·&nbsp;
+    <b>Author:</b> Ali Murtaza Bhutto &nbsp;|&nbsp;
+    <b>Repository:</b> github.com/thunderstornX/forenix-oss &nbsp;|&nbsp;
     <b>License:</b> MIT
   </div>
 </section>
@@ -253,7 +253,7 @@ const html = `<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<title>forenix-oss — User Manual</title>
+<title>forenix-oss  -  User Manual</title>
 <style>${css}</style>
 </head>
 <body>
@@ -278,8 +278,8 @@ await page.pdf({
   displayHeaderFooter: true,
   headerTemplate: `
     <div style="width:100%;padding:0 18mm;font-size:8pt;color:#5b6473;display:flex;justify-content:space-between;">
-      <span>forenix-oss · User Manual</span>
-      <span>v0.1 · 2026-05</span>
+      <span>forenix-oss | User Manual</span>
+      <span>v0.1 | 2026-05</span>
     </div>`,
   footerTemplate: `
     <div style="width:100%;padding:0 18mm;font-size:8pt;color:#5b6473;display:flex;justify-content:space-between;">

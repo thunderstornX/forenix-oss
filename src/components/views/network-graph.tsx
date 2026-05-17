@@ -25,7 +25,7 @@ const KIND_RADIUS: Record<NetworkNode["kind"], number> = {
 };
 
 /**
- * Lightweight force-free layout — group by kind, place each group on
+ * Lightweight force-free layout  -  group by kind, place each group on
  * a horizontal swimlane. Within each lane, evenly-spaced. Stable and
  * cheap, no physics, no animation thrash, no extra dependencies.
  */
@@ -69,10 +69,10 @@ export function NetworkGraphView() {
   return (
     <ViewShell
       title="Network Graph"
-      subtitle="Cross-case knowledge graph — analysts, agents, investigations, cases, evidence, and the discovered entity graph, all on one canvas."
+      subtitle="Cross-case knowledge graph  -  analysts, agents, investigations, cases, evidence, and the discovered entity graph, all on one canvas."
       actions={
         <span className="text-[11px] text-[var(--foreground-muted)]">
-          {data?.nodes.length ?? 0} nodes · {data?.edges.length ?? 0} edges
+          {data?.nodes.length ?? 0} nodes | {data?.edges.length ?? 0} edges
         </span>
       }
     >
@@ -90,7 +90,7 @@ export function NetworkGraphView() {
         {positioned.length === 0 ? (
           <div className="grid place-items-center py-16 text-center text-[12px] text-[var(--foreground-muted)]">
             <Network className="mb-2 h-5 w-5" />
-            No graph data yet — run a pipeline and bridge to a case to populate it.
+            No graph data yet  -  run a pipeline and bridge to a case to populate it.
           </div>
         ) : (
           <svg viewBox={`0 0 ${W} ${H}`} className="w-full" style={{ height: H }}>
@@ -132,7 +132,7 @@ export function NetworkGraphView() {
                   textAnchor="middle"
                   fontFamily="ui-sans-serif, system-ui"
                 >
-                  {n.label.length > 22 ? n.label.slice(0, 20) + "…" : n.label}
+                  {n.label.length > 22 ? n.label.slice(0, 20) + "..." : n.label}
                 </text>
               </g>
             ))}

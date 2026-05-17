@@ -1,18 +1,18 @@
 /**
- * GroqAdapter — Groq's LPU-accelerated chat completions.
+ * GroqAdapter  -  Groq's LPU-accelerated chat completions.
  *
  * NB: "Groq" (the LPU inference company) is NOT "Grok" (xAI's
  * model). Two very different products, confusingly-similar names.
  *
  * Free tier is generous and card-free:
  *   - 30 req/min, 14,400 req/day on `llama-3.3-70b-versatile`.
- *   - Median latency ~150 ms — easily the fastest of all the
+ *   - Median latency ~150 ms  -  easily the fastest of all the
  *     adapters in this build.
  *
  * Setup:
  *   1. Sign up at https://console.groq.com (no card).
- *   2. Create a key → set GROQ_API_KEY=gsk_…
- *   3. (Optional) override GROQ_MODEL — default below works.
+ *   2. Create a key → set GROQ_API_KEY=gsk_...
+ *   3. (Optional) override GROQ_MODEL  -  default below works.
  *   4. AI_ADAPTER=groq bun dev
  */
 import type {
