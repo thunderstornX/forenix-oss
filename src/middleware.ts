@@ -27,9 +27,20 @@ export async function middleware(req: NextRequest) {
   if (PUBLIC_ROUTES.has(pathname)) return NextResponse.next();
   if (PUBLIC_PREFIXES.some((p) => pathname.startsWith(p))) return NextResponse.next();
 
+  // Detect HTTPS behind a reverse proxy. getToken() uses req.url to
+  // decide whether to look for the `__Secure-` cookie; that URL is
+  // always http://localhost:3000 once Caddy forwards to Bun, so we
+  // pass `secureCookie` explicitly. Honoured signals (in order):
+  //   - AUTH_URL / NEXTAUTH_URL begins with https://
+  //   - X-Forwarded-Proto: https from a trusted proxy
+  const xfp = req.headers.get("x-forwarded-proto");
+  const authUrl = process.env.AUTH_URL ?? process.env.NEXTAUTH_URL ?? "";
+  const isHttps = authUrl.startsWith("https://") || xfp === "https";
+
   const token = await getToken({
     req,
     secret: process.env.AUTH_SECRET ?? process.env.NEXTAUTH_SECRET,
+    secureCookie: isHttps,
   });
 
   if (!token) {
