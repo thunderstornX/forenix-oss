@@ -106,6 +106,74 @@ print("chain OK")
 PY
 ```
 
+### 3.4 External attestation of the chain head
+
+The chain alone proves no-tampering only against an attacker without
+DB-write access. An attacker who can rewrite every row from genesis
+and recompute the entire forward-linked chain leaves no internal
+evidence — the chain is internally consistent, just not the chain it
+used to be.
+
+External attestations close that gap by periodically pinning the
+current head hash to something the maintainer can't unilaterally
+rewrite:
+
+```
+   audit chain                          external witness
+   ┌────────┐  ┌────────┐  ┌────────┐   ┌────────────────┐
+   │  row 1 │─▶│  row 2 │─▶│  row N │──▶│ GitHub comment │
+   └────────┘  └────────┘  └────────┘   │ Sigstore Rekor │
+                                head H  │ HMAC archive   │
+                                        └────────────────┘
+                                        attested-at: T
+                                        head-hash:   H
+```
+
+An auditor later asks: *given today's chain head, does it still match
+what was witnessed at time T?* If row N still hashes to H, the chain
+between attestations is intact. If not, the divergence is bounded
+between the last attestation and now.
+
+#### Backends (`src/lib/attestation/`)
+
+| Backend  | What it witnesses with                                     | Trust assumption                                                                 |
+|----------|------------------------------------------------------------|----------------------------------------------------------------------------------|
+| `local`  | HMAC-SHA256 over the head, keyed on `AUTH_SECRET`          | Detects accidental corruption + naive tampering. **Not external** — an attacker with `AUTH_SECRET` can forge a new local witness. |
+| `github` | A JSON comment on a designated GitHub issue                | GitHub keeps a per-comment edit history visible to anyone with read access. Tampering becomes *detectable*, not impossible. |
+
+Future backends (Sigstore Rekor, OpenTimestamps, custom webhooks)
+plug in via the same `AttestationBackend` interface in
+`src/lib/attestation/types.ts` — no schema changes required.
+
+#### Configuration
+
+```env
+# Default backend selected by the factory:
+ATTESTATION_BACKEND=local       # or "github"
+
+# Only required if ATTESTATION_BACKEND=github (or chosen per-request):
+ATTEST_GITHUB_TOKEN=ghp_...     # PAT with repo:public_repo, issues:write
+ATTEST_GITHUB_OWNER=thunderstornX
+ATTEST_GITHUB_REPO=forenix-oss-witness
+ATTEST_GITHUB_ISSUE=1           # number of an open (ideally locked) issue
+```
+
+#### Operational guidance
+
+- **Cadence.** Hit `POST /api/attestation` from any external cron
+  (system `cron`, GitHub Actions schedule, Vercel Cron) on whatever
+  cadence matches your evidentiary needs — daily for low-risk
+  cases, hourly during active investigations.
+- **The attestation itself is in the chain.** Every successful run
+  appends an `attest_chain` audit row. So the next attestation
+  witnesses the previous attestation, making the witness history
+  itself tamper-evident.
+- **Compromise drill.** If the chain's verifier flags a break,
+  fetch every external attestation in
+  `/api/attestation`, re-verify each against the **current** chain,
+  and find the most-recent attestation whose verifier still returns
+  ok. Everything after that attestation's `createdAt` is suspect.
+
 ## 4. Defense-in-depth
 
 | Layer | Control | File |

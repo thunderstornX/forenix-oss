@@ -561,3 +561,33 @@ model AuditLog {
   case          Case?          @relation(fields: [caseId],          references: [id], onDelete: Cascade)
   investigation Investigation? @relation(fields: [investigationId], references: [id], onDelete: SetNull)
 }
+
+// ───────────────────────── Attestation (external witness) ─────────
+// One row per "we asked an external witness to record the audit
+// chain's current head." The chain alone proves no-tampering only
+// against an attacker without DB-write access; an attacker who can
+// rewrite + re-sign every row from genesis can hide their work.
+//
+// External attestations close that gap: each row pins the head hash
+// at a point in time to something the maintainer can't unilaterally
+// rewrite (Sigstore Rekor, a GitHub-issue comment, etc.). An auditor
+// later asks "does the chain's current row N match what was attested
+// at time T?" and trust collapses to "do we trust the witness."
+//
+// Backends implement src/lib/attestation/types.ts. New backends never
+// change the schema — only the `backend` discriminator + the `proof`
+// JSON blob.
+model Attestation {
+  id          String    @id @default(cuid())
+  entries     Int       // total AuditLog rows at attestation time
+  headId      String    // AuditLog.id of the tip being attested
+  headHash    String    // The hash being witnessed
+  backend     String    // "local" | "github" | (future) "rekor" | "opentimestamps"
+  status      String    @default("submitted") // submitted | confirmed | failed
+  proof       String    @default("{}")        // JSON payload returned by the backend
+  externalRef String?                         // Backend-specific id (issue comment id, log index, ots receipt, ...)
+  externalUrl String?                         // Human-clickable URL when one exists
+  error       String?                         // Failure message (status=failed)
+  createdAt   DateTime  @default(now())
+  confirmedAt DateTime?
+}

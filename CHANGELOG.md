@@ -6,6 +6,42 @@ and the project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added - external attestation of the audit chain
+
+- **New `Attestation` model** + `src/lib/attestation/` library
+  implementing the long-standing "DB admin rewrites + re-signs the
+  whole chain" gap in the threat model. The chain alone proves
+  no-tampering only against attackers without DB-write access;
+  external attestations pin the head hash periodically to a witness
+  the maintainer can't unilaterally rewrite.
+- **Two backends ship now, more without schema changes:**
+    - `local`  - HMAC-SHA256 over the head, keyed on `AUTH_SECRET`.
+      Always-available; offline-verifiable; catches accidental
+      corruption + naive tampering. Honest about not being external.
+    - `github` - posts the head as a JSON comment to a designated
+      issue. GitHub's per-comment edit history makes tampering
+      detectable, not impossible.
+- **`/api/attestation` route**: `GET` lists recent witnesses,
+  `POST` (admin-only) records a new one; `GET /:id/verify`
+  re-fetches the witness and confirms it still pins the original
+  head.
+- **Integrity dashboard now surfaces attestations** below the chain
+  status: backend, short head hash, status, external link, per-row
+  "Verify now" button. Admin sees an "Attest now" control + a
+  per-run backend override.
+- **The attestation event is itself an audit row**
+  (`action=attest_chain`). So the next attestation witnesses the
+  previous attestation — the witness history is itself tamper-
+  evident.
+- 17 new tests across `local.test.ts` + `github.test.ts` (HMAC
+  round-trip + tamper-detection + secret-rotation; envelope codec
+  round-trip + tolerant parse). Bun test count: 39 -> 56.
+- Docs: new "External attestation of the chain head" section in
+  `docs/07-SECURITY.md` (threat model, backends table, operational
+  guidance, compromise drill).
+- `.env.example`: `ATTESTATION_BACKEND` + the `ATTEST_GITHUB_*`
+  block under a new section.
+
 ### Fixed
 
 - **Middleware auth was breaking under HTTPS reverse proxy** (Caddy

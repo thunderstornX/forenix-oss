@@ -325,6 +325,59 @@ export function useIntegrity() {
   });
 }
 
+export interface AttestationRow {
+  id: string;
+  entries: number;
+  headId: string;
+  headHash: string;
+  backend: string;
+  status: "submitted" | "confirmed" | "failed";
+  proof: string;
+  externalRef: string | null;
+  externalUrl: string | null;
+  error: string | null;
+  createdAt: string;
+  confirmedAt: string | null;
+}
+export interface AttestationBackendInfo {
+  name: string;
+  description: string;
+}
+export function useAttestations() {
+  return useQuery({
+    queryKey: ["attestations"],
+    queryFn: () =>
+      http<{ data: AttestationRow[]; backends: AttestationBackendInfo[] }>(
+        "/api/attestation",
+      ),
+  });
+}
+export function useCreateAttestation() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (body: { backend?: string } = {}) =>
+      http<{ data: AttestationRow }>("/api/attestation", {
+        method: "POST",
+        body: JSON.stringify(body),
+      }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["attestations"] });
+      qc.invalidateQueries({ queryKey: ["audit"] });
+      qc.invalidateQueries({ queryKey: ["integrity"] });
+    },
+  });
+}
+export interface AttestationVerifyResult {
+  row: AttestationRow;
+  verdict: { ok: boolean; details?: string };
+}
+export function useVerifyAttestation() {
+  return useMutation({
+    mutationFn: (id: string) =>
+      http<{ data: AttestationVerifyResult }>(`/api/attestation/${id}/verify`),
+  });
+}
+
 export interface MeResponse {
   id: string;
   email: string | null;
