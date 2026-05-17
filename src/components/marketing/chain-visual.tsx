@@ -4,152 +4,127 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
 /**
- * Animated chain-of-custody visual for the hero — a terminal-shaped
- * card that progressively grows hash-linked rows. Each new row's
- * prevHash points at the previous row's hash, mirroring the real
- * audit chain's data model.
+ * Hero artefact: real `forenix verify` CLI output, typed out
+ * line-by-line. The premise is "this is the actual thing the tool
+ * does," not "here's an abstract chain visual." Less decoration,
+ * more product.
  *
- * Pure SSR-safe: no random numbers, no Date.now() in render output.
+ * The lines below are the exact shape of what
+ * `bun run scripts/verify-chain.ts` emits against a seeded DB —
+ * abbreviated for the marketing surface. No randomisation, SSR-safe.
  */
 
-interface Row {
-  id: string;
-  action: string;
-  hash: string;
-  attest?: { backend: string; ref: string };
+interface Line {
+  // null prefix = silent (no command echo)
+  prompt?: "$" | "→";
+  body: string;
+  tone?: "muted" | "ok" | "warn" | "accent";
+  // Optional pause AFTER this line lands, in ms. Default 240.
+  pause?: number;
 }
 
-const ROWS: Row[] = [
-  { id: "ckxw1", action: "create_investigation", hash: "0e7c3a91" },
-  { id: "ckxw2", action: "run_pipeline",         hash: "4f1b0c8d" },
-  { id: "ckxw3", action: "promote_to_evidence",  hash: "2a90fc41" },
-  { id: "ckxw4", action: "verify_evidence",      hash: "9d4ec2b6" },
-  { id: "ckxw5", action: "seal_case",            hash: "61b3a04f" },
-  {
-    id: "ckxw6",
-    action: "attest_chain",
-    hash: "8c7a2e10",
-    attest: { backend: "rekor", ref: "163847219" },
-  },
+const LINES: Line[] = [
+  { prompt: "$", body: "forenix verify --case CASE-2026-014" },
+  { body: "loading chain ............................. 412 rows", tone: "muted", pause: 380 },
+  { body: "replaying SHA-256 forward link ............. ok",       tone: "muted" },
+  { body: "verifying evidence content addresses ...... ok",        tone: "muted" },
+  { body: "checking case-git branch heads ............. ok",       tone: "muted" },
+  { body: "external attestations:",                                tone: "muted", pause: 200 },
+  { body: "  · local    (HMAC, AUTH_SECRET) ........... ok",       tone: "muted" },
+  { body: "  · github   (issue #14, comment 218477) ... ok",       tone: "muted" },
+  { body: "  · rekor    (logIndex 163847219) .......... ok",       tone: "accent", pause: 360 },
+  { body: "" },
+  { body: "chain OK — 412 rows, 3 witnesses agree.",               tone: "ok",     pause: 0 },
 ];
 
 export function ChainVisual() {
   const [step, setStep] = useState(0);
 
   useEffect(() => {
-    if (step >= ROWS.length) return;
-    const t = setTimeout(() => setStep((s) => s + 1), 650);
+    if (step >= LINES.length) return;
+    const t = setTimeout(() => setStep((s) => s + 1), LINES[step]?.pause ?? 240);
     return () => clearTimeout(t);
   }, [step]);
 
   return (
     <div className="relative w-full">
-      <div className="rounded-2xl border border-[var(--border)] bg-[var(--background-elev)]/80 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.6)] backdrop-blur-sm">
-        {/* terminal chrome */}
-        <div className="flex items-center justify-between border-b border-[var(--border)] px-4 py-2.5">
+      {/* a tiny editorial label sitting OFF the top-left of the card */}
+      <span
+        className="absolute -top-2 left-3 z-10 select-none rounded-sm border border-[var(--border)] bg-[var(--background)] px-1.5 py-0.5 font-mono text-[9px] tracking-[0.18em] text-[var(--foreground-muted)] uppercase"
+        aria-hidden
+      >
+        verify.sh
+      </span>
+
+      <div className="overflow-hidden rounded-md border border-[var(--border)] bg-[#0b0d10] shadow-[0_40px_100px_-40px_rgba(0,0,0,0.85),0_0_0_1px_color-mix(in_oklch,var(--accent-strong)_15%,transparent)]">
+        {/* chrome */}
+        <div className="flex items-center justify-between border-b border-white/[0.05] px-3 py-2">
           <div className="flex items-center gap-1.5">
-            <span className="h-2.5 w-2.5 rounded-full bg-[var(--danger)]/60" />
-            <span className="h-2.5 w-2.5 rounded-full bg-[var(--warning)]/60" />
-            <span className="h-2.5 w-2.5 rounded-full bg-[var(--success)]/60" />
+            <span className="h-2.5 w-2.5 rounded-full bg-[#ff5f57]" />
+            <span className="h-2.5 w-2.5 rounded-full bg-[#febc2e]" />
+            <span className="h-2.5 w-2.5 rounded-full bg-[#28c840]" />
           </div>
-          <span className="font-mono text-[10px] tracking-[0.16em] text-[var(--foreground-muted)] uppercase">
-            audit chain · live
-          </span>
-          <span className="font-mono text-[10px] text-[var(--foreground-faint)]">
-            sha-256
-          </span>
+          <span className="font-mono text-[10px] text-white/40">~/cases/case-2026-014</span>
+          <span className="font-mono text-[10px] text-white/30">bash</span>
         </div>
 
-        <div className="space-y-1.5 p-4 font-mono text-[11px] leading-relaxed sm:text-[12px]">
-          {ROWS.slice(0, step).map((r, idx) => (
-            <ChainRow
-              key={r.id}
-              row={r}
-              prev={idx === 0 ? "0".repeat(8) : ROWS[idx - 1]!.hash}
-              isAttest={!!r.attest}
-            />
+        <div className="space-y-[2px] p-4 font-mono text-[12px] leading-[1.55] text-white/85">
+          {LINES.slice(0, step).map((line, idx) => (
+            <Row key={idx} line={line} />
           ))}
-          {step < ROWS.length && <CursorRow />}
+          {step < LINES.length && (
+            <div className="flex items-baseline gap-2 pt-0.5">
+              {step === 0 && <span className="text-white/30">$</span>}
+              <motion.span
+                animate={{ opacity: [1, 0.15, 1] }}
+                transition={{ duration: 1.1, repeat: Infinity }}
+                className="inline-block h-[13px] w-[7px] bg-white/60"
+              />
+            </div>
+          )}
         </div>
-
-        {/* footer chip — appears after attest row lands */}
-        {step >= ROWS.length && (
-          <motion.div
-            initial={{ opacity: 0, y: 4 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex items-center justify-between gap-3 border-t border-[var(--border)] bg-[var(--background-elev-2)] px-4 py-2.5 text-[11px]"
-          >
-            <span className="text-[var(--foreground-muted)]">
-              <span className="text-[var(--accent-strong)]">●</span> chain verified ·{" "}
-              {ROWS.length} entries · witnessed on{" "}
-              <span className="text-[var(--foreground)]">rekor.sigstore.dev</span>
-            </span>
-            <span className="font-mono text-[var(--foreground-faint)]">
-              #163847219
-            </span>
-          </motion.div>
-        )}
       </div>
+
+      {/* slightly off-grid hand-drawn annotation */}
+      {step >= LINES.length && (
+        <motion.div
+          initial={{ opacity: 0, x: -4 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.1 }}
+          className="absolute -bottom-7 right-1 flex items-center gap-1 text-[10px] italic text-[var(--accent-strong)]"
+          style={{ transform: "rotate(-1.5deg)" }}
+        >
+          <svg width="28" height="14" viewBox="0 0 28 14" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round">
+            <path d="M2 8 C 10 1, 18 1, 24 7" />
+            <path d="M21 4 L 24 7 L 21 9" />
+          </svg>
+          <span>three independent witnesses agree</span>
+        </motion.div>
+      )}
     </div>
   );
 }
 
-function ChainRow({
-  row,
-  prev,
-  isAttest,
-}: {
-  row: Row;
-  prev: string;
-  isAttest: boolean;
-}) {
+function Row({ line }: { line: Line }) {
+  const colour =
+    line.tone === "ok"
+      ? "text-emerald-300"
+      : line.tone === "accent"
+      ? "text-[var(--accent-strong)]"
+      : line.tone === "warn"
+      ? "text-amber-300"
+      : line.tone === "muted"
+      ? "text-white/55"
+      : "text-white/85";
   return (
     <motion.div
-      initial={{ opacity: 0, y: 6 }}
+      initial={{ opacity: 0, y: 4 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.25 }}
-      className={
-        isAttest
-          ? "flex flex-wrap items-baseline gap-x-3 gap-y-0.5 rounded-md bg-[var(--accent-soft)] px-2 py-1 -mx-2"
-          : "flex flex-wrap items-baseline gap-x-3 gap-y-0.5"
-      }
+      transition={{ duration: 0.16 }}
+      className="flex items-baseline gap-2 whitespace-pre"
     >
-      <span className="text-[var(--foreground-faint)]">prev</span>
-      <span className="text-[var(--foreground-muted)]">{prev}</span>
-      <span className="text-[var(--foreground-faint)]">→</span>
-      <span
-        className={
-          isAttest ? "text-[var(--accent-strong)]" : "text-[var(--foreground)]"
-        }
-      >
-        {row.action}
-      </span>
-      <span className="text-[var(--foreground-faint)]">hash</span>
-      <span
-        className={
-          isAttest ? "text-[var(--accent-strong)]" : "text-[var(--foreground)]"
-        }
-      >
-        {row.hash}
-      </span>
-      {row.attest && (
-        <span className="ml-auto rounded-sm border border-[var(--accent-strong)]/40 px-1.5 py-0.5 text-[10px] uppercase tracking-[0.12em] text-[var(--accent-strong)]">
-          {row.attest.backend}
-        </span>
-      )}
+      {line.prompt && <span className="text-white/30">{line.prompt}</span>}
+      <span className={colour}>{line.body}</span>
     </motion.div>
-  );
-}
-
-function CursorRow() {
-  return (
-    <div className="flex items-baseline gap-2">
-      <span className="text-[var(--foreground-faint)]">$</span>
-      <motion.span
-        animate={{ opacity: [1, 0.2, 1] }}
-        transition={{ duration: 1.1, repeat: Infinity }}
-        className="inline-block h-[12px] w-[7px] bg-[var(--foreground-muted)]"
-      />
-    </div>
   );
 }

@@ -1,6 +1,8 @@
 /* @import rules MUST be the very first declarations; web fonts first so
-   Tailwind's downstream bundling can't inject rules above them. */
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap");
+   Tailwind's downstream bundling can't inject rules above them.
+   Instrument Serif is added for the marketing surface's display
+   headings; the authed app keeps Inter throughout. */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600&display=swap");
 @import "tailwindcss";
 
 /* =====================================================================
@@ -15,6 +17,7 @@
   /* ── type ─────────────────────────────────────────────────────────── */
   --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --font-display: "Instrument Serif", "Cambria", "Georgia", serif;
 
   --fs-3xs: 10px;
   --fs-2xs: 11px;

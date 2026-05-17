@@ -21,13 +21,15 @@ export default function WaitlistPage() {
           <ArrowLeft className="h-3.5 w-3.5" />
           Back home
         </Link>
-        <h1 className="mt-6 text-balance text-[32px] font-semibold tracking-tight text-[var(--foreground)] sm:text-[40px]">
-          Join the <span className="text-[var(--accent-strong)]">forenix-oss</span> waitlist.
+        <h1 className="mt-6 text-balance font-[family-name:var(--font-display)] text-[44px] font-normal leading-[1.1] tracking-[-0.01em] text-[var(--foreground)] sm:text-[56px]">
+          Join the <span className="italic text-[var(--accent-strong)]">forenix/oss</span> waitlist.
         </h1>
-        <p className="mt-4 text-[15px] leading-relaxed text-[var(--foreground-muted)]">
-          We&apos;re onboarding analysts, investigators, and security teams in small
-          batches. Tell us a little about yourself and your use case — it helps us
-          prioritise the right early invites.
+        <p className="mt-5 font-mono text-[13px] leading-relaxed text-[var(--foreground-muted)] sm:text-[14px]">
+          small batches. real invites. no waitlist drip campaigns.
+        </p>
+        <p className="mt-4 text-[14px] leading-relaxed text-[var(--foreground-muted)]">
+          Tell us a little about yourself and the case you&apos;d like to run through it.
+          That&apos;s how we prioritise.
         </p>
         <div className="mt-8">
           <WaitlistForm variant="full" source="waitlist-page" />

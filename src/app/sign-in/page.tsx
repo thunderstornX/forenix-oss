@@ -84,12 +84,12 @@ function SignInInner() {
         </Link>
 
         <div className="rounded-2xl border border-[var(--border)] bg-[var(--background-elev)]/80 p-7 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.6)] backdrop-blur-sm">
-          <h1 className="text-[22px] font-semibold tracking-tight text-[var(--foreground)]">
-            Sign in
+          <h1 className="font-[family-name:var(--font-display)] text-[32px] font-normal leading-none tracking-[-0.01em] text-[var(--foreground)]">
+            Sign <span className="italic text-[var(--accent-strong)]">in</span>.
           </h1>
-          <p className="mt-2 text-[13px] leading-relaxed text-[var(--foreground-muted)]">
-            Use the credentials your workspace owner issued you. No SSO yet — that
-            lands with the paid tier.
+          <p className="mt-3 text-[13px] leading-relaxed text-[var(--foreground-muted)]">
+            Credentials your workspace owner issued. No SSO yet — that lands with
+            the paid tier.
           </p>
 
           <form onSubmit={submit} className="mt-6 space-y-4">
