@@ -2,9 +2,12 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<title>forenix-oss</title>
+<title>forenix-oss  -  User Manual</title>
 <style>
-@page { size: A4; margin: 22mm 18mm 22mm 18mm; }
+@page {
+  size: A4;
+  margin: 22mm 18mm 22mm 18mm;
+}
 
 :root {
   --bg: #ffffff;
@@ -18,117 +21,195 @@
   --code-fg: #1d2530;
 }
 
-html, body { background: var(--bg); color: var(--fg); margin: 0; padding: 0; }
+html, body {
+  background: var(--bg);
+  color: var(--fg);
+  margin: 0;
+  padding: 0;
+}
+
 body {
   font-family: "Inter", "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 10.5pt; line-height: 1.55;
+  font-size: 10.5pt;
+  line-height: 1.55;
   -webkit-font-smoothing: antialiased;
 }
 
+/* Cover page */
 .cover {
   page-break-after: always;
+  text-align: left;
   padding: 6mm 0 0 0;
   border-bottom: 1px solid var(--hr);
 }
 .cover .eyebrow {
-  color: var(--accent); font-size: 10pt;
-  letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--accent);
+  font-size: 10pt;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
   font-weight: 600;
 }
 .cover h1.title {
-  font-size: 40pt; font-weight: 800;
-  margin: 8pt 0 6pt 0; line-height: 1.05;
+  font-size: 40pt;
+  font-weight: 800;
+  margin: 8pt 0 6pt 0;
+  line-height: 1.05;
 }
 .cover .subtitle {
-  font-size: 14pt; color: var(--muted); margin-bottom: 28pt;
+  font-size: 14pt;
+  color: var(--muted);
+  margin-bottom: 28pt;
 }
 .cover .meta {
-  font-size: 10pt; color: var(--muted);
-  border-top: 1px solid var(--hr); padding-top: 8pt;
+  font-size: 10pt;
+  color: var(--muted);
+  border-top: 1px solid var(--hr);
+  padding-top: 8pt;
 }
 
+/* Main content */
 .content { padding-top: 6mm; }
 
-h1, h2, h3, h4 { page-break-after: avoid; break-after: avoid-page; }
+h1, h2, h3, h4 {
+  page-break-after: avoid;
+  break-after: avoid-page;
+}
 h1 {
-  font-size: 22pt; font-weight: 800;
-  margin-top: 16pt; margin-bottom: 6pt;
-  border-bottom: 1px solid var(--hr); padding-bottom: 4pt;
+  font-size: 22pt;
+  font-weight: 800;
+  margin-top: 16pt;
+  margin-bottom: 6pt;
+  border-bottom: 1px solid var(--hr);
+  padding-bottom: 4pt;
 }
 h2 {
-  font-size: 15pt; font-weight: 700;
-  margin-top: 14pt; margin-bottom: 4pt;
+  font-size: 15pt;
+  font-weight: 700;
+  margin-top: 14pt;
+  margin-bottom: 4pt;
+  color: var(--fg);
 }
 h3 {
-  font-size: 12pt; font-weight: 700;
-  margin-top: 10pt; margin-bottom: 2pt;
+  font-size: 12pt;
+  font-weight: 700;
+  margin-top: 10pt;
+  margin-bottom: 2pt;
   color: var(--accent);
 }
 h4 {
-  font-size: 11pt; font-weight: 700;
-  margin-top: 8pt; margin-bottom: 2pt;
+  font-size: 11pt;
+  font-weight: 700;
+  margin-top: 8pt;
+  margin-bottom: 2pt;
   color: var(--muted);
 }
+
 p { margin: 4pt 0 6pt 0; }
-ul, ol { margin: 4pt 0 6pt 0; padding-left: 18pt; }
+
+ul, ol {
+  margin: 4pt 0 6pt 0;
+  padding-left: 18pt;
+}
 li { margin: 2pt 0; }
-a { color: var(--accent); text-decoration: none; }
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
 a:hover { text-decoration: underline; }
 
 code {
   font-family: "JetBrains Mono", "Menlo", "Consolas", monospace;
   font-size: 9pt;
-  background: var(--code-bg); color: var(--code-fg);
-  padding: 1pt 4pt; border-radius: 3pt;
+  background: var(--code-bg);
+  color: var(--code-fg);
+  padding: 1pt 4pt;
+  border-radius: 3pt;
 }
+
 pre {
   background: var(--code-bg);
-  border: 1px solid var(--border); border-left: 3px solid var(--accent);
-  border-radius: 4pt; padding: 8pt 10pt;
-  font-size: 9pt; line-height: 1.45;
-  overflow-x: auto; page-break-inside: avoid;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 4pt;
+  padding: 8pt 10pt;
+  font-size: 9pt;
+  line-height: 1.45;
+  overflow-x: auto;
+  page-break-inside: avoid;
 }
-pre code { background: transparent; padding: 0; }
+pre code {
+  background: transparent;
+  padding: 0;
+}
 
 table {
-  border-collapse: collapse; margin: 6pt 0 10pt 0;
-  font-size: 9.5pt; width: 100%;
+  border-collapse: collapse;
+  margin: 6pt 0 10pt 0;
+  font-size: 9.5pt;
+  width: 100%;
   page-break-inside: avoid;
 }
 th, td {
-  text-align: left; vertical-align: top;
-  border: 1px solid var(--border); padding: 4pt 6pt;
+  text-align: left;
+  vertical-align: top;
+  border: 1px solid var(--border);
+  padding: 4pt 6pt;
 }
-th { background: var(--code-bg); font-weight: 700; }
+th {
+  background: var(--code-bg);
+  font-weight: 700;
+}
 
 img {
-  max-width: 100%; height: auto;
-  border: 1px solid var(--border); border-radius: 4pt;
-  margin: 8pt 0; page-break-inside: avoid; display: block;
+  max-width: 100%;
+  height: auto;
+  border: 1px solid var(--border);
+  border-radius: 4pt;
+  margin: 8pt 0;
+  page-break-inside: avoid;
+  display: block;
 }
 
-hr { border: 0; border-top: 1px solid var(--hr); margin: 14pt 0; }
+hr {
+  border: 0;
+  border-top: 1px solid var(--hr);
+  margin: 14pt 0;
+}
 
 blockquote {
   border-left: 3px solid var(--accent);
   background: var(--accent-soft);
-  margin: 8pt 0; padding: 6pt 10pt;
-  color: var(--code-fg); border-radius: 3pt;
+  margin: 8pt 0;
+  padding: 6pt 10pt;
+  color: var(--code-fg);
+  border-radius: 3pt;
+}
+
+/* "do not" callout */
+.warn {
+  background: #fff5e6;
+  border-left: 3px solid #b06b00;
+  padding: 6pt 10pt;
+  border-radius: 3pt;
+  margin: 6pt 0;
 }
 
 strong { font-weight: 700; }
 em { font-style: italic; }
 
+/* Pretty bullets in tables for the "filter chip" type lists */
 td > p:first-child { margin-top: 0; }
 td > p:last-child { margin-bottom: 0; }
 
+/* Avoid breaking a paragraph immediately after a heading */
 h2 + p, h3 + p, h4 + p { page-break-before: avoid; }
 </style>
 </head>
 <body>
 
 <section class="cover">
-  <div class="eyebrow">forenix-oss | v0.1 | 2026-05</div>
+  <div class="eyebrow">User Manual | v0.1 | 2026-05</div>
   <h1 class="title">forenix-oss</h1>
   <div class="subtitle">OSINT x Forensics  -  a step-by-step guide for analysts, examiners, and team leads.</div>
   <div class="meta">
@@ -371,7 +452,7 @@ evidence hash.</li>
 <li><strong>verify</strong>  -  flips the finding&#39;s confidence from <code>unverified</code>
 to <code>confirmed</code> and records you as the verifier. Writes a
 <code>verify_finding</code> audit row.</li>
-<li><strong>promote -> evidence</strong>  -  only visible if the investigation is
+<li><strong>promote -&gt; evidence</strong>  -  only visible if the investigation is
 bridged to a case AND the finding hasn&#39;t been promoted yet.
 Creates an Evidence row with its own initial commit and
 stamps <code>Finding.evidenceId</code>.</li>
@@ -406,7 +487,7 @@ active adapter is the one in <code>.env</code>.</li>
 <p>While the pipeline runs:</p>
 <ul>
 <li>Each stage in the right-hand panel transitions
-<code>idle -> running -> done</code>.</li>
+<code>idle -&gt; running -&gt; done</code>.</li>
 <li>A <code>Loader2</code> spinner shows what&#39;s currently in flight.</li>
 </ul>
 <p>When the run completes (typically 30-90 seconds on hosted LLMs),
@@ -420,12 +501,12 @@ were inferred.</li>
 <li><strong>report</strong>  -  a draft markdown report tied to the investigation.</li>
 </ul>
 <p>The next step  -  and this is what makes forenix-oss different  -  is
-the <strong>Open forensic case -></strong> button.</p>
+the <strong>Open forensic case -&gt;</strong> button.</p>
 <hr>
 <h2>6. Workflow 2  -  Bridge findings to a forensic case</h2>
 <p>This is the workflow that turns OSINT into evidence.</p>
 <h3>6.1 What the bridge does</h3>
-<p>Clicking <strong>Open forensic case -></strong> does five things in one
+<p>Clicking <strong>Open forensic case -&gt;</strong> does five things in one
 transaction:</p>
 <ol>
 <li><strong>Mints a Case</strong> with an auto-generated <code>CASE-YYYY-NNN</code>
@@ -742,7 +823,7 @@ them by editing one line in <code>.env</code>:</p>
 # AI_ADAPTER=ollama     # local Ollama HTTP API
 # AI_ADAPTER=glm        # Zhipu AI GLM-4 / GLM-5
 # AI_ADAPTER=claude     # Anthropic Claude (SaaS-gated)
-# AI_ADAPTER=openrouter # OpenRouter proxy -> many models
+# AI_ADAPTER=openrouter # OpenRouter proxy -&gt; many models
 # AI_ADAPTER=nvidia     # NVIDIA NIM hosted catalogue
 </code></pre>
 <p>After changing the value, restart the dev server. The top-bar
@@ -888,7 +969,7 @@ case or investigation by number/title.</p>
 switches view + activates the right detail panel in one click.</li>
 <li><strong>Click the bridge chip on an investigation</strong>  -  opens its
 linked case.</li>
-<li><strong>Click a finding&#39;s <em>promote -> evidence</em> button</strong>  -  does the
+<li><strong>Click a finding&#39;s <em>promote -&gt; evidence</em> button</strong>  -  does the
 promotion + writes the audit row + invalidates the queries that
 feed the surrounding UI.</li>
 </ul>
@@ -1059,7 +1140,7 @@ through their first admissibility argument.</p>
 </tr>
 <tr>
 <td><strong>Pipeline</strong></td>
-<td>The end-to-end run that orchestrates <code>analyzePipeline -> extractEntities -> generateReport</code> over the AI adapter.</td>
+<td>The end-to-end run that orchestrates <code>analyzePipeline -&gt; extractEntities -&gt; generateReport</code> over the AI adapter.</td>
 </tr>
 <tr>
 <td><strong>Promote</strong></td>

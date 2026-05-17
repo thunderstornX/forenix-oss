@@ -123,6 +123,40 @@ describe("audit-chain", () => {
     expect(baseline[1]).not.toBe(tampered[1]);
     expect(baseline[2]).not.toBe(tampered[2]);
   });
+
+  // Regression: the security doc and README both claim the chain is
+  // verifiable offline with the literal Python recipe documented in
+  // docs/07-SECURITY.md. This test reproduces that recipe byte-for-byte
+  // and asserts it agrees with the TS implementation. If anyone tightens
+  // the input format in `computeAuditHash` without updating the Python
+  // recipe, this test fires.
+  it("matches the documented Python offline-verifier recipe", async () => {
+    const { createHash } = await import("node:crypto");
+    function pythonRecipe(args: {
+      prevHash: string; action: string; entity: string;
+      entityId: string; createdAt: Date;
+    }): string {
+      // Replicates the recipe quoted in docs/07-SECURITY.md + the README:
+      //   sha256( prevHash | action | entity | entityId | iso(createdAt) )
+      const parts = [
+        args.prevHash,
+        args.action,
+        args.entity,
+        args.entityId,
+        args.createdAt.toISOString(),
+      ];
+      return createHash("sha256").update(parts.join("|")).digest("hex");
+    }
+
+    const inputs = [
+      { prevHash: GENESIS_HASH, action: "create_user", entity: "User", entityId: "u1", createdAt: FIXED_DATE },
+      { prevHash: "f".repeat(64), action: "verify_finding", entity: "Finding", entityId: "abc-123", createdAt: new Date("2026-06-01T00:00:00.000Z") },
+      { prevHash: "1".repeat(64), action: "seal_evidence", entity: "Evidence", entityId: "", createdAt: FIXED_DATE },
+    ];
+    for (const args of inputs) {
+      expect(computeAuditHash(args)).toBe(pythonRecipe(args));
+    }
+  });
 });
 
 function chainFor(
