@@ -83,8 +83,13 @@ export async function chatComplete(
     if (data.error) {
       throw new Error(`${backend.name} error: ${data.error.message ?? "unknown"}`);
     }
+    // Some routes return only `reasoning` and no `content` for reasoning
+    // models. Treat that as recoverable — return "" and let the caller
+    // handle (extractJson + the per-call try/catch both already do).
     const content = data.choices?.[0]?.message?.content ?? "";
-    if (!content) throw new Error(`${backend.name}: empty completion`);
+    if (!content) {
+      console.warn(`[${backend.name}] empty completion (model=${backend.model}); returning ""`);
+    }
     return content;
   } finally {
     clearTimeout(timer);
