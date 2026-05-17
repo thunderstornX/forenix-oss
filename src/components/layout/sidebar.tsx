@@ -58,6 +58,8 @@ export function Sidebar() {
   const { activeView, setView, sidebarCollapsed, toggleSidebar, setCommandPaletteOpen } = useUI();
   const me = useMe();
   const isAdmin = me.data?.data?.role === "admin";
+  const userName = me.data?.data?.name ?? me.data?.data?.email ?? "—";
+  const initial = userName?.[0]?.toUpperCase() ?? "?";
 
   const visible = NAV.filter((n) => !n.adminOnly || isAdmin);
   const grouped = visible.reduce<Record<string, typeof NAV>>((acc, item) => {
@@ -66,57 +68,45 @@ export function Sidebar() {
   }, {});
 
   return (
-    <aside
-      className={cn(
-        "glass-strong relative flex h-screen flex-col border-r border-[var(--border-strong)] transition-[width] duration-200 ease-out",
-        sidebarCollapsed ? "w-16" : "w-64",
-      )}
-    >
+    <aside className="fx-side">
       {/* Brand */}
-      <div className="flex items-center gap-3 px-4 pt-5 pb-4">
-        <div className="grid h-8 w-8 place-items-center rounded-md bg-[var(--accent-soft)] forensic-glow">
-          <Lock className="h-4 w-4 text-[var(--accent-strong)]" />
-        </div>
+      <div className="fx-side__brand">
+        <div className="fx-side__mark">FX</div>
         {!sidebarCollapsed && (
-          <div className="leading-tight">
-            <div className="text-sm font-semibold text-[var(--foreground)]">forenix-oss</div>
-            <div className="text-[10px] uppercase tracking-[0.18em] text-[var(--foreground-muted)]">
-              osint × forensics
-            </div>
+          <div>
+            <div className="fx-side__name">forenix-oss</div>
+            <div className="fx-side__tag">osint × forensics</div>
           </div>
         )}
       </div>
 
       {/* Command palette trigger */}
-      <button
-        type="button"
-        onClick={() => setCommandPaletteOpen(true)}
-        className={cn(
-          "mx-3 mb-4 flex items-center gap-2 rounded-md border border-[var(--border)] bg-[var(--background-elev)] px-2.5 py-1.5 text-[11px] text-[var(--foreground-muted)] hover:border-[var(--border-strong)] hover:text-[var(--foreground)]",
-          sidebarCollapsed && "justify-center px-0",
-        )}
-      >
-        <Search className="h-3.5 w-3.5" />
-        {!sidebarCollapsed && (
-          <>
-            <span className="flex-1 text-left">Search</span>
-            <kbd className="rounded bg-[var(--background-elev-2)] px-1.5 py-0.5 font-mono text-[10px] text-[var(--foreground-muted)]">
-              ⌘K
-            </kbd>
-          </>
-        )}
-      </button>
+      {!sidebarCollapsed && (
+        <div className="fx-side__search">
+          <div className="fx-search">
+            <span className="fx-search__icon">
+              <Search size={14} />
+            </span>
+            <input
+              type="text"
+              readOnly
+              placeholder="Search cases, evidence, hashes…"
+              onClick={() => setCommandPaletteOpen(true)}
+              className="fx-input"
+            />
+            <span className="fx-search__kbd">⌘K</span>
+          </div>
+        </div>
+      )}
 
       {/* Nav */}
-      <nav className="flex-1 overflow-y-auto px-2 pb-4">
+      <nav className="fx-side__nav">
         {(["osint", "combined", "forensics", "account"] as const).map((section) => (
-          <div key={section} className="mb-4">
+          <div key={section} className="fx-side__group">
             {!sidebarCollapsed && (
-              <div className="px-2 pb-1.5 text-[10px] font-medium uppercase tracking-[0.18em] text-[var(--foreground-muted)]">
-                {SECTION_LABELS[section]}
-              </div>
+              <div className="fx-side__group-label">{SECTION_LABELS[section]}</div>
             )}
-            <ul className="space-y-0.5">
+            <ul className="fx-stack" style={{ gap: 2 }}>
               {grouped[section]?.map((item) => {
                 const Icon = ICONS[item.id] ?? LayoutDashboard;
                 const isActive = activeView === item.id;
@@ -125,26 +115,19 @@ export function Sidebar() {
                     <button
                       type="button"
                       onClick={() => setView(item.id)}
+                      aria-current={isActive ? "page" : undefined}
                       title={sidebarCollapsed ? item.label : undefined}
                       className={cn(
-                        "group flex w-full items-center gap-2.5 rounded-md px-2 py-1.5 text-[13px] transition-colors",
-                        isActive
-                          ? "bg-[var(--accent-soft)] text-[var(--accent-strong)] forensic-glow"
-                          : "text-[var(--foreground-muted)] hover:bg-[var(--background-elev)] hover:text-[var(--foreground)]",
-                        sidebarCollapsed && "justify-center px-0",
+                        "fx-navitem",
+                        sidebarCollapsed && "justify-center",
                       )}
                     >
-                      <Icon
-                        className={cn(
-                          "h-4 w-4 shrink-0",
-                          isActive ? "text-[var(--accent-strong)]" : "text-current",
-                        )}
-                      />
-                      {!sidebarCollapsed && <span className="flex-1 text-left">{item.label}</span>}
+                      <Icon className="h-4 w-4 shrink-0" />
+                      {!sidebarCollapsed && (
+                        <span className="fx-navitem__label">{item.label}</span>
+                      )}
                       {!sidebarCollapsed && item.shortcut && (
-                        <kbd className="rounded bg-[var(--background-elev-2)] px-1.5 py-0.5 font-mono text-[10px] text-[var(--foreground-muted)]">
-                          ⌘{item.shortcut}
-                        </kbd>
+                        <span className="fx-navitem__kbd">⌘{item.shortcut}</span>
                       )}
                     </button>
                   </li>
@@ -155,15 +138,37 @@ export function Sidebar() {
         ))}
       </nav>
 
-      {/* Collapse toggle */}
-      <button
-        type="button"
-        onClick={toggleSidebar}
-        className="m-3 flex items-center justify-center gap-2 rounded-md border border-[var(--border)] bg-[var(--background-elev)] py-1.5 text-[11px] text-[var(--foreground-muted)] hover:border-[var(--border-strong)] hover:text-[var(--foreground)]"
-      >
-        {sidebarCollapsed ? <ChevronRight className="h-3.5 w-3.5" /> : <ChevronLeft className="h-3.5 w-3.5" />}
-        {!sidebarCollapsed && <span>Collapse</span>}
-      </button>
+      {/* Footer */}
+      <div className="fx-side__foot">
+        <div className="fx-side__user">{initial}</div>
+        {!sidebarCollapsed && (
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div
+              style={{
+                fontSize: "var(--fs-xs)",
+                color: "var(--fg)",
+                fontWeight: 500,
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+              }}
+            >
+              {userName}
+            </div>
+            <div style={{ fontSize: "var(--fs-3xs)", color: "var(--fg-faint)" }}>
+              {isAdmin ? "admin" : "analyst"}
+            </div>
+          </div>
+        )}
+        <button
+          type="button"
+          onClick={toggleSidebar}
+          className="fx-btn fx-btn--ghost fx-btn--icon fx-btn--sm"
+          aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+        >
+          {sidebarCollapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
+        </button>
+      </div>
     </aside>
   );
 }

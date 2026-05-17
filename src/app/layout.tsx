@@ -1,20 +1,10 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 
 import { Toaster } from "sonner";
 
 import { Providers } from "@/components/providers";
+import { THEME_PRE_SCRIPT } from "@/lib/theme";
 import "./globals.css";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "forenix-oss — OSINT × Forensics",
@@ -28,12 +18,19 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased dark`}
+      data-theme="dark"
+      data-accent="emerald"
+      data-density="standard"
       suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col bg-[var(--background)] text-[var(--foreground)]">
+      <head>
+        {/* Sets data-theme/accent/density from localStorage before paint so
+            the page never flashes the wrong palette. */}
+        <script dangerouslySetInnerHTML={{ __html: THEME_PRE_SCRIPT }} />
+      </head>
+      <body>
         <Providers>{children}</Providers>
-        <Toaster theme="dark" position="bottom-right" richColors />
+        <Toaster position="bottom-right" richColors theme="system" />
       </body>
     </html>
   );

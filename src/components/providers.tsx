@@ -4,6 +4,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { SessionProvider } from "next-auth/react";
 import { useState } from "react";
 
+import { ThemeProvider } from "@/lib/theme";
+
 /**
  * App-level client providers — TanStack Query for server cache,
  * NextAuth SessionProvider for the client-side session hook.
@@ -25,7 +27,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
   return (
     <SessionProvider>
-      <QueryClientProvider client={client}>{children}</QueryClientProvider>
+      <QueryClientProvider client={client}>
+        <ThemeProvider>{children}</ThemeProvider>
+      </QueryClientProvider>
     </SessionProvider>
   );
 }

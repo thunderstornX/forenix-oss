@@ -92,12 +92,14 @@ export default function Home() {
     return () => window.removeEventListener("keydown", handler);
   }, [setView]);
 
+  const sidebarCollapsed = useUI((s) => s.sidebarCollapsed);
+
   return (
-    <div className="flex h-screen w-full bg-[var(--background)]">
+    <div className="fx-app" data-sidebar={sidebarCollapsed ? "collapsed" : "expanded"}>
       <Sidebar />
-      <main className="flex min-w-0 flex-1 flex-col">
+      <main className="fx-main">
         <Topbar />
-        <div className="flex-1 overflow-y-auto">
+        <div className="fx-body">
           <ViewRouter />
         </div>
       </main>
