@@ -41,12 +41,12 @@ function apply(theme: ThemeMode, accent: AccentKey, density: DensityKey) {
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<ThemeMode>("dark");
-  const [accent, setAccentState] = useState<AccentKey>("emerald");
+  const [accent, setAccentState] = useState<AccentKey>("amber");
   const [density, setDensityState] = useState<DensityKey>("standard");
 
   useEffect(() => {
     const t = (window.localStorage.getItem(LS_THEME) as ThemeMode | null) ?? "dark";
-    const a = (window.localStorage.getItem(LS_ACCENT) as AccentKey | null) ?? "emerald";
+    const a = (window.localStorage.getItem(LS_ACCENT) as AccentKey | null) ?? "amber";
     const d = (window.localStorage.getItem(LS_DENSITY) as DensityKey | null) ?? "standard";
     setThemeState(t);
     setAccentState(a);
@@ -106,7 +106,7 @@ export const THEME_PRE_SCRIPT = `
 (function(){
   try {
     var t = window.localStorage.getItem("forenix-theme") || "dark";
-    var a = window.localStorage.getItem("forenix-accent") || "emerald";
+    var a = window.localStorage.getItem("forenix-accent") || "amber";
     var d = window.localStorage.getItem("forenix-density") || "standard";
     var h = document.documentElement;
     h.setAttribute("data-theme", t);

@@ -19,7 +19,7 @@ export default function RootLayout({
     <html
       lang="en"
       data-theme="dark"
-      data-accent="emerald"
+      data-accent="amber"
       data-density="standard"
       suppressHydrationWarning
     >
