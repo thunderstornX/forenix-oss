@@ -258,21 +258,44 @@ export async function chatAnalyzePipeline(
     );
   }
 
-  const parsed = extractJson<{
+  type Parsed = {
     findings: Array<{
       title: string;
       description: string;
       confidence?: string;
       priority?: string;
       sourceName?: string;
-      // SAT trace is structured under Phase C; we accept either
-      // shape so older adapters that produce a plain string still
-      // work.
       reasoningTrace?: string | Record<string, unknown>;
     }>;
     confidence?: number;
     reasoningTrace?: string;
-  }>(raw);
+  };
+  let parsed: Parsed;
+  try {
+    parsed = extractJson<Parsed>(raw);
+  } catch (err) {
+    // Some models — particularly larger reasoning-flavoured ones routed
+    // through OpenRouter — occasionally return prose-only output after
+    // running tools. Don't 500 the pipeline: return a single sentinel
+    // finding that captures what the LLM said + the error, so the
+    // analyst can see what happened and rerun.
+    console.warn(`[chatAnalyzePipeline] JSON parse failed: ${(err as Error).message}; raw[:200]=${raw.slice(0, 200)}`);
+    parsed = {
+      findings: [
+        {
+          title: `${agentGroup} pipeline returned unstructured output`,
+          description:
+            (raw.trim() || `(no model output — adapter "${backend.name}" model "${backend.model}" produced no content)`).slice(0, 1100),
+          confidence: "unverified",
+          priority: "low",
+          sourceName: `${backend.name}/${agentGroup}/raw`,
+          reasoningTrace: { error: (err as Error).message, raw_excerpt: raw.slice(0, 600) },
+        },
+      ],
+      confidence: 0,
+      reasoningTrace: "model did not return parseable JSON; sentinel finding emitted",
+    };
+  }
 
   const findings: Finding[] = (parsed.findings ?? []).slice(0, 6).map((f) => ({
     category: agentGroup,
