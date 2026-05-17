@@ -3,6 +3,7 @@
 import {
   ArrowLeft,
   Archive,
+  FileText,
   GitBranch,
   GitCommit,
   GitMerge,
@@ -60,13 +61,33 @@ export function CaseDetail({ caseId }: Props) {
       title={c.title}
       subtitle={c.description}
       actions={
-        <button
-          type="button"
-          onClick={() => setActiveCase(null)}
-          className="flex items-center gap-1.5 rounded-md border border-[var(--border)] bg-[var(--background-elev)] px-2.5 py-1.5 text-[12px] text-[var(--foreground-muted)] hover:text-[var(--foreground)]"
-        >
-          <ArrowLeft className="h-3.5 w-3.5" /> Back
-        </button>
+        <>
+          <a
+            href={`/api/cases/${caseId}/report?format=pdf`}
+            download
+            className="fx-btn fx-btn--sm"
+            title="Download forensic case report (PDF) with chain attestation"
+          >
+            <FileText size={13} />
+            Export PDF
+          </a>
+          <a
+            href={`/api/cases/${caseId}/report`}
+            target="_blank"
+            rel="noopener"
+            className="fx-btn fx-btn--ghost fx-btn--sm"
+            title="Preview the report in a new tab (no PDF)"
+          >
+            Preview
+          </a>
+          <button
+            type="button"
+            onClick={() => setActiveCase(null)}
+            className="flex items-center gap-1.5 rounded-md border border-[var(--border)] bg-[var(--background-elev)] px-2.5 py-1.5 text-[12px] text-[var(--foreground-muted)] hover:text-[var(--foreground)]"
+          >
+            <ArrowLeft className="h-3.5 w-3.5" /> Back
+          </button>
+        </>
       }
     >
       {/* Header strip */}

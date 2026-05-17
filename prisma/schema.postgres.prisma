@@ -346,6 +346,12 @@ model Evidence {
   source      String?
   storyPoints Int      @default(0)
   metadata    String   @default("{}")
+  // Phase 9.1 - real file-byte storage. See schema.prisma for the
+  // full contract; mirrored here so the Postgres deploy stays in lock-
+  // step. `objectKey` non-null means a real file lives at the
+  // content-addressed path; `hash` is then SHA-256 over actual bytes.
+  objectKey   String?
+  byteCount   BigInt   @default(0)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 

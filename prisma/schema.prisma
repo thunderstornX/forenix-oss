@@ -346,6 +346,14 @@ model Evidence {
   source      String?
   storyPoints Int      @default(0)
   metadata    String   @default("{}")
+  // Phase 9.1 - real file-byte storage. When non-null, this evidence
+  // has a real underlying file on disk at the content-addressed
+  // path resolved by buildEvidencePath(objectKey). The `hash` column
+  // is then SHA-256 over actual bytes (forensic identity). When
+  // null, the row is metadata-only (legacy promote-from-finding path
+  // or seeded data, where `hash` is over the finding text).
+  objectKey   String?
+  byteCount   BigInt   @default(0)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 

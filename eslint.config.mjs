@@ -59,6 +59,11 @@ export default [
         Buffer: "readonly",
         AbortSignal: "readonly",
         confirm: "readonly",
+        File: "readonly",
+        FormData: "readonly",
+        ReadableStream: "readonly",
+        BodyInit: "readonly",
+        NodeJS: "readonly",
       },
     },
     plugins: {

@@ -6,6 +6,62 @@ and the project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-05-17
+
+Real file bytes on disk and a forensic-grade PDF report. The two
+items most-mentioned as missing in the v0.2.0 review.
+
+### Added - file-byte evidence storage (Phase 9.1)
+
+- **Content-addressed disk store** at `src/lib/evidence-store.ts`.
+  Streams uploaded bytes through a SHA-256 hash, writes to
+  `{store}/{caseId}/{sha[:2]}/{sha}` atomically (temp file + rename),
+  deduplicates identical bytes within a case automatically. Hard cap
+  per upload at 500 MB (configurable).
+- **Evidence schema** gained two new columns:
+    - `objectKey String?`  - the content-addressed relative path on disk.
+      Non-null means the evidence has a real underlying file.
+    - `byteCount BigInt`   - the file size in bytes.
+  The `hash` column on these rows is now SHA-256 *over actual bytes*
+  (forensic identity), not over finding text.
+- **New endpoints**:
+    - `POST /api/evidence/upload` (multipart/form-data: caseId + file)
+    - `GET  /api/evidence/[id]/download` (streams bytes back to caller, audits the access)
+    - `POST /api/evidence/[id]/verify-bytes` (re-hashes the file on disk, audits the result)
+- **Upload UI** on the Evidence view: drag-or-pick a file, choose a
+  case, submit. Hash is computed server-side as bytes stream through.
+- **Vercel graceful degradation**: `evidenceStorageEnabled()` returns
+  false on Vercel; the upload route 503s with a clear message. The UI
+  shows an explanatory toast.
+- **Test coverage**: 8 new tests for the store (`src/lib/evidence-store.test.ts`)
+  covering content-addressed pathing, dedup, re-hash + verify,
+  tamper detection, path-traversal rejection, empty-upload rejection,
+  maxBytes enforcement.
+
+### Added - PDF export of admissible reports (Phase 9.2)
+
+- **`src/lib/case-report.ts`** - HTML renderer for a forensic-grade
+  case report:
+    - Cover page with case metadata + custodian + report timestamp.
+    - **Chain-of-custody attestation block** showing chain length, head
+      hash, genesis hash, verify status, and a SHA-256 report digest
+      over the report contents themselves (so a printed PDF can be
+      tied to a known state of the case).
+    - Evidence inventory table (name, type, status, size, SHA-256,
+      object key, added timestamp).
+    - Findings (up to 50) with agent group, confidence, priority,
+      verification status, description + reasoning-trace excerpt.
+    - Audit log sample (last 100 entries) with timestamp, action,
+      entity, actor, hash.
+  Light-theme print-ready; uses the same OKLCH design tokens as the app.
+- **`GET /api/cases/[id]/report`** (HTML preview) and
+  **`?format=pdf`** (Playwright-rendered A4 PDF download).
+- **Export buttons** on the Case detail view: "Export PDF" and "Preview"
+  (HTML in a new tab).
+- **Vercel graceful degradation**: PDF format requires Chromium, which
+  Vercel can't spawn. Returns 503 with a clear message; the HTML
+  preview works everywhere.
+
 ## [0.2.0] - 2026-05-17
 
 The "Monster Mode" release. Real Git per case, real LLM tool-loop
@@ -200,6 +256,7 @@ production-ready.
   `AI_ADAPTER` value  -  never to a paid adapter.
 - Adapter HTTP calls have a 90 s AbortController timeout.
 
-[Unreleased]: https://github.com/thunderstornX/forenix-oss/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/thunderstornX/forenix-oss/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/thunderstornX/forenix-oss/releases/tag/v0.3.0
 [0.2.0]: https://github.com/thunderstornX/forenix-oss/releases/tag/v0.2.0
 [0.1.0]: https://github.com/thunderstornX/forenix-oss/releases/tag/v0.1.0

@@ -6,7 +6,7 @@
 
 [![CI](https://github.com/thunderstornX/forenix-oss/actions/workflows/ci.yml/badge.svg)](https://github.com/thunderstornX/forenix-oss/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Version 0.2.0](https://img.shields.io/badge/version-0.2.0-c97a2f.svg)](CHANGELOG.md)
+[![Version 0.3.0](https://img.shields.io/badge/version-0.3.0-c97a2f.svg)](CHANGELOG.md)
 
 **An open-source platform that fuses OSINT investigations with Git-style forensic case management. One workflow from public-source lead to chain-of-custody evidence  -  with a SHA-256 forward-chained audit log on every state change.**
 
@@ -295,7 +295,9 @@ docs/
 - [x] Phase 6  -  AI Lab, Monitors, Verification
 - [x] Phase 7  -  Report viewer + live adapter testing
 - [x] Phase 8  -  Real Git engine (isomorphic-git) + structured SAT prompts + 20-tool registry + AES-encrypted admin vault + light/dark redesign
-- Phase 9  -  File-byte evidence storage (R2 / S3 / IPFS) | Scheduled Monitors | Multi-tenant orgs | WebSocket live updates | PDF export of admissible reports
+- [x] Phase 9.1  -  File-byte evidence storage (content-addressed disk store, real SHA-256 over bytes, atomic dedup, byte-level verify endpoint, download streaming)
+- [x] Phase 9.2  -  PDF export of admissible case reports (chain-of-custody attestation block, evidence inventory, finding summaries, audit-log sample, embedded report digest)
+- [ ] Phase 9.3  -  Scheduled Monitors | Multi-tenant orgs | WebSocket live updates
 
 ---
 
