@@ -7,8 +7,8 @@ import { Lock, Loader2, AlertCircle, Moon, Sun } from "lucide-react";
 import { useTheme } from "@/lib/theme";
 
 export default function SignInPage() {
-  const [email, setEmail] = useState("admin@forenix-oss.local");
-  const [password, setPassword] = useState("forenix");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const { theme, toggleTheme } = useTheme();
@@ -98,8 +98,8 @@ export default function SignInPage() {
               color: "var(--fg-muted)",
             }}
           >
-            Use one of the seeded demo accounts below. All demo accounts use the
-            password <code style={{ fontFamily: "var(--font-mono)", color: "var(--accent)" }}>forenix</code>.
+            Use the credentials you were issued. If you don't have an account
+            yet, ask the workspace owner for an invite.
           </p>
 
           <form onSubmit={submit} className="fx-stack" style={{ gap: 12 }}>
@@ -156,29 +156,6 @@ export default function SignInPage() {
             </button>
           </form>
 
-          <div
-            style={{
-              marginTop: 20,
-              padding: "var(--s-3)",
-              border: "1px solid var(--border)",
-              background: "var(--bg-sunken)",
-              borderRadius: "var(--r-sm)",
-              fontSize: "var(--fs-xs)",
-              color: "var(--fg-muted)",
-            }}
-          >
-            <div className="fx-eyebrow" style={{ color: "var(--accent)", marginBottom: 4 }}>
-              Demo accounts
-            </div>
-            <ul style={{ listStyle: "none", padding: 0, margin: 0, fontFamily: "var(--font-mono)", fontSize: "var(--fs-2xs)" }}>
-              <li><b>admin@forenix-oss.local</b> · admin (full access)</li>
-              <li><b>investigator@forenix-oss.local</b> · investigator</li>
-              <li><b>analyst@forenix-oss.local</b> · analyst</li>
-            </ul>
-            <div style={{ marginTop: 4 }}>
-              password: <code style={{ color: "var(--accent)" }}>forenix</code>
-            </div>
-          </div>
         </div>
       </div>
     </div>

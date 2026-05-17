@@ -16,6 +16,7 @@ export default [
       "_argus/**",
       "_forenix/**",
       "scripts/**",
+      "private/**",
       "prisma/dev.db",
       "**/*.d.ts",
     ],
