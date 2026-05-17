@@ -16,6 +16,17 @@ import { sherlockTool } from "./catalogue/sherlock";
 import { shodanHostTool } from "./catalogue/shodan";
 import { theHarvesterTool } from "./catalogue/the-harvester";
 import { whoisTool } from "./catalogue/whois";
+// monster-mode subprocess tools — self-host only (DO Droplet)
+import { maigretTool } from "./catalogue/maigret";
+import { subfinderTool } from "./catalogue/subfinder";
+import { httpxTool } from "./catalogue/httpx";
+import { dnsxTool } from "./catalogue/dnsx";
+import { amassTool } from "./catalogue/amass";
+import { nucleiTool } from "./catalogue/nuclei";
+import { exiftoolTool } from "./catalogue/exiftool";
+import { ytDlpTool } from "./catalogue/yt-dlp";
+import { tesseractTool } from "./catalogue/tesseract";
+import { gowitnessTool } from "./catalogue/gowitness";
 
 export const ALL_TOOLS: readonly Tool[] = [
   // builtins — work everywhere
@@ -32,6 +43,17 @@ export const ALL_TOOLS: readonly Tool[] = [
   sherlockTool,
   holeheTool,
   theHarvesterTool,
+  // monster-mode subprocess tools — DO Droplet only
+  maigretTool,
+  subfinderTool,
+  httpxTool,
+  dnsxTool,
+  amassTool,
+  nucleiTool,
+  exiftoolTool,
+  ytDlpTool,
+  tesseractTool,
+  gowitnessTool,
 ];
 
 export function getToolByName(name: string): Tool | undefined {

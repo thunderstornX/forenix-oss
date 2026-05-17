@@ -341,10 +341,17 @@ export async function chatExtractEntities(
     ],
     { response_format: "json_object" },
   );
-  const parsed = extractJson<{
+  type EntsParsed = {
     entities?: Array<{ name?: string; type?: string; properties?: Record<string, unknown>; confidence?: string }>;
     relations?: Array<{ from?: string; to?: string; relationType?: string; confidence?: string }>;
-  }>(raw);
+  };
+  let parsed: EntsParsed;
+  try {
+    parsed = extractJson<EntsParsed>(raw);
+  } catch (err) {
+    console.warn(`[chatExtractEntities] JSON parse failed: ${(err as Error).message}; raw[:160]=${raw.slice(0, 160)}`);
+    parsed = { entities: [], relations: [] };
+  }
 
   const VALID_ETYPE = new Set(["person", "organization", "domain", "ip", "email", "phone", "account", "location"]);
   return {
@@ -382,12 +389,14 @@ export async function chatTagEvidence(
     ],
     { response_format: "json_object" },
   );
-  const parsed = extractJson<{
-    tags?: unknown[];
-    classification?: string;
-    rationale?: string;
-    riskScore?: number;
-  }>(raw);
+  type TagParsed = { tags?: unknown[]; classification?: string; rationale?: string; riskScore?: number };
+  let parsed: TagParsed;
+  try {
+    parsed = extractJson<TagParsed>(raw);
+  } catch (err) {
+    console.warn(`[chatTagEvidence] JSON parse failed: ${(err as Error).message}`);
+    parsed = { tags: [], classification: "review", rationale: "model output was unparseable", riskScore: 0.5 };
+  }
 
   const classOK = new Set(["high-interest", "review", "low-interest"]);
   return {
