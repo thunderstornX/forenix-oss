@@ -57,3 +57,7 @@ next-env.d.ts
 # Logs from dev server output redirection.
 dev.log
 server.log
+
+# local-only / private (not for the public repo)
+/private/
+*.private.*
