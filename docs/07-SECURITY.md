@@ -140,10 +140,11 @@ between the last attestation and now.
 |----------|------------------------------------------------------------|----------------------------------------------------------------------------------|
 | `local`  | HMAC-SHA256 over the head, keyed on `AUTH_SECRET`          | Detects accidental corruption + naive tampering. **Not external** — an attacker with `AUTH_SECRET` can forge a new local witness. |
 | `github` | A JSON comment on a designated GitHub issue                | GitHub keeps a per-comment edit history visible to anyone with read access. Tampering becomes *detectable*, not impossible. |
+| `rekor`  | An Ed25519-signed `hashedrekord` entry on Sigstore Rekor   | Public append-only transparency log. Inclusion proofs and signed-entry-timestamps are issued by Sigstore's own keys and replicated across the network. Trust shrinks to "Sigstore didn't conspire with the maintainer." |
 
-Future backends (Sigstore Rekor, OpenTimestamps, custom webhooks)
-plug in via the same `AttestationBackend` interface in
-`src/lib/attestation/types.ts` — no schema changes required.
+Future backends (OpenTimestamps, custom webhooks, your own
+on-premise log) plug in via the same `AttestationBackend` interface
+in `src/lib/attestation/types.ts` — no schema changes required.
 
 #### Configuration
 
@@ -156,6 +157,12 @@ ATTEST_GITHUB_TOKEN=ghp_...     # PAT with repo:public_repo, issues:write
 ATTEST_GITHUB_OWNER=thunderstornX
 ATTEST_GITHUB_REPO=forenix-oss-witness
 ATTEST_GITHUB_ISSUE=1           # number of an open (ideally locked) issue
+
+# Only required if ATTESTATION_BACKEND=rekor (or chosen per-request):
+REKOR_BASE_URL=https://rekor.sigstore.dev    # the public log; defaults to this
+REKOR_KEY_DIR=.attestation-keys              # Ed25519 keypair persisted here
+                                              # (auto-generated on first attest,
+                                              #  0600 on the private key, gitignored)
 ```
 
 #### Operational guidance

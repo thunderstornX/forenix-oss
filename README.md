@@ -22,7 +22,7 @@
   <img alt="Bun" src="https://img.shields.io/badge/Bun-1.3-fbf0df?style=flat&logo=bun&logoColor=black">
   <img alt="Prisma 6" src="https://img.shields.io/badge/Prisma-6-2d3748?style=flat&logo=prisma&logoColor=white">
   <img alt="Tailwind 4" src="https://img.shields.io/badge/Tailwind-4-38bdf8?style=flat&logo=tailwindcss&logoColor=white">
-  <img alt="Tests" src="https://img.shields.io/badge/tests-39_passing-2f8754?style=flat">
+  <img alt="Tests" src="https://img.shields.io/badge/tests-61_passing-2f8754?style=flat">
 </p>
 
 **An open-source platform that fuses OSINT investigations with Git-style forensic case management. One workflow from public-source lead to chain-of-custody evidence  -  with a SHA-256 forward-chained audit log on every state change.**

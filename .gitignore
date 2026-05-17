@@ -54,6 +54,9 @@ next-env.d.ts
 /case-repos/
 /prisma/migrations/dev*
 
+# Lazy-generated Ed25519 keypair for the Rekor attestation backend.
+/.attestation-keys/
+
 # Logs from dev server output redirection.
 dev.log
 server.log

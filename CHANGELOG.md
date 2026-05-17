@@ -6,6 +6,12 @@ and the project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-05-17
+
+External attestation of the audit chain head. Closes the long-standing
+"DB admin rewrites + re-signs the whole chain" gap in the threat model
+that's been sitting in the roadmap since v0.2.0.
+
 ### Added - external attestation of the audit chain
 
 - **New `Attestation` model** + `src/lib/attestation/` library
@@ -14,13 +20,18 @@ and the project adheres to [Semantic Versioning](https://semver.org/).
   no-tampering only against attackers without DB-write access;
   external attestations pin the head hash periodically to a witness
   the maintainer can't unilaterally rewrite.
-- **Two backends ship now, more without schema changes:**
+- **Three backends ship now, more without schema changes:**
     - `local`  - HMAC-SHA256 over the head, keyed on `AUTH_SECRET`.
       Always-available; offline-verifiable; catches accidental
       corruption + naive tampering. Honest about not being external.
     - `github` - posts the head as a JSON comment to a designated
       issue. GitHub's per-comment edit history makes tampering
       detectable, not impossible.
+    - `rekor`  - posts an Ed25519-signed `hashedrekord` entry to the
+      public Sigstore transparency log (https://rekor.sigstore.dev).
+      Inclusion proofs + signed-entry-timestamps issued by Sigstore's
+      own keys and replicated across the network. Trust shrinks to
+      "Sigstore didn't conspire with the maintainer."
 - **`/api/attestation` route**: `GET` lists recent witnesses,
   `POST` (admin-only) records a new one; `GET /:id/verify`
   re-fetches the witness and confirms it still pins the original
@@ -33,14 +44,18 @@ and the project adheres to [Semantic Versioning](https://semver.org/).
   (`action=attest_chain`). So the next attestation witnesses the
   previous attestation — the witness history is itself tamper-
   evident.
-- 17 new tests across `local.test.ts` + `github.test.ts` (HMAC
-  round-trip + tamper-detection + secret-rotation; envelope codec
-  round-trip + tolerant parse). Bun test count: 39 -> 56.
+- **Rekor keypair** is a lazy-generated Ed25519 pair under
+  `REKOR_KEY_DIR` (defaults to `.attestation-keys/`), 0600 on the
+  private key, gitignored via both `*.pem` and an explicit dir rule.
+- 22 new tests across `local.test.ts`, `github.test.ts`, and
+  `rekor.test.ts` (HMAC + envelope + Rekor-codec round-trips,
+  tamper-detection, secret-rotation, tolerant parse). Bun test
+  count: 39 -> 61.
 - Docs: new "External attestation of the chain head" section in
-  `docs/07-SECURITY.md` (threat model, backends table, operational
-  guidance, compromise drill).
-- `.env.example`: `ATTESTATION_BACKEND` + the `ATTEST_GITHUB_*`
-  block under a new section.
+  `docs/07-SECURITY.md` (threat model, three-backend table,
+  configuration, compromise drill).
+- `.env.example`: `ATTESTATION_BACKEND`, the `ATTEST_GITHUB_*`
+  block, and the `REKOR_*` block under a new section.
 
 ### Fixed
 

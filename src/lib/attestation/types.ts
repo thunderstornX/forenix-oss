@@ -67,4 +67,4 @@ export interface AttestationBackend {
   ): Promise<AttestationVerification>;
 }
 
-export type AttestationBackendName = "local" | "github";
+export type AttestationBackendName = "local" | "github" | "rekor";

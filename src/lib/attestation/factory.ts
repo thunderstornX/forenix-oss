@@ -16,10 +16,12 @@ import "server-only";
 import type { AttestationBackend, AttestationBackendName } from "./types";
 import { localBackend } from "./backends/local";
 import { githubBackend } from "./backends/github";
+import { rekorBackend } from "./backends/rekor";
 
 const REGISTRY: Record<AttestationBackendName, AttestationBackend> = {
   local: localBackend,
   github: githubBackend,
+  rekor: rekorBackend,
 };
 
 export function listAttestationBackends(): AttestationBackend[] {
