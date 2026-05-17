@@ -4,9 +4,26 @@
 
 # forenix-oss
 
-[![CI](https://github.com/thunderstornX/forenix-oss/actions/workflows/ci.yml/badge.svg)](https://github.com/thunderstornX/forenix-oss/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Version 0.3.0](https://img.shields.io/badge/version-0.3.0-c97a2f.svg)](CHANGELOG.md)
+<p>
+  <a href="https://github.com/thunderstornX/forenix-oss/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/thunderstornX/forenix-oss/actions/workflows/ci.yml/badge.svg"></a>
+  <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-blue.svg"></a>
+  <a href="https://github.com/thunderstornX/forenix-oss/releases/latest"><img alt="Latest release" src="https://img.shields.io/github/v/release/thunderstornX/forenix-oss?color=c97a2f&label=release"></a>
+  <a href="https://github.com/thunderstornX/forenix-oss/stargazers"><img alt="Stars" src="https://img.shields.io/github/stars/thunderstornX/forenix-oss?style=flat&color=c97a2f"></a>
+</p>
+
+<p>
+  <a href="https://forenix.tech"><img alt="Concept demo" src="https://img.shields.io/badge/concept_demo-forenix.tech-c97a2f?style=flat&logo=vercel&logoColor=white"></a>
+  <a href="https://demo.forenix.tech"><img alt="Full demo" src="https://img.shields.io/badge/full_demo-demo.forenix.tech-2f8754?style=flat"></a>
+</p>
+
+<p>
+  <img alt="Next.js" src="https://img.shields.io/badge/Next.js-16-000?style=flat&logo=nextdotjs&logoColor=white">
+  <img alt="TypeScript strict" src="https://img.shields.io/badge/TypeScript-strict-3178c6?style=flat&logo=typescript&logoColor=white">
+  <img alt="Bun" src="https://img.shields.io/badge/Bun-1.3-fbf0df?style=flat&logo=bun&logoColor=black">
+  <img alt="Prisma 6" src="https://img.shields.io/badge/Prisma-6-2d3748?style=flat&logo=prisma&logoColor=white">
+  <img alt="Tailwind 4" src="https://img.shields.io/badge/Tailwind-4-38bdf8?style=flat&logo=tailwindcss&logoColor=white">
+  <img alt="Tests" src="https://img.shields.io/badge/tests-39_passing-2f8754?style=flat">
+</p>
 
 **An open-source platform that fuses OSINT investigations with Git-style forensic case management. One workflow from public-source lead to chain-of-custody evidence  -  with a SHA-256 forward-chained audit log on every state change.**
 
