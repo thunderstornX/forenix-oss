@@ -1,0 +1,65 @@
+name: monitor-tick
+
+# Pings the scheduler endpoint on both deployment surfaces every 5
+# minutes. GitHub Actions is the chosen cron driver because:
+#   - Vercel Hobby caps cron jobs at 1/day (vercel.json keeps a
+#     daily entry so the platform doesn't complain).
+#   - The Droplet ALSO runs a systemd timer; this workflow is
+#     belt-and-braces for the Vercel surface where the daily
+#     vercel-cron isn't tight enough.
+#   - GitHub Actions cron is free on public repos and has the
+#     5-minute minimum we want.
+#
+# Setup:
+#   - Repo settings -> Secrets and variables -> Actions:
+#       CRON_SECRET            = matches Vercel project env
+#       MONITOR_CRON_TOKEN     = matches /opt/forenix/.env on Droplet
+#   - (Optional) override the targets via repo variables:
+#       VERCEL_MONITOR_URL     defaults to https://forenix.tech/api/internal/monitor-tick
+#       DROPLET_MONITOR_URL    defaults to https://demo.forenix.tech/api/internal/monitor-tick
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"  # every 5 minutes; GHA's tightest cadence
+  workflow_dispatch:        # manual fire from the Actions tab for ad-hoc kicks
+
+permissions: {}             # don't need any GitHub-side perms; we only curl external URLs
+
+concurrency:
+  group: monitor-tick
+  cancel-in-progress: false
+
+jobs:
+  tick:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: vercel surface
+        env:
+          URL: ${{ vars.VERCEL_MONITOR_URL || 'https://forenix.tech/api/internal/monitor-tick' }}
+          TOKEN: ${{ secrets.CRON_SECRET }}
+        run: |
+          if [ -z "$TOKEN" ]; then
+            echo "::warning::CRON_SECRET not set; skipping vercel tick"
+            exit 0
+          fi
+          # ||true so a transient surface outage on one side doesn't
+          # fail the whole workflow and silence the other side too.
+          curl --fail-with-body --silent --show-error --max-time 60 \
+               --request POST "$URL" \
+               --header "Authorization: Bearer $TOKEN" \
+            || echo "::warning::vercel tick failed (one transient failure is OK; back-to-back is not)"
+
+      - name: droplet surface
+        env:
+          URL: ${{ vars.DROPLET_MONITOR_URL || 'https://demo.forenix.tech/api/internal/monitor-tick' }}
+          TOKEN: ${{ secrets.MONITOR_CRON_TOKEN }}
+        run: |
+          if [ -z "$TOKEN" ]; then
+            echo "::warning::MONITOR_CRON_TOKEN not set; skipping droplet tick"
+            exit 0
+          fi
+          curl --fail-with-body --silent --show-error --max-time 60 \
+               --request POST "$URL" \
+               --header "Authorization: Bearer $TOKEN" \
+            || echo "::warning::droplet tick failed (one transient failure is OK; back-to-back is not)"

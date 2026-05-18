@@ -148,18 +148,38 @@ The database is unaffected; restarting `bun run dev` resumes.
 
 Monitors fire on a cadence string (`hourly` / `daily` / `weekly` /
 `monthly`, or `every:N(m|h|d)` — see `src/lib/monitor-scheduler/cadence.ts`
-for the grammar). The scheduler is **one entry point with two cron
-drivers** so the same code path covers both deployment shapes:
+for the grammar). The scheduler is **one entry point with three cron
+drivers**; same code path covers all three:
 
-| Surface | Cron driver | Token env |
-|---|---|---|
-| Vercel (serverless) | `vercel.json` `crons` block, posts every 5 min | `CRON_SECRET` |
-| DigitalOcean Droplet (full demo / self-host) | systemd timer or any `cron` line that curls the endpoint | `MONITOR_CRON_TOKEN` |
+| Driver | Where it runs | Cadence | Token env |
+|---|---|---|---|
+| `vercel.json` `crons` block | Vercel platform | **daily** (Hobby tier limit: 1/day max) | `CRON_SECRET` (Vercel project env) |
+| `.github/workflows/monitor-tick.yml` | GitHub Actions | every 5 min | `CRON_SECRET` + `MONITOR_CRON_TOKEN` (repo Actions secrets) |
+| systemd timer | DigitalOcean Droplet (or any self-host) | every 5 min | `MONITOR_CRON_TOKEN` (in `/opt/forenix/.env`) |
 
-Both drivers POST to `/api/internal/monitor-tick` with the same shape.
-The route accepts either env var (Vercel sends `Authorization: Bearer
-<CRON_SECRET>`; the Droplet posts the bare token), so no per-surface
+All three POST `/api/internal/monitor-tick`. The route accepts either
+token env, with or without the `Bearer ` prefix, so no per-driver
 code change is needed.
+
+**Why three?** Vercel Hobby caps cron jobs at one-per-day; we keep
+the daily entry so the platform doesn't reject the deploy, and run
+GitHub Actions as the actual production cadence for the Vercel
+surface (free for public repos, 5-min minimum). The Droplet's
+systemd timer is independent — when self-hosting, that's the only
+driver you need.
+
+### Set up GitHub Actions (the 5-min cadence for the Vercel surface)
+
+1. Repo Settings → Secrets and variables → Actions → New repository secret:
+   - `CRON_SECRET` = same value as the Vercel project env
+   - `MONITOR_CRON_TOKEN` = same value as `/opt/forenix/.env` on the Droplet
+2. (Optional) override the target URLs as repo *variables* if the
+   demos move:
+   - `VERCEL_MONITOR_URL`  = e.g. `https://forenix.tech/api/internal/monitor-tick`
+   - `DROPLET_MONITOR_URL` = e.g. `https://demo.forenix.tech/api/internal/monitor-tick`
+3. The workflow at `.github/workflows/monitor-tick.yml` fires every
+   5 min. Inspect runs at Actions → monitor-tick. Manually fire
+   with the "Run workflow" button for ad-hoc kicks.
 
 ### Set up the Droplet timer
 
