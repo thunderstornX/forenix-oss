@@ -25,7 +25,7 @@ export function RekorArtefact() {
         </span>
         <span className="text-white/30">200 OK</span>
       </div>
-      <pre className="overflow-x-auto px-4 py-3 font-mono leading-[1.6] text-white/85">
+      <pre className="overflow-x-auto px-3 py-3 sm:px-4 font-mono leading-[1.6] text-white/85">
 {`{
   "uuid":             "24296fb…b9c1",
   "logIndex":         163847219,
@@ -113,7 +113,7 @@ export function VerifierArtefact() {
         <span className="text-white/55">verify-chain.py</span>
         <span className="text-white/30">offline · no SDK</span>
       </div>
-      <pre className="overflow-x-auto px-4 py-3 font-mono text-[12px] leading-[1.65] text-white/85">
+      <pre className="overflow-x-auto px-3 py-3 sm:px-4 font-mono text-[12px] leading-[1.65] text-white/85">
 {`import csv, hashlib
 
 prev = "0" * 64

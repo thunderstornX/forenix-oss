@@ -39,12 +39,13 @@ export default function LandingPage() {
 
 function Hero() {
   return (
-    <section className="relative pt-16 sm:pt-24">
-      <div className="mx-auto grid max-w-6xl items-start gap-12 px-5 lg:grid-cols-12 lg:gap-10">
+    <section className="relative pt-12 sm:pt-20">
+      <div className="mx-auto grid max-w-6xl items-start gap-10 px-4 sm:px-6 lg:grid-cols-12 lg:gap-10">
         <div className="lg:col-span-7">
-          <h1 className="text-balance font-[family-name:var(--font-display)] text-[44px] font-normal leading-[1.05] tracking-[-0.02em] text-[var(--foreground)] sm:text-[60px] lg:text-[72px]">
+          <h1 className="text-balance font-[family-name:var(--font-display)] text-[34px] font-normal leading-[1.05] tracking-[-0.02em] text-[var(--foreground)] sm:text-[52px] md:text-[60px] lg:text-[68px]">
             Court-admissible OSINT,
-            <br />
+            <br className="hidden sm:block" />
+            <span className="sm:hidden"> </span>
             from the{" "}
             <span className="italic text-[var(--accent-strong)]">first finding</span>.
           </h1>
@@ -60,7 +61,7 @@ function Hero() {
           <div className="mt-8 flex flex-wrap items-center gap-3">
             <Link
               href="/waitlist"
-              className="group inline-flex items-center gap-2 rounded-md bg-[var(--accent-strong)] px-5 py-2.5 text-[14px] font-medium text-black transition hover:brightness-110"
+              className="group inline-flex items-center gap-2 rounded-md bg-[var(--accent)] px-5 py-2.5 text-[14px] font-medium text-[var(--fg-on-accent)] transition hover:bg-[var(--accent-hover)]"
             >
               Join the waitlist
               <span aria-hidden className="transition group-hover:translate-x-0.5">→</span>
@@ -69,7 +70,7 @@ function Hero() {
               href="https://demo.forenix.tech"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-md px-5 py-2.5 text-[14px] font-medium text-[var(--foreground)] transition hover:bg-[var(--background-elev)]/60"
+              className="inline-flex items-center gap-2 rounded-md border border-[var(--border-strong)] px-5 py-2.5 text-[14px] font-medium text-[var(--foreground)] transition hover:bg-[var(--bg-hover)]"
             >
               try the live demo
               <span aria-hidden className="text-[var(--foreground-muted)]">↗</span>
@@ -128,12 +129,12 @@ function Capabilities() {
     },
   ];
   return (
-    <section id="how" className="relative mx-auto mt-32 max-w-6xl px-5">
+    <section id="how" className="relative mx-auto mt-20 sm:mt-32 max-w-6xl px-4 sm:px-6">
       <div className="grid gap-12 lg:grid-cols-3 lg:gap-8">
         {items.map((it, i) => (
           <div key={it.n} className={i === 1 ? "lg:mt-8" : i === 2 ? "lg:mt-4" : ""}>
             <div className="flex items-baseline gap-3">
-              <span className="font-mono text-[11px] tracking-[0.18em] text-[var(--foreground-faint)]">
+              <span className="font-mono text-[11px] tracking-[0.18em] text-[var(--fg-faint)]">
                 {it.n}
               </span>
               <h3 className="font-[family-name:var(--font-display)] text-[36px] font-normal italic leading-none text-[var(--foreground)]">
@@ -212,7 +213,7 @@ function Shelf({
   newBadge?: string;
 }) {
   return (
-    <section id={id} className="relative mx-auto mt-32 max-w-6xl px-5">
+    <section id={id} className="relative mx-auto mt-20 sm:mt-32 max-w-6xl px-4 sm:px-6">
       <div
         className={
           side === "left"
@@ -278,7 +279,7 @@ function ShelfText({
 
 function VerifyMoment() {
   return (
-    <section id="verify" className="relative mx-auto mt-40 max-w-3xl px-5 text-center">
+    <section id="verify" className="relative mx-auto mt-24 sm:mt-40 max-w-3xl px-4 sm:px-6 text-center">
       <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-[var(--accent-strong)]">
         ↳ the part most platforms hand-wave
       </span>
@@ -312,8 +313,8 @@ function StackLine() {
     "ProjectDiscovery",
   ];
   return (
-    <section className="relative mx-auto mt-32 max-w-5xl px-5">
-      <div className="text-center font-mono text-[11px] uppercase tracking-[0.2em] text-[var(--foreground-faint)]">
+    <section className="relative mx-auto mt-20 sm:mt-32 max-w-5xl px-4 sm:px-6">
+      <div className="text-center font-mono text-[11px] uppercase tracking-[0.2em] text-[var(--fg-faint)]">
         built on
       </div>
       <p className="mt-3 text-center text-[14px] text-[var(--foreground-muted)]">
@@ -321,7 +322,7 @@ function StackLine() {
           <span key={s}>
             <span className="text-[var(--foreground)]">{s}</span>
             {i < stack.length - 1 && (
-              <span className="px-3 text-[var(--foreground-faint)]">·</span>
+              <span className="px-3 text-[var(--fg-faint)]">·</span>
             )}
           </span>
         ))}
@@ -336,7 +337,7 @@ function StackLine() {
 
 function FinalInvite() {
   return (
-    <section className="relative mx-auto mt-32 max-w-2xl px-5 text-center">
+    <section className="relative mx-auto mt-20 sm:mt-32 max-w-2xl px-4 sm:px-6 text-center">
       <h2 className="text-balance font-[family-name:var(--font-display)] text-[36px] font-normal leading-[1.1] text-[var(--foreground)] sm:text-[44px]">
         Building <span className="italic text-[var(--accent-strong)]">forenix/oss</span> in
         the open.

@@ -68,7 +68,7 @@ function MarketingNav() {
 function MarketingFooter() {
   return (
     <footer className="relative mt-32">
-      <div className="mx-auto max-w-6xl px-5 pb-12">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 pb-12">
         {/* hairline rule with a single annotation, not a full border */}
         <div className="relative">
           <div className="h-px w-full bg-[var(--border)]" />
@@ -111,7 +111,7 @@ function MarketingFooter() {
           </div>
         </div>
 
-        <div className="mt-6 font-mono text-[10px] text-[var(--foreground-faint)]">
+        <div className="mt-6 font-mono text-[10px] text-[var(--fg-faint)]">
           © {new Date().getFullYear()} · v0.4.0
         </div>
       </div>

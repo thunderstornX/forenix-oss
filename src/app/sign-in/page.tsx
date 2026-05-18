@@ -123,7 +123,7 @@ function SignInInner() {
             <button
               type="submit"
               disabled={loading}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-md bg-[var(--accent-strong)] px-4 py-2.5 text-[14px] font-medium text-black transition hover:brightness-110 disabled:opacity-60"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-md bg-[var(--accent)] px-4 py-2.5 text-[14px] font-medium text-[var(--fg-on-accent)] transition hover:bg-[var(--accent-hover)] disabled:opacity-60"
             >
               {loading ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
@@ -135,7 +135,7 @@ function SignInInner() {
             </button>
           </form>
 
-          <div className="my-6 flex items-center gap-3 text-[10px] uppercase tracking-[0.18em] text-[var(--foreground-faint)]">
+          <div className="my-6 flex items-center gap-3 text-[10px] uppercase tracking-[0.18em] text-[var(--fg-faint)]">
             <span className="h-px flex-1 bg-[var(--border)]" />
             or
             <span className="h-px flex-1 bg-[var(--border)]" />
@@ -193,7 +193,7 @@ function Field({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="mt-1.5 block w-full rounded-md border border-[var(--border-strong)] bg-[var(--background)] px-3 py-2.5 text-[14px] text-[var(--foreground)] placeholder:text-[var(--foreground-faint)] focus:border-[var(--accent-strong)] focus:outline-none"
+        className="mt-1.5 block w-full rounded-md border border-[var(--border-strong)] bg-[var(--background)] px-3 py-2.5 text-[14px] text-[var(--foreground)] placeholder:text-[var(--fg-faint)] focus:border-[var(--accent-strong)] focus:outline-none"
       />
     </label>
   );
@@ -236,7 +236,7 @@ function BackgroundAura() {
         className="absolute inset-0 opacity-[0.16]"
         style={{
           backgroundImage:
-            "radial-gradient(circle at 1px 1px, var(--foreground-faint) 1px, transparent 0)",
+            "radial-gradient(circle at 1px 1px, var(--fg-faint) 1px, transparent 0)",
           backgroundSize: "22px 22px",
           maskImage: "radial-gradient(ellipse 80% 60% at 50% 30%, black, transparent 85%)",
           WebkitMaskImage:

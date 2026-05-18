@@ -68,7 +68,7 @@ export function ChainVisual() {
           <span className="font-mono text-[10px] text-white/30">bash</span>
         </div>
 
-        <div className="space-y-[2px] p-4 font-mono text-[12px] leading-[1.55] text-white/85">
+        <div className="space-y-[2px] overflow-x-auto p-3 font-mono text-[11px] leading-[1.55] text-white/85 sm:p-4 sm:text-[12px]">
           {LINES.slice(0, step).map((line, idx) => (
             <Row key={idx} line={line} />
           ))}

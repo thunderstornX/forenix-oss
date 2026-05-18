@@ -118,7 +118,7 @@ export function WaitlistForm({
           placeholder="you@work.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="flex-1 rounded-md border border-[var(--border-strong)] bg-[var(--background)] px-3 py-2.5 text-[14px] text-[var(--foreground)] placeholder:text-[var(--foreground-faint)] focus:border-[var(--accent-strong)] focus:outline-none"
+          className="flex-1 rounded-md border border-[var(--border-strong)] bg-[var(--background)] px-3 py-2.5 text-[14px] text-[var(--foreground)] placeholder:text-[var(--fg-faint)] focus:border-[var(--accent-strong)] focus:outline-none"
         />
         {variant === "full" && (
           <>
@@ -140,14 +140,14 @@ export function WaitlistForm({
               placeholder="What would you use forenix-oss for? (optional)"
               value={useCase}
               onChange={(e) => setUseCase(e.target.value)}
-              className="rounded-md border border-[var(--border-strong)] bg-[var(--background)] px-3 py-2.5 text-[13px] text-[var(--foreground)] placeholder:text-[var(--foreground-faint)] focus:border-[var(--accent-strong)] focus:outline-none"
+              className="rounded-md border border-[var(--border-strong)] bg-[var(--background)] px-3 py-2.5 text-[13px] text-[var(--foreground)] placeholder:text-[var(--fg-faint)] focus:border-[var(--accent-strong)] focus:outline-none"
             />
           </>
         )}
         <button
           type="submit"
           disabled={loading}
-          className="inline-flex items-center justify-center gap-1.5 rounded-md bg-[var(--accent-strong)] px-4 py-2.5 text-[13px] font-medium text-black transition hover:brightness-110 disabled:opacity-60 sm:whitespace-nowrap"
+          className="inline-flex items-center justify-center gap-1.5 rounded-md bg-[var(--accent)] px-4 py-2.5 text-[13px] font-medium text-[var(--fg-on-accent)] transition hover:bg-[var(--accent-hover)] disabled:opacity-60 sm:whitespace-nowrap"
         >
           {loading ? (
             <Loader2 className="h-4 w-4 animate-spin" />
