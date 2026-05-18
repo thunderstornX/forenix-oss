@@ -592,6 +592,31 @@ model Attestation {
   confirmedAt DateTime?
 }
 
+// ───────────────────────── AttestationSchedule ───────────────────
+// Drives cron-triggered attestation. Admins create one row per
+// backend they want fired automatically; the scheduler tick (same
+// pattern as the Monitor scheduler) fires each one at its cadence.
+//
+// Why a separate model instead of a column on something existing?
+//   - Each backend (local / github / rekor / future) can run on its
+//     own cadence. A site might attest hourly to local + daily to
+//     rekor, for instance.
+//   - Pausing one backend doesn't pause the others.
+//   - The Attestation row itself stays as the per-event record;
+//     this is just the schedule that produces them.
+model AttestationSchedule {
+  id         String    @id @default(cuid())
+  backend    String                          // "local" | "github" | "rekor" | (future)
+  cadence    String    @default("daily")     // hourly | daily | weekly | monthly | every:Nu
+  enabled    Boolean   @default(true)
+  lastRunAt  DateTime?
+  nextRunAt  DateTime?
+  lastError  String?                          // populated when the most recent run failed
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  createdBy  String?                          // userId who set this up (informational)
+}
+
 // ───────────────────────── Waitlist ──────────────────────────────
 // Public sign-up list for the marketing landing page. Lives in the
 // same DB as everything else so the admin view can triage it without

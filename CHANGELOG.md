@@ -6,6 +6,46 @@ and the project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added - cron-triggered attestations (Phase 9.3 / item 2 of 3)
+
+Closes the strongest gap in the chain-of-custody story: the
+"Attest now" button was always manual, which meant the chain
+witnesses were only as fresh as the operator's memory. This wires
+the cron infrastructure shipped in item 1 to fire attestations too.
+
+- **`AttestationSchedule` Prisma model** - one row per backend
+  you want fired automatically. Each can run on its own cadence
+  (typical setup: local hourly + github daily + rekor weekly).
+- **`src/lib/attestation/scheduler.ts`** - reuses
+  `runAttestation()` so the cron path and the manual button produce
+  identical Attestation rows. Failures advance the schedule (one
+  network blip can't permanently disable a backend) and the error
+  is surfaced in the schedule row's `lastError`.
+- **`POST /api/internal/attest-tick`** - same auth gate as
+  monitor-tick (`MONITOR_CRON_TOKEN` or `CRON_SECRET`, with or
+  without `Bearer` prefix).
+- **Admin routes**:
+    - `GET / POST /api/admin/attestation-schedule`     list / create
+    - `PATCH / DELETE /api/admin/attestation-schedule/[id]`  pause/
+                                                              resume,
+                                                              edit cadence,
+                                                              delete
+- **Integrity dashboard** gains a "Scheduled attestations" panel
+  (admin only): backend column, cadence picker, status pill,
+  last-run / next-run, per-row pause/resume + delete, last-error
+  display when a run failed.
+- **`vercel.json`** gains an `attest-tick` cron entry at 8:30am
+  daily (still Hobby-compliant: 2 entries, both daily).
+- **`.github/workflows/cron-tick.yml`** (renamed from monitor-tick)
+  adds a separate `attest` job so a slow Rekor anchor doesn't delay
+  the next monitor tick.
+- Every schedule action appends an audit row
+  (`attestation_schedule_created`, `_paused`, `_resumed`,
+  `_updated`, `_deleted`) so the chain notarises its own scheduling
+  alongside its events.
+- `docs/09-RUNBOOK.md` §12 covers cadence pairings, drivers, and
+  operator setup.
+
 ### Added - scheduled monitors (Phase 9.3 / item 1 of 3)
 
 The Monitor rows have always carried `cadence` + `nextRunAt`

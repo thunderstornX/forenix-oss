@@ -253,3 +253,58 @@ sudo -u postgres psql forenix_oss -c "
   WHERE status='active' AND (\"nextRunAt\" IS NULL OR \"nextRunAt\" < now())
   ORDER BY \"nextRunAt\" ASC;"
 ```
+
+## 12. Routine  -  scheduled attestations
+
+Cron-triggered attestations close the strongest gap in the
+chain-of-custody story: "did someone remember to click Attest now?"
+becomes "the chain witnesses itself automatically and the witness
+history is itself audited."
+
+Reuses the Monitor scheduler's cron infrastructure (same three
+drivers, same token, same cadence grammar). Adds:
+
+- `AttestationSchedule` Prisma model  -  one row per backend you
+  want fired on a schedule.
+- `POST /api/internal/attest-tick`  -  the cron-driver endpoint.
+- `GET / POST /api/admin/attestation-schedule`  -  list / create
+  (admin only).
+- `PATCH / DELETE /api/admin/attestation-schedule/[id]`  -
+  pause/resume, change cadence, delete (admin only).
+- A schedules panel in the Integrity dashboard (admin only).
+
+### Cadence
+
+Same grammar as monitors (`hourly` / `daily` / `weekly` /
+`monthly` / `every:N(m|h|d)`). A typical setup pairs:
+
+  - `local`  cadence=hourly      (cheap; catches accidental disk corruption fast)
+  - `github` cadence=daily       (publicly-witnessed; comment edit-history detects tampering)
+  - `rekor`  cadence=weekly      (Sigstore transparency log; the strongest witness)
+
+### Cron drivers
+
+The three drivers from ยง11 (`vercel.json` daily + GitHub Actions
+every 5min + Droplet systemd timer) all also fire the attest tick;
+no extra setup beyond setting the secrets is required. The Vercel
+daily cron is a backstop; GitHub Actions is the actual cadence on
+the Vercel surface. The `cron-tick.yml` workflow has a separate
+`attest` job so a slow Rekor anchor doesn't delay the next monitor
+tick.
+
+### Operator setup
+
+```bash
+# 1. As an admin, hit Integrity in the app:
+#    > Scheduled attestations panel
+#    > "New schedule" -> pick backend + cadence
+#
+# 2. First fire arrives within ~30s of creation; subsequent fires
+#    are at the chosen cadence.
+#
+# 3. Inspect runs at:
+#    - Vercel:  Vercel project -> Crons tab; or curl the live tick
+#      with the same shared secret
+#    - Actions: github.com/.../actions/workflows/monitor-tick.yml
+#    - Droplet: journalctl -u forenix-monitor-tick.service -n 30
+```

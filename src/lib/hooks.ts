@@ -447,6 +447,77 @@ export function useVerifyAttestation() {
   });
 }
 
+export interface AttestationScheduleRow {
+  id: string;
+  backend: string;
+  cadence: string;
+  enabled: boolean;
+  lastRunAt: string | null;
+  nextRunAt: string | null;
+  lastError: string | null;
+  createdAt: string;
+  updatedAt: string;
+  createdBy: string | null;
+}
+export function useAttestationSchedules() {
+  return useQuery({
+    queryKey: ["attestation-schedules"],
+    queryFn: () =>
+      http<{ data: AttestationScheduleRow[]; backends: AttestationBackendInfo[] }>(
+        "/api/admin/attestation-schedule",
+      ),
+  });
+}
+export function useCreateAttestationSchedule() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (body: { backend: string; cadence?: string; enabled?: boolean }) =>
+      http<{ data: AttestationScheduleRow }>("/api/admin/attestation-schedule", {
+        method: "POST",
+        body: JSON.stringify(body),
+      }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["attestation-schedules"] });
+      qc.invalidateQueries({ queryKey: ["audit"] });
+    },
+  });
+}
+export function usePatchAttestationSchedule() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      id,
+      ...body
+    }: {
+      id: string;
+      enabled?: boolean;
+      cadence?: string;
+      backend?: string;
+    }) =>
+      http<{ data: AttestationScheduleRow }>(`/api/admin/attestation-schedule/${id}`, {
+        method: "PATCH",
+        body: JSON.stringify(body),
+      }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["attestation-schedules"] });
+      qc.invalidateQueries({ queryKey: ["audit"] });
+    },
+  });
+}
+export function useDeleteAttestationSchedule() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) =>
+      http<{ data: { ok: true } }>(`/api/admin/attestation-schedule/${id}`, {
+        method: "DELETE",
+      }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["attestation-schedules"] });
+      qc.invalidateQueries({ queryKey: ["audit"] });
+    },
+  });
+}
+
 export interface MeResponse {
   id: string;
   email: string | null;

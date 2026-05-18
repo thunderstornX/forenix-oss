@@ -1,7 +1,8 @@
-name: monitor-tick
+name: cron-tick
 
-# Pings the scheduler endpoint on both deployment surfaces every 5
-# minutes. GitHub Actions is the chosen cron driver because:
+# Pings both scheduler endpoints (monitor + attestation) on both
+# deployment surfaces every 5 minutes. GitHub Actions is the chosen
+# cron driver because:
 #   - Vercel Hobby caps cron jobs at 1/day (vercel.json keeps a
 #     daily entry so the platform doesn't complain).
 #   - The Droplet ALSO runs a systemd timer; this workflow is
@@ -63,3 +64,38 @@ jobs:
                --request POST "$URL" \
                --header "Authorization: Bearer $TOKEN" \
             || echo "::warning::droplet tick failed (one transient failure is OK; back-to-back is not)"
+
+  attest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    # The attest tick is a separate job so a slow attestation
+    # backend (Rekor in particular  -  it goes to a public log) can't
+    # delay the next monitor tick.
+    steps:
+      - name: vercel surface
+        env:
+          URL: ${{ vars.VERCEL_ATTEST_URL || 'https://forenix.tech/api/internal/attest-tick' }}
+          TOKEN: ${{ secrets.CRON_SECRET }}
+        run: |
+          if [ -z "$TOKEN" ]; then
+            echo "::warning::CRON_SECRET not set; skipping vercel attest tick"
+            exit 0
+          fi
+          curl --fail-with-body --silent --show-error --max-time 90 \
+               --request POST "$URL" \
+               --header "Authorization: Bearer $TOKEN" \
+            || echo "::warning::vercel attest tick failed"
+
+      - name: droplet surface
+        env:
+          URL: ${{ vars.DROPLET_ATTEST_URL || 'https://demo.forenix.tech/api/internal/attest-tick' }}
+          TOKEN: ${{ secrets.MONITOR_CRON_TOKEN }}
+        run: |
+          if [ -z "$TOKEN" ]; then
+            echo "::warning::MONITOR_CRON_TOKEN not set; skipping droplet attest tick"
+            exit 0
+          fi
+          curl --fail-with-body --silent --show-error --max-time 90 \
+               --request POST "$URL" \
+               --header "Authorization: Bearer $TOKEN" \
+            || echo "::warning::droplet attest tick failed"
