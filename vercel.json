@@ -3,6 +3,12 @@
   "buildCommand": "bun run vercel-build",
   "installCommand": "bun install --frozen-lockfile",
   "regions": ["iad1"],
+  "crons": [
+    {
+      "path": "/api/internal/monitor-tick",
+      "schedule": "*/5 * * * *"
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",

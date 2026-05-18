@@ -20,6 +20,7 @@ const PUBLIC_PREFIXES = [
   "/api/auth/",
   "/api/admin/seed-demo", // token-gated, bootstraps fresh deploys
   "/api/waitlist",        // public sign-up endpoint
+  "/api/internal/",       // token-gated scheduler tick (MONITOR_CRON_TOKEN / CRON_SECRET)
   "/_next/",
   "/_vercel/",
 ];

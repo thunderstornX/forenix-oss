@@ -234,6 +234,75 @@ export function useMonitors() {
   });
 }
 
+export function useCreateMonitor() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (body: {
+      investigationId?: string;
+      target: string;
+      targetType: string;
+      cadence?: string;
+      status?: "active" | "paused";
+    }) =>
+      http<{ data: MonitorRow }>("/api/monitors", {
+        method: "POST",
+        body: JSON.stringify(body),
+      }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["monitors"] });
+      qc.invalidateQueries({ queryKey: ["audit"] });
+    },
+  });
+}
+
+export function usePatchMonitor() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      id,
+      ...body
+    }: {
+      id: string;
+      status?: "active" | "paused";
+      cadence?: string;
+      target?: string;
+      targetType?: string;
+    }) =>
+      http<{ data: MonitorRow }>(`/api/monitors/${id}`, {
+        method: "PATCH",
+        body: JSON.stringify(body),
+      }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["monitors"] });
+      qc.invalidateQueries({ queryKey: ["audit"] });
+    },
+  });
+}
+
+export function useDeleteMonitor() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) =>
+      http<{ data: { ok: true } }>(`/api/monitors/${id}`, { method: "DELETE" }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["monitors"] });
+      qc.invalidateQueries({ queryKey: ["audit"] });
+    },
+  });
+}
+
+export function useRunMonitorNow() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) =>
+      http<{ data: unknown }>(`/api/monitors/${id}/run`, { method: "POST" }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["monitors"] });
+      qc.invalidateQueries({ queryKey: ["audit"] });
+    },
+  });
+}
+
 export interface VerificationRow {
   id: string;
   investigationId: string | null;

@@ -143,3 +143,93 @@ pkill -9 -f 'next dev|next-server'
 
 Wait 2 s, confirm with `pgrep -f next` (no output = clean stop).
 The database is unaffected; restarting `bun run dev` resumes.
+
+## 11. Routine  -  scheduled monitors
+
+Monitors fire on a cadence string (`hourly` / `daily` / `weekly` /
+`monthly`, or `every:N(m|h|d)` — see `src/lib/monitor-scheduler/cadence.ts`
+for the grammar). The scheduler is **one entry point with two cron
+drivers** so the same code path covers both deployment shapes:
+
+| Surface | Cron driver | Token env |
+|---|---|---|
+| Vercel (serverless) | `vercel.json` `crons` block, posts every 5 min | `CRON_SECRET` |
+| DigitalOcean Droplet (full demo / self-host) | systemd timer or any `cron` line that curls the endpoint | `MONITOR_CRON_TOKEN` |
+
+Both drivers POST to `/api/internal/monitor-tick` with the same shape.
+The route accepts either env var (Vercel sends `Authorization: Bearer
+<CRON_SECRET>`; the Droplet posts the bare token), so no per-surface
+code change is needed.
+
+### Set up the Droplet timer
+
+```bash
+ssh root@206.189.82.103
+
+# 1. Pick a secret + add it to /opt/forenix/.env
+echo "MONITOR_CRON_TOKEN=$(openssl rand -hex 32)" >> /opt/forenix/.env
+systemctl restart forenix
+
+# 2. Drop the service + timer.
+cat >/etc/systemd/system/forenix-monitor-tick.service <<UNIT
+[Unit]
+Description=forenix-oss monitor scheduler tick
+After=network-online.target
+
+[Service]
+Type=oneshot
+EnvironmentFile=/opt/forenix/.env
+ExecStart=/usr/bin/curl -fsS -X POST \\
+  -H "Authorization: \$MONITOR_CRON_TOKEN" \\
+  http://localhost:3000/api/internal/monitor-tick
+UNIT
+
+cat >/etc/systemd/system/forenix-monitor-tick.timer <<TIMER
+[Unit]
+Description=Run forenix-oss monitor scheduler every 5 minutes
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=5min
+Unit=forenix-monitor-tick.service
+[Install]
+WantedBy=timers.target
+TIMER
+
+systemctl daemon-reload
+systemctl enable --now forenix-monitor-tick.timer
+systemctl list-timers | grep forenix-monitor-tick   # confirm it's queued
+```
+
+### Operator actions in the UI
+
+- **New monitor** — header action on the Monitors view. Picks a
+  target + targetType + cadence + (optionally) an investigation to
+  link. First tick fires within ~30 s so you see a result quickly.
+- **Run now** — per-card button. Bypasses the next scheduled tick.
+  Useful for verifying a freshly-created monitor or chasing a
+  suspected change without waiting up to 5 min.
+- **Pause / Resume** — per-card toggle. Pausing nulls `nextRunAt`
+  so the scheduler skips the row; resuming recomputes `nextRunAt`
+  from the last run + the cadence.
+- **Change cadence** — per-card select. The next tick is recomputed
+  immediately; if the new cadence would have already fired, it's
+  pushed out by 30 s instead of firing instantly.
+- **Delete** — per-card. Audit-logged.
+
+### Debugging
+
+```bash
+# Tail the tick endpoint locally:
+curl -X POST http://localhost:3000/api/internal/monitor-tick \
+  -H "Authorization: Bearer <MONITOR_CRON_TOKEN>" | jq
+
+# On the Droplet, check the timer + the last few service runs:
+ssh root@206.189.82.103 'systemctl list-timers | grep monitor; journalctl -u forenix-monitor-tick.service -n 20 --no-pager'
+
+# Find rows that should be firing but aren't:
+sudo -u postgres psql forenix_oss -c "
+  SELECT id, target, status, \"nextRunAt\"
+  FROM \"Monitor\"
+  WHERE status='active' AND (\"nextRunAt\" IS NULL OR \"nextRunAt\" < now())
+  ORDER BY \"nextRunAt\" ASC;"
+```

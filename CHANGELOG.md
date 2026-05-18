@@ -6,6 +6,54 @@ and the project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added - scheduled monitors (Phase 9.3 / item 1 of 3)
+
+The Monitor rows have always carried `cadence` + `nextRunAt`
+columns; this turn finally wires a scheduler that fires them.
+
+- **`src/lib/monitor-scheduler/`** - new module:
+    - `cadence.ts`        - parser for the cadence DSL
+                            (`hourly`/`daily`/`weekly`/`monthly` or
+                            `every:N(m|h|d)`), with a 1-min floor
+                            and a 90-day ceiling. 14 pure-function
+                            tests for the grammar + the `isDue`
+                            grace-window predicate.
+    - `scheduler.ts`      - `runMonitorTick()` finds active rows
+                            where `nextRunAt <= now + 60s grace`,
+                            runs each through the always-available
+                            HTTP tool subset (`web_search` +
+                            `crtsh_certificates` for now -  enough
+                            to prove the wiring without needing
+                            subprocess deps on Vercel), persists a
+                            `MonitorRun` row, advances `nextRunAt`.
+                            Failures still advance the schedule so
+                            one bad tick doesn't permanently disable
+                            a monitor.
+- **`POST /api/internal/monitor-tick`** - token-gated endpoint that
+  both cron drivers POST into. Accepts either `MONITOR_CRON_TOKEN`
+  or Vercel's built-in `CRON_SECRET`, with `Bearer` prefix optional.
+- **`vercel.json`** gains a `crons` block that hits the tick every
+  5 minutes; `docs/09-RUNBOOK.md` documents the matching systemd
+  timer for the Droplet.
+- **Monitor CRUD now exists**:
+    - `POST   /api/monitors`         create (investigator+)
+    - `PATCH  /api/monitors/[id]`    pause/resume, change cadence,
+                                      change target
+    - `DELETE /api/monitors/[id]`    delete (investigator+)
+    - `POST   /api/monitors/[id]/run` run-now (bypasses next tick)
+  Every state-change appends an audit row (`monitor_created`,
+  `monitor_paused`, `monitor_resumed`, `monitor_updated`,
+  `monitor_run`, `monitor_deleted`) so the chain notarises the
+  schedule alongside the cases.
+- **Monitors view** in the authed app gains controls:
+  'New monitor' header action with a cadence picker, per-card
+  'Run now' / 'Pause' / 'Resume' / cadence-select / 'Delete' under
+  a hairline divider. Read-only for analysts/viewers; mutating
+  controls hidden for them.
+- **`.env.example`** documents `MONITOR_CRON_TOKEN`; the Vercel
+  surface uses the built-in `CRON_SECRET` set in the project env.
+- Test count: 61 -> 75 (14 new cadence-parser tests).
+
 ## [0.4.0] - 2026-05-17
 
 External attestation of the audit chain head. Closes the long-standing
