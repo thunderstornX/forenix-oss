@@ -74,16 +74,18 @@ MIT-licensed. Self-host friendly.
 
 The same codebase ships in three shapes. Pick the one that matches what you want to do.
 
-| Lane | Live at | Who runs it | What you get | Get started |
+| Lane | Live at | Audience | What it is | Get started |
 |---|---|---|---|---|
 | **OSS Core** (MIT) | _you self-host_ | self-hosters, evaluators, integrators | every analyst feature, every adapter except Claude, real Git per case, full subprocess toolchain, scheduled monitors + attestations | [`docs/OSS_INSTALL.md`](docs/OSS_INSTALL.md) |
-| **Vercel demo** | [forenix.tech](https://forenix.tech) | anyone | the UI on a serverless surface with mock adapter + deterministic Git fallback. Instant load, no subprocess tools | [`docs/VERCEL_DEPLOY.md`](docs/VERCEL_DEPLOY.md) |
-| **SaaS Premium** | hosted (paid) | teams who want the hosted product | OSS Core + Claude adapter, multi-tenant org isolation, PDF export, advanced OSINT adapters, SSO, usage metering. Gated by `SAAS_MODE=true` | [`docs/SAAS.md`](docs/SAAS.md) |
+| **Concept + waitlist** | [forenix.tech](https://forenix.tech) | the public | marketing site + serverless concept demo (mock adapter). Visitors read the pitch and **join the waitlist for the paid SaaS** | [`docs/VERCEL_DEPLOY.md`](docs/VERCEL_DEPLOY.md) |
+| **Paid SaaS** | [demo.forenix.tech](https://demo.forenix.tech) | **invite / register only** (waitlist approval required) | the actual product — full build on a DigitalOcean droplet, real LLM via OpenRouter, full OSINT toolchain, file-byte custody. Multi-tenant + billing + SSO land here behind `SAAS_MODE=true` as Phase 9.4+ ships | [`docs/SAAS.md`](docs/SAAS.md) |
 
-The lanes are not separate codebases. They are the same Next.js app
-switched by environment variables. The boundary for premium-only
+The customer journey is **forenix.tech → waitlist → admin approves → demo.forenix.tech**.
+
+The three lanes are not separate codebases. They are the same Next.js
+app switched by environment variables. The boundary for premium-only
 code lives under [`src/lib/saas/`](src/lib/saas/); the rule is that
-OSS paths must not depend on it. See
+OSS code paths must not depend on it. See
 [`docs/SAAS.md`](docs/SAAS.md) for the full contract.
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/thunderstornX/forenix-oss)
@@ -92,8 +94,8 @@ OSS paths must not depend on it. See
 
 | Surface | URL | What runs there |
 |---|---|---|
-| Landing + concept demo (Vercel) | [forenix.tech](https://forenix.tech) | Mock adapter, HTTP-API tools, deterministic Git fallback. Instant load. |
-| Full-feature self-host demo | [demo.forenix.tech](https://demo.forenix.tech) | The OSS Core on a DigitalOcean droplet. Real Git per case, full 20-tool OSINT registry, real LLM via OpenRouter, file-byte custody. |
+| Concept + waitlist (Vercel) | [forenix.tech](https://forenix.tech) | Marketing + concept demo. Mock adapter, HTTP-API tools, deterministic Git fallback. Public. The waitlist on this surface is the entry point to the paid SaaS. |
+| Paid SaaS (DigitalOcean) | [demo.forenix.tech](https://demo.forenix.tech) | The actual product. Invite / register only. Full build, real LLM via OpenRouter, real OSINT toolchain, real Git per case, file-byte custody. |
 
 ---
 

@@ -11,14 +11,15 @@ the Vercel demo specifics see [`VERCEL_DEPLOY.md`](VERCEL_DEPLOY.md).
 
 ## 1. The three lanes
 
-| Lane | Where it lives | Who runs it | What you get |
+| Lane | Live at | Audience | What it is |
 |---|---|---|---|
 | **OSS Core** (MIT) | this GitHub repo | self-hosters, evaluators, integrators | every analyst feature, every adapter except Claude, audit chain, branch graph, verifier, real Git per case, full subprocess tool registry |
-| **Vercel demo** | [forenix.tech](https://forenix.tech) | anyone with a browser | mock adapter, deterministic Git fallback, no subprocess tools - the UI is real, the data is seeded |
-| **SaaS Premium** | hosted product (path: paid only) | teams who want the hosted app | OSS Core, plus the SAAS gated features below |
+| **Concept + waitlist** | [forenix.tech](https://forenix.tech) | the public | marketing site + serverless concept demo (mock adapter, deterministic Git fallback). This surface is where prospective customers read the pitch and **join the waitlist** for the paid SaaS. |
+| **Paid SaaS** | [demo.forenix.tech](https://demo.forenix.tech) | **invite / register only** (waitlist approval required) | the actual product, running the OSS Core build under systemd + Caddy on a DigitalOcean droplet, with the deep OSINT toolchain installed, real LLM via OpenRouter, and the SAAS-gated features below (as they ship). |
 
-The lanes are not separate codebases. They are the same Next.js app
-toggled by environment variables.
+The customer journey is **forenix.tech → waitlist → admin approves →
+demo.forenix.tech**. The three lanes are not separate codebases. They
+are the same Next.js app toggled by environment variables.
 
 ---
 
@@ -60,15 +61,22 @@ checked at review time, not enforced by a lint rule (yet).
 
 ## 4. What is gated today
 
-As of `v0.4.0`:
+As of `v0.4.0` the **paid SaaS is live at
+[demo.forenix.tech](https://demo.forenix.tech)** as a single-tenant
+deployment. The waitlist on
+[forenix.tech](https://forenix.tech) is the entry point; an admin
+provisions accounts on the droplet after approval.
+
+What's gated by `SAAS_MODE=true` *in code* today:
 
 | Feature | Gate | Status |
 |---|---|---|
 | `ClaudeAdapter` | `SAAS_MODE=true` + `ANTHROPIC_API_KEY` | Stub - constructor wired, calls throw `NotImplementedError`. Awaiting an Anthropic SDK implementation. |
 | `saasMode` flag exposed on `/api/health` and `/api/settings` | always | Informational only; the UI shows the current state. |
 
-That is everything. The flag is live and respected, but the paid
-feature catalogue below is not yet built.
+So the SaaS surface exists and serves customers today on the same
+code as the OSS Core. The paid-tier *features* below (multi-tenant,
+billing, SSO, etc.) are what's not yet shipped into that deployment.
 
 ---
 
@@ -117,10 +125,16 @@ in the logs).
 
 ---
 
-## 7. Production deployment (when it ships)
+## 7. Production deployment (where it runs today)
 
-The current self-host path in [`SELF_HOST.md`](SELF_HOST.md) is the
-foundation. The SaaS production setup adds:
+The paid SaaS runs **today** at
+[demo.forenix.tech](https://demo.forenix.tech), single-tenant, on a
+DigitalOcean droplet using the systemd unit + Caddy front documented
+in [`SELF_HOST.md`](SELF_HOST.md). Customer onboarding is operator-
+driven: approve a waitlist entry on forenix.tech, provision the
+account on the droplet, send credentials.
+
+The Phase 9.4+ pieces that turn this into a true multi-tenant SaaS:
 
 - **Multi-tenant Postgres** - either row-level tenancy on the existing
   schema or schema-per-org. Choice has not been made.

@@ -71,8 +71,13 @@ app to anything other than localhost.
 
 ## Path B. VPS production (DigitalOcean, etc.)
 
-What runs the [live demo](https://demo.forenix.tech). systemd unit +
-Caddy front + the deep OSS toolchain installed onto the host.
+The same recipe that runs the paid SaaS at
+[demo.forenix.tech](https://demo.forenix.tech) (invite-only,
+provisioned from the waitlist on forenix.tech). systemd unit + Caddy
+front + the deep OSS toolchain installed onto the host. If you
+self-host this way, you are running the same build as the SaaS, just
+without the multi-tenant + billing pieces (which haven't shipped yet
+either, see [`SAAS.md`](SAAS.md)).
 
 This path is documented in detail at
 [`SELF_HOST.md`](SELF_HOST.md). The short version:
