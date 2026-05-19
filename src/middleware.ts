@@ -12,6 +12,7 @@ const PUBLIC_ROUTES = new Set<string>([
   "/waitlist",    // standalone waitlist sign-up page
   "/favicon.ico",
   "/robots.txt",
+  "/api/health",  // liveness probe — load balancers, smoke checks, uptime monitors
 ]);
 // /accept-invite is gated, but in a different way  -  the page itself
 // only needs an authenticated user (so they know who's accepting).

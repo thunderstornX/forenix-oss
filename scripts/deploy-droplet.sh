@@ -14,6 +14,12 @@
 
 set -euo pipefail
 
+# Make `bun` available even when this script is invoked from a
+# non-interactive shell (GitHub Actions SSH session) where
+# ~/.bashrc isn't sourced. The standard bun installer places the
+# binary at ~/.bun/bin/bun.
+export PATH="$HOME/.bun/bin:$PATH"
+
 cd "$(dirname "$0")/.."
 PWD_HERE="$(pwd)"
 echo "── deploy ${PWD_HERE} ──"
