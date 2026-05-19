@@ -1,10 +1,11 @@
 /**
  * ClaudeAdapter  -  calls Anthropic's Claude via @anthropic-ai/sdk.
  *
- * Gated as a SaaS-premium tier feature; requires SAAS_MODE=true and
- * an Anthropic API key.
+ * Lives under `src/lib/saas/` because Claude is the SaaS-premium tier
+ * adapter. The class refuses to do any work unless SAAS_MODE=true; in
+ * the OSS lane the constructor warns and every call throws.
  *
- * Setup:
+ * Setup (paid tier only):
  *   1. bun add @anthropic-ai/sdk
  *   2. Get a key at https://console.anthropic.com
  *   3. Export ANTHROPIC_API_KEY=sk-...
@@ -21,7 +22,7 @@ import type {
   InvestigationContext,
   PipelineAnalysis,
   SearchResult,
-} from "../types";
+} from "../../ai/types";
 
 class NotImplementedError extends Error {
   constructor(setup: string) {

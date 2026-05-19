@@ -17,7 +17,10 @@ import type { AdapterName, AIAdapter } from "./types";
 import { MockAdapter } from "./adapters/mock";
 import { OllamaAdapter } from "./adapters/ollama";
 import { GLMAdapter } from "./adapters/glm";
-import { ClaudeAdapter } from "./adapters/claude";
+// Premium adapters live under src/lib/saas/. See src/lib/saas/README.md
+// for the boundary rule. The factory is the one exception that's
+// allowed to import them, because it is the gate.
+import { ClaudeAdapter } from "../saas/adapters/claude";
 import { OpenRouterAdapter } from "./adapters/openrouter";
 import { NVIDIAAdapter } from "./adapters/nvidia";
 import { GroqAdapter } from "./adapters/groq";
