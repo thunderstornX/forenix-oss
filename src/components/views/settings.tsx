@@ -102,9 +102,12 @@ export function SettingsView() {
                     <span className="flex items-center gap-1.5 text-[10px] font-medium text-[var(--accent-strong)]">
                       <Sparkles className="h-3 w-3" /> ACTIVE
                     </span>
-                  ) : a.saasOnly && !s.saasMode ? (
-                    <span className="flex items-center gap-1.5 text-[10px] text-[var(--foreground-muted)]">
-                      <Lock className="h-3 w-3" /> saas-gated
+                  ) : a.saasOnly ? (
+                    <span
+                      className="flex items-center gap-1.5 text-[10px] text-[var(--foreground-muted)]"
+                      title="Part of the private SaaS overlay that powers demo.forenix.tech. Not included in OSS Core."
+                    >
+                      <Lock className="h-3 w-3" /> overlay only
                     </span>
                   ) : !a.keyPresent ? (
                     <span className="text-[10px] text-[var(--foreground-muted)]">no key</span>

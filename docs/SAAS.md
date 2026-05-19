@@ -1,11 +1,18 @@
-# SaaS premium tier
+# The paid SaaS — and why no premium code lives in this repo
 
-The same codebase that ships as MIT-licensed OSS Core also drives the
-paid hosted product. This document covers what the SaaS tier is, what
-is gated, what is planned, and how the boundary is enforced in code.
+This document is the short answer to "where are the premium features
+I read about?"
 
-For the OSS install path see [`OSS_INSTALL.md`](OSS_INSTALL.md). For
-the Vercel demo specifics see [`VERCEL_DEPLOY.md`](VERCEL_DEPLOY.md).
+**They are not in this repository.** Premium / SaaS-only code lives
+in a private overlay that powers the hosted product at
+[demo.forenix.tech](https://demo.forenix.tech). The public
+`forenix-oss` repo on GitHub is the **OSS Core**: every analyst
+feature, every free adapter, the full audit chain, real Git per
+case, the full subprocess OSINT toolchain. Self-hosters get the
+sovereign-deployment build, no paid features required.
+
+For the install path see [`OSS_INSTALL.md`](OSS_INSTALL.md). For the
+Vercel concept surface see [`VERCEL_DEPLOY.md`](VERCEL_DEPLOY.md).
 
 ---
 
@@ -13,154 +20,78 @@ the Vercel demo specifics see [`VERCEL_DEPLOY.md`](VERCEL_DEPLOY.md).
 
 | Lane | Live at | Audience | What it is |
 |---|---|---|---|
-| **OSS Core** (MIT) | this GitHub repo | self-hosters, evaluators, integrators | every analyst feature, every adapter except Claude, audit chain, branch graph, verifier, real Git per case, full subprocess tool registry |
-| **Concept + waitlist** | [forenix.tech](https://forenix.tech) | the public | marketing site + serverless concept demo (mock adapter, deterministic Git fallback). This surface is where prospective customers read the pitch and **join the waitlist** for the paid SaaS. |
-| **Paid SaaS** | [demo.forenix.tech](https://demo.forenix.tech) | **invite / register only** (waitlist approval required) | the actual product, running the OSS Core build under systemd + Caddy on a DigitalOcean droplet, with the deep OSINT toolchain installed, real LLM via OpenRouter, and the SAAS-gated features below (as they ship). |
+| **OSS Core** (MIT) | this GitHub repo | self-hosters, evaluators, integrators | every analyst feature, every free adapter, audit chain, branch graph, verifier, real Git per case, full subprocess tool registry, scheduled monitors + attestations, SSE live updates |
+| **Concept + waitlist** | [forenix.tech](https://forenix.tech) | the public | marketing site + serverless concept demo (mock adapter, deterministic Git fallback). Where prospective customers read the pitch and **join the waitlist** |
+| **Paid SaaS** | [demo.forenix.tech](https://demo.forenix.tech) | **invite / register only** (waitlist approval) | OSS Core **+ a private SaaS overlay** that adds Claude adapter, multi-tenant orgs, billing, SSO, PDF export, advanced OSINT adapters |
 
 The customer journey is **forenix.tech → waitlist → admin approves →
-demo.forenix.tech**. The three lanes are not separate codebases. They
-are the same Next.js app toggled by environment variables.
+demo.forenix.tech**.
 
 ---
 
-## 2. The single gate
+## 2. The overlay model
 
-A single environment variable controls the SaaS tier:
+The DigitalOcean droplet that runs the paid SaaS is built by
+assembling two repositories at deploy time:
 
-```bash
-SAAS_MODE=true
+```
+public:   github.com/thunderstornX/forenix-oss   (this repo, MIT)
+private:  github.com/thunderstornX/forenix-saas  (overlay, all rights reserved)
 ```
 
-When it is `true`, premium features become available. When it is
-`false` (the default), premium features are silently absent and every
-OSS feature behaves identically. The BRD enforces this in §7: premium
-features are **additive, never restrictive**. The OSS path is never
-allowed to depend on a premium one.
-
-The only other knob in flight is `AI_ADAPTER`, which selects which
-LLM adapter the pipeline talks to. Setting `AI_ADAPTER=claude`
-without `SAAS_MODE=true` causes the Claude adapter to warn at
-construction and throw on every call.
+The deploy workflow checks out both and copies the overlay's
+`src/lib/saas/` tree into the OSS build before running `bun run
+build`. The OSS Core has no knowledge of the overlay; the overlay
+depends on the OSS Core's typed boundaries. Premium features are
+**additive, never restrictive** — every OSS feature behaves
+identically whether or not the overlay is present.
 
 ---
 
-## 3. The code boundary
+## 3. What the `SAAS_MODE` env var does
 
-Premium code lives under [`src/lib/saas/`](../src/lib/saas/). The
-rule, documented in [`src/lib/saas/README.md`](../src/lib/saas/README.md),
-is:
+In OSS Core it is **informational only**. `SAAS_MODE=true` in this
+repository activates nothing, because there is no premium code to
+activate. The value is exposed on `/api/health` and `/api/settings`
+so you can confirm at a glance which build you are looking at.
 
-> OSS code paths must not import from `src/lib/saas/`. The single
-> exception is `src/lib/ai/adapter.ts`, which is the gate.
+In the paid SaaS build (overlay present), `SAAS_MODE=true` is what
+the overlay reads to gate Claude adapter, multi-tenant org
+isolation, billing webhooks, and SSO.
 
-If you find an OSS feature transitively pulling in something from
-`src/lib/saas/`, that is the bug. The boundary is intentional and
-checked at review time, not enforced by a lint rule (yet).
-
----
-
-## 4. What is gated today
-
-As of `v0.4.0` the **paid SaaS is live at
-[demo.forenix.tech](https://demo.forenix.tech)** as a single-tenant
-deployment. The waitlist on
-[forenix.tech](https://forenix.tech) is the entry point; an admin
-provisions accounts on the droplet after approval.
-
-What's gated by `SAAS_MODE=true` *in code* today:
-
-| Feature | Gate | Status |
-|---|---|---|
-| `ClaudeAdapter` | `SAAS_MODE=true` + `ANTHROPIC_API_KEY` | Stub - constructor wired, calls throw `NotImplementedError`. Awaiting an Anthropic SDK implementation. |
-| `saasMode` flag exposed on `/api/health` and `/api/settings` | always | Informational only; the UI shows the current state. |
-
-So the SaaS surface exists and serves customers today on the same
-code as the OSS Core. The paid-tier *features* below (multi-tenant,
-billing, SSO, etc.) are what's not yet shipped into that deployment.
+If you flip `SAAS_MODE=true` in an OSS-only install, nothing
+changes. If a self-hoster wanted to build the equivalent of the
+paid SaaS, they would either pay for the hosted product or
+implement the overlay themselves — the public docs do not provide a
+how-to.
 
 ---
 
-## 5. What is planned
+## 4. What the overlay provides today
 
-Per BRD §4 (FR-18 onwards) and §7:
+| Feature | Status in the SaaS overlay |
+|---|---|
+| `ClaudeAdapter` (Anthropic) | wired |
+| `saasMode` flag exposure | wired |
+| Multi-tenant org isolation + RBAC | Phase 9.4 (in progress) |
+| PDF report export | planned |
+| Advanced OSINT adapters (Shodan, Censys, Hunter, HIBP, metered) | planned |
+| SSO (SAML / OIDC) | planned |
+| Usage metering + Stripe billing | planned |
+| Support portal | planned |
 
-| Feature | BRD ID | Status |
-|---|---|---|
-| Multi-tenant org isolation + RBAC | FR-21 | not started - the SaaS keystone |
-| PDF report export | FR-20 | not started |
-| Advanced OSINT adapters (Shodan, Censys, Hunter, HIBP at metered cadence) | n/a | not started |
-| SSO (SAML / OIDC) | n/a | not started |
-| Usage metering | n/a | not started |
-| Billing (Stripe customer + subscription + invoice webhooks) | n/a | not started |
-| Production runbook for multi-tenant deploys | n/a | not started |
-| Support tooling | n/a | not started |
-
-Anything in this list will land under `src/lib/saas/` and will be
-gated behind `SAAS_MODE=true`.
+Anything not on this list is OSS Core. The overlay never gates an
+existing OSS feature; if it did, that would be a regression.
 
 ---
 
-## 6. Running with SaaS mode enabled (dev / preview)
+## 5. If you want the paid product
 
-```bash
-# 1. Get an Anthropic key
-export ANTHROPIC_API_KEY=sk-ant-...
+Join the waitlist at [forenix.tech](https://forenix.tech). The
+journey is: read → waitlist → admin approves → use
+[demo.forenix.tech](https://demo.forenix.tech).
 
-# 2. Flip the gate
-export SAAS_MODE=true
-
-# 3. Tell the pipeline to use Claude
-export AI_ADAPTER=claude
-
-# 4. Run the app
-bun run dev
-```
-
-Visit `http://localhost:3000/app?view=settings`. The adapter table
-shows Claude as `ACTIVE` rather than `saas-gated`.
-
-If `SAAS_MODE=false`, the same setup shows Claude as `saas-gated` and
-the pipeline refuses to invoke it (falls back to mock with a warning
-in the logs).
-
----
-
-## 7. Production deployment (where it runs today)
-
-The paid SaaS runs **today** at
-[demo.forenix.tech](https://demo.forenix.tech), single-tenant, on a
-DigitalOcean droplet using the systemd unit + Caddy front documented
-in [`SELF_HOST.md`](SELF_HOST.md). Customer onboarding is operator-
-driven: approve a waitlist entry on forenix.tech, provision the
-account on the droplet, send credentials.
-
-The Phase 9.4+ pieces that turn this into a true multi-tenant SaaS:
-
-- **Multi-tenant Postgres** - either row-level tenancy on the existing
-  schema or schema-per-org. Choice has not been made.
-- **Per-org Git roots** - cases live under
-  `/var/forenix/cases/<org_id>/<case_id>` not the shared
-  `/var/forenix/cases/<case_id>`.
-- **Stripe webhooks** at `/api/billing/webhook` - to be added under
-  `src/app/api/billing/` and gated by `SAAS_MODE`.
-- **Caddy or Cloudflare** front for `*.forenix-oss.com` or the chosen
-  SaaS domain, with org-subdomain routing.
-- **Job queue** for billing reconciliation + usage rollups - not
-  decided whether to reuse the cron infra or add BullMQ.
-
-This document gets updated as each piece lands.
-
----
-
-## 8. The OSS / SaaS social contract
-
-The reason for a single codebase with an env gate, rather than two
-repos, is simple: every commit that makes the OSS lane better must
-also make the SaaS lane better, and every SaaS-only feature must be
-clean enough that an OSS user reading the code does not feel cheated.
-The OSS lane is the product. The SaaS lane is the OSS lane with the
-operational burden removed and the premium-only adapters wired up.
-
-If a feature would make sense in OSS, it ships in OSS. If a feature
-genuinely depends on hosting capital (third-party API quota,
-multi-tenant infra, a support team), it ships behind `SAAS_MODE`.
+If you want to self-host the OSS Core instead, see
+[`OSS_INSTALL.md`](OSS_INSTALL.md). The OSS lane is the product;
+the paid SaaS is the OSS lane with the operational burden removed
+and the overlay attached.

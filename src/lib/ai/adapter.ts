@@ -17,10 +17,26 @@ import type { AdapterName, AIAdapter } from "./types";
 import { MockAdapter } from "./adapters/mock";
 import { OllamaAdapter } from "./adapters/ollama";
 import { GLMAdapter } from "./adapters/glm";
-// Premium adapters live under src/lib/saas/. See src/lib/saas/README.md
-// for the boundary rule. The factory is the one exception that's
-// allowed to import them, because it is the gate.
-import { ClaudeAdapter } from "../saas/adapters/claude";
+// Premium adapters (Claude, etc.) are not shipped with OSS Core.
+// They live in the private SaaS overlay that powers the hosted
+// product at demo.forenix.tech. In OSS the registry still recognises
+// "claude" as a valid adapter name so configuration files don't error
+// silently, but construction throws with a pointer to the hosted
+// product / a recommendation to use a free adapter instead.
+class ClaudeAdapter implements AIAdapter {
+  readonly name: AdapterName = "claude";
+  constructor() {
+    throw new Error(
+      "ClaudeAdapter is part of the SaaS overlay and is not included in OSS Core. " +
+      "Use AI_ADAPTER=mock for demos, or any of: ollama, glm, openrouter, nvidia, groq " +
+      "(see .env.example for keys). The hosted product runs at https://forenix.tech.",
+    );
+  }
+  async analyzePipeline(): Promise<never> { throw new Error("not available in OSS"); }
+  async extractEntities(): Promise<never> { throw new Error("not available in OSS"); }
+  async tagEvidence(): Promise<never>     { throw new Error("not available in OSS"); }
+  async generateReport(): Promise<never>  { throw new Error("not available in OSS"); }
+}
 import { OpenRouterAdapter } from "./adapters/openrouter";
 import { NVIDIAAdapter } from "./adapters/nvidia";
 import { GroqAdapter } from "./adapters/groq";

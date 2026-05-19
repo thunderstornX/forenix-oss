@@ -78,14 +78,14 @@ The same codebase ships in three shapes. Pick the one that matches what you want
 |---|---|---|---|---|
 | **OSS Core** (MIT) | _you self-host_ | self-hosters, evaluators, integrators | every analyst feature, every adapter except Claude, real Git per case, full subprocess toolchain, scheduled monitors + attestations | [`docs/OSS_INSTALL.md`](docs/OSS_INSTALL.md) |
 | **Concept + waitlist** | [forenix.tech](https://forenix.tech) | the public | marketing site + serverless concept demo (mock adapter). Visitors read the pitch and **join the waitlist for the paid SaaS** | [`docs/VERCEL_DEPLOY.md`](docs/VERCEL_DEPLOY.md) |
-| **Paid SaaS** | [demo.forenix.tech](https://demo.forenix.tech) | **invite / register only** (waitlist approval required) | the actual product — full build on a DigitalOcean droplet, real LLM via OpenRouter, full OSINT toolchain, file-byte custody. Multi-tenant + billing + SSO land here behind `SAAS_MODE=true` as Phase 9.4+ ships | [`docs/SAAS.md`](docs/SAAS.md) |
+| **Paid SaaS** | [demo.forenix.tech](https://demo.forenix.tech) | **invite / register only** (waitlist approval required) | OSS Core **+ a private SaaS overlay** (Claude adapter, multi-tenant orgs, billing, SSO, PDF export, advanced OSINT adapters). Premium code does not live in this repository | [`docs/SAAS.md`](docs/SAAS.md) |
 
 The customer journey is **forenix.tech → waitlist → admin approves → demo.forenix.tech**.
 
-The three lanes are not separate codebases. They are the same Next.js
-app switched by environment variables. The boundary for premium-only
-code lives under [`src/lib/saas/`](src/lib/saas/); the rule is that
-OSS code paths must not depend on it. See
+OSS Core and the Vercel concept run from this repository directly.
+The paid SaaS is built by assembling this repository with a private
+overlay (`forenix-saas`) at deploy time; the overlay adds the premium
+features but never alters OSS behaviour. See
 [`docs/SAAS.md`](docs/SAAS.md) for the full contract.
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/thunderstornX/forenix-oss)
