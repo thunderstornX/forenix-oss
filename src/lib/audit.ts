@@ -15,6 +15,7 @@ import "server-only";
 
 import { prisma } from "./db";
 import { computeAuditHash, GENESIS_HASH } from "./audit-chain";
+import { emit } from "./events/emitter";
 
 export { computeAuditHash, GENESIS_HASH } from "./audit-chain";
 
@@ -48,7 +49,7 @@ export async function appendAudit(input: AuditEntryInput) {
     createdAt,
   });
 
-  return prisma.auditLog.create({
+  const row = await prisma.auditLog.create({
     data: {
       action: input.action,
       entity: input.entity,
@@ -62,6 +63,17 @@ export async function appendAudit(input: AuditEntryInput) {
       createdAt,
     },
   });
+
+  // Broadcast on the live bus so the Audit view + topbar status can
+  // refresh without polling. Fires once per append; consumers throttle
+  // on their end if needed.
+  emit("audit.append", {
+    hash,
+    action: input.action,
+    entity: input.entity,
+  });
+
+  return row;
 }
 
 /**

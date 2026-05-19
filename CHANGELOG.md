@@ -6,6 +6,37 @@ and the project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added - SSE live updates (Phase 9.3 / item 3 of 3, closes sprint)
+
+The dashboard now reflects monitor runs, attestation runs, and
+audit appends as they happen, without polling. Closes the Phase
+9.3 sprint and makes the marketing "live verification" claim
+literal.
+
+- **`src/lib/events/{types,emitter}.ts`** - five typed topics
+  (`monitor.run.{started,completed}`,
+  `attestation.run.{started,completed}`, `audit.append`) and a
+  process-singleton emitter on `globalThis` (HMR-safe). Wildcard
+  channel for catch-all subscribers. Single-process for now; the
+  SaaS lane will swap in Postgres LISTEN/NOTIFY without changing
+  the public surface.
+- **`GET /api/events`** - session-gated SSE endpoint with `?topics=`
+  filter, 25 s keep-alive comments, `X-Accel-Buffering: no` for
+  nginx, cleans up on the request's AbortSignal.
+- **`src/hooks/use-live-events.ts`** - EventSource wrapper with
+  exponential reconnect (1 s -> 30 s cap), topic filtering,
+  ref-stable callback handling, and a `connected` flag for UI.
+- **Producers wired**: `appendAudit()` emits `audit.append`;
+  `runOneMonitor()` emits started + completed; `runAttestation()`
+  emits started + completed (manual + scheduled paths produce
+  identical event streams).
+- **Consumers wired**: Monitors / Integrity / Audit views invalidate
+  their TanStack Query keys on the relevant events. Topbar gains a
+  small "live" pulse driven by the SSE connection state.
+- **Tests** - 5 cases for the emitter (typed delivery, wildcard,
+  topic isolation, unsubscribe, multi-subscriber). All 80 tests
+  across the suite pass.
+
 ### Added - cron-triggered attestations (Phase 9.3 / item 2 of 3)
 
 Closes the strongest gap in the chain-of-custody story: the
