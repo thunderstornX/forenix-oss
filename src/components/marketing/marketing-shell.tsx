@@ -3,162 +3,175 @@
 import Link from "next/link";
 
 /**
- * Marketing chrome — kept deliberately quiet so the page content
- * carries the weight. The previous version had an aurora-glow +
- * dotted-grid backdrop on every page; that read as a SaaS template.
- * This one drops both in favour of a single, off-axis beam that
- * sits behind the hero and fades out before the rest of the page,
- * plus very fine grain noise.
+ * Marketing surface chrome.
+ *
+ * The Court Document direction treats the landing page as a single
+ * printed legal/scholarly document. The chrome reads accordingly:
+ *
+ *   ── Document masthead: serif wordmark + section directory + version
+ *   ── A double rule under the masthead, the way a published opinion
+ *      sits beneath its caption
+ *   ── A faint margin rule down the left edge of the page (desktop),
+ *      the way a printed page has a binding gutter
+ *   ── Colophon footer: edition info, author, set in the same register
+ *      as the document itself
+ *
+ * No SaaS-y backdrop blur, no aurora beam, no pill nav. Everything
+ * the user sees should reinforce "this is a document, read it."
  */
-
 export function MarketingShell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="relative min-h-screen bg-[var(--background)] text-[var(--foreground)]">
-      <BackgroundLayer />
-      <MarketingNav />
-      <main className="relative">{children}</main>
-      <MarketingFooter />
+    <div className="cd-doc relative min-h-screen bg-[var(--bg)]">
+      <Masthead />
+      <main className="relative mx-auto max-w-[1080px] px-5 sm:px-8 lg:px-14">
+        <span aria-hidden className="cd-margin-rule" />
+        {children}
+      </main>
+      <Colophon />
     </div>
   );
 }
 
-function MarketingNav() {
+/* ─────────────────────────  MASTHEAD  ───────────────────────────── */
+
+function Masthead() {
   return (
-    <header className="sticky top-0 z-40 bg-[var(--background)]/75 backdrop-blur-xl">
-      <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-5">
-        <Link href="/" className="flex items-center gap-2 text-[14px] font-medium tracking-tight">
-          <Glyph />
-          <span className="font-[family-name:var(--font-sans)]">
-            forenix<span className="text-[var(--accent-strong)]">/</span>oss
-          </span>
-        </Link>
-        <nav className="hidden items-center gap-7 text-[13px] text-[var(--foreground-muted)] md:flex">
-          <a href="#chain"    className="transition hover:text-[var(--foreground)]">Chain</a>
-          <a href="#how"      className="transition hover:text-[var(--foreground)]">How it works</a>
-          <a href="#verify"   className="transition hover:text-[var(--foreground)]">Verify</a>
-          <a
-            href="https://github.com/thunderstornX/forenix-oss"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="transition hover:text-[var(--foreground)]"
-          >
-            Source
-          </a>
-        </nav>
-        <div className="flex items-center gap-2">
+    <header className="relative">
+      {/* a hair-thin top stripe gives the page a "printed top edge" */}
+      <div className="h-[3px] w-full bg-[var(--accent)]" />
+      <div className="mx-auto flex max-w-[1080px] flex-col gap-3 px-5 pt-7 pb-5 sm:px-8 sm:flex-row sm:items-end sm:justify-between sm:gap-6 lg:px-14">
+        {/* Wordmark — serif display, italic slash, all single weight */}
+        <div>
           <Link
-            href="/sign-in"
-            className="hidden rounded-md px-2.5 py-1.5 text-[13px] text-[var(--foreground-muted)] transition hover:text-[var(--foreground)] sm:inline-flex"
+            href="/"
+            className="block font-[family-name:var(--font-display)] text-[34px] leading-none tracking-tight text-[var(--fg-strong)] no-underline"
+            style={{ textDecoration: "none" }}
           >
-            Sign in
+            forenix
+            <span className="italic text-[var(--accent)]">/</span>
+            oss
           </Link>
-          <Link
-            href="/waitlist"
-            className="inline-flex items-center gap-1 rounded-md bg-[var(--foreground)] px-3 py-1.5 text-[13px] font-medium text-[var(--background)] transition hover:bg-[var(--foreground)]/90"
-          >
-            Join waitlist
-            <span aria-hidden className="ml-0.5">→</span>
-          </Link>
+          <div className="mt-1.5 cd-smallcaps text-[11px]">
+            an open-source instrument of evidence
+          </div>
         </div>
+
+        {/* Section directory + version — reads like a published opinion's
+            caption block. Section anchors map to §§ in the page. */}
+        <div className="flex flex-col items-start gap-2 sm:items-end">
+          <nav className="flex flex-wrap items-center gap-x-5 gap-y-1 font-[family-name:var(--font-body)] text-[14px] italic text-[var(--fg-muted)]">
+            <a href="#i"   className="no-underline hover:text-[var(--fg-strong)]">§I Chain</a>
+            <a href="#ii"  className="no-underline hover:text-[var(--fg-strong)]">§II Witness</a>
+            <a href="#iii" className="no-underline hover:text-[var(--fg-strong)]">§III Loop</a>
+            <a href="#iv"  className="no-underline hover:text-[var(--fg-strong)]">§IV Verifier</a>
+            <a href="#v"   className="no-underline hover:text-[var(--fg-strong)]">§V Admission</a>
+          </nav>
+          <div className="flex items-baseline gap-3 font-mono text-[11px] text-[var(--fg-muted)]">
+            <span>Vol. 0 · Ed. 4 · v0.4.0</span>
+            <span aria-hidden className="text-[var(--fg-faint)]">·</span>
+            <a
+              href="https://github.com/thunderstornX/forenix-oss"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="no-underline hover:text-[var(--fg-strong)]"
+            >
+              source ↗
+            </a>
+            <Link href="/sign-in" className="no-underline hover:text-[var(--fg-strong)]">
+              sign in
+            </Link>
+          </div>
+        </div>
+      </div>
+      {/* double rule under the masthead — the document begins here */}
+      <div className="mx-auto max-w-[1080px] px-5 sm:px-8 lg:px-14">
+        <hr className="cd-rule--double" />
       </div>
     </header>
   );
 }
 
-function MarketingFooter() {
-  return (
-    <footer className="relative mt-32">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6 pb-12">
-        {/* hairline rule with a single annotation, not a full border */}
-        <div className="relative">
-          <div className="h-px w-full bg-[var(--border)]" />
-          <span className="absolute -top-2 left-0 bg-[var(--background)] pr-3 font-mono text-[10px] tracking-[0.18em] text-[var(--foreground-muted)] uppercase">
-            ── ./eof
-          </span>
-        </div>
+/* ─────────────────────────  COLOPHON  ────────────────────────────── */
 
-        <div className="mt-8 flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-end">
-          <div className="max-w-md">
-            <Link href="/" className="flex items-center gap-2 text-[14px] font-medium">
-              <Glyph />
-              <span>forenix<span className="text-[var(--accent-strong)]">/</span>oss</span>
-            </Link>
-            <p className="mt-3 text-[12px] leading-relaxed text-[var(--foreground-muted)]">
-              Built in the open by{" "}
+function Colophon() {
+  const year = new Date().getFullYear();
+  return (
+    <footer className="relative mt-28 sm:mt-40">
+      <div className="mx-auto max-w-[1080px] px-5 sm:px-8 lg:px-14 pb-16">
+        <hr className="cd-rule--double" />
+        <div className="mt-10 grid gap-10 sm:grid-cols-[1.4fr_1fr_1fr]">
+          {/* Colophon prose — the way a printed edition closes */}
+          <div className="cd-prose max-w-none">
+            <div className="cd-smallcaps text-[12px]">colophon</div>
+            <p className="mt-3 font-[family-name:var(--font-body)] text-[15px] leading-[1.6] text-[var(--fg-muted)]">
+              Set in <em>Newsreader</em> and <em>Instrument Serif</em>,
+              with <span className="cd-mono">JetBrains Mono</span> for
+              the technical bench-work. Bound on Next.js, Prisma, and
+              Bun. Released under the MIT licence in the open at{" "}
+              <a
+                href="https://github.com/thunderstornX/forenix-oss"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                github.com/thunderstornX/forenix-oss
+              </a>
+              . No telemetry, no upsells.
+            </p>
+          </div>
+
+          {/* Edition info — short numbered set */}
+          <dl className="cd-set">
+            <dt>Edition</dt>
+            <dd>v0.4.0 · 2026</dd>
+            <dt>Licence</dt>
+            <dd>MIT</dd>
+            <dt>Maintainer</dt>
+            <dd>
               <a
                 href="https://github.com/thunderstornX"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[var(--foreground)] underline-offset-2 hover:underline"
+                className="no-underline hover:underline"
               >
-                Ali Murtaza Bhutto
+                AMB
               </a>
-              . MIT-licensed. No telemetry. No upsells.
-            </p>
-          </div>
+            </dd>
+            <dt>ORCID</dt>
+            <dd>0009-0007-2787-943X</dd>
+          </dl>
 
-          <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-[12px] text-[var(--foreground-muted)]">
-            <a href="https://demo.forenix.tech" target="_blank" rel="noopener noreferrer" className="hover:text-[var(--foreground)]">
-              Live demo
+          {/* Links — secondary, document-toned */}
+          <div className="flex flex-col gap-2 font-[family-name:var(--font-body)] text-[14px] italic text-[var(--fg-muted)]">
+            <a
+              href="https://demo.forenix.tech"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="no-underline hover:text-[var(--fg-strong)]"
+            >
+              the live demo →
             </a>
-            <a href="https://github.com/thunderstornX/forenix-oss" target="_blank" rel="noopener noreferrer" className="hover:text-[var(--foreground)]">
-              GitHub
+            <a
+              href="https://github.com/thunderstornX/forenix-oss/releases"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="no-underline hover:text-[var(--fg-strong)]"
+            >
+              releases →
             </a>
-            <a href="https://github.com/thunderstornX/forenix-oss/releases" target="_blank" rel="noopener noreferrer" className="hover:text-[var(--foreground)]">
-              Releases
-            </a>
-            <Link href="/waitlist" className="hover:text-[var(--foreground)]">Waitlist</Link>
+            <Link href="/waitlist" className="no-underline hover:text-[var(--fg-strong)]">
+              join the waitlist →
+            </Link>
+            <Link href="/sign-in" className="no-underline hover:text-[var(--fg-strong)]">
+              sign in →
+            </Link>
           </div>
         </div>
 
-        <div className="mt-6 font-mono text-[10px] text-[var(--fg-faint)]">
-          © {new Date().getFullYear()} · v0.4.0
+        <div className="mt-10 flex flex-wrap items-baseline justify-between gap-2 font-mono text-[10px] text-[var(--fg-faint)]">
+          <span>© {year} · forenix/oss</span>
+          <span aria-hidden>— end of document —</span>
         </div>
       </div>
     </footer>
-  );
-}
-
-function Glyph() {
-  return (
-    <span
-      aria-hidden
-      className="inline-flex h-6 w-6 items-center justify-center rounded-md bg-[var(--accent-strong)]/12 text-[var(--accent-strong)]"
-    >
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
-        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
-      </svg>
-    </span>
-  );
-}
-
-function BackgroundLayer() {
-  // One off-axis beam tucked above the hero, plus a hairline grain
-  // texture. Both fade out before the page content past the hero, so
-  // the marketing surface doesn't feel like every-other-SaaS.
-  return (
-    <div className="pointer-events-none absolute inset-x-0 top-0 z-0 h-[900px] overflow-hidden" aria-hidden>
-      {/* off-axis amber beam — single source, low opacity */}
-      <div
-        className="absolute -top-32 left-1/2 h-[700px] w-[1200px] -translate-x-1/2 rotate-[-6deg] opacity-[0.55]"
-        style={{
-          background:
-            "radial-gradient(ellipse 60% 40% at 35% 30%, color-mix(in oklch, var(--accent-strong) 22%, transparent), transparent 65%)",
-          maskImage:
-            "linear-gradient(to bottom, black 0%, black 60%, transparent 100%)",
-          WebkitMaskImage:
-            "linear-gradient(to bottom, black 0%, black 60%, transparent 100%)",
-        }}
-      />
-      {/* hairline grain — subtle but signals "hand-made" */}
-      <svg className="absolute inset-0 h-full w-full opacity-[0.04]" xmlns="http://www.w3.org/2000/svg">
-        <filter id="noise">
-          <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" stitchTiles="stitch" />
-          <feColorMatrix values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.6 0" />
-        </filter>
-        <rect width="100%" height="100%" filter="url(#noise)" />
-      </svg>
-    </div>
   );
 }

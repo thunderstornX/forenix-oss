@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { ArrowRight, CheckCircle2, Loader2 } from "lucide-react";
 
 type Role = "analyst" | "investigator" | "ciso" | "researcher" | "other";
 
@@ -18,15 +17,21 @@ interface Props {
   variant?: "compact" | "full";
   /** Optional source tag captured in the DB (utm-style). */
   source?: string;
-  /** Render style — "card" puts the form in an `fx-card`-style shell. */
+  /** Kept for back-compat with old call sites; ignored in the document
+   * register (we no longer differentiate card vs bare — the document
+   * layout supplies whitespace). */
   surface?: "card" | "bare";
 }
 
-export function WaitlistForm({
-  variant = "full",
-  source,
-  surface = "card",
-}: Props) {
+/**
+ * Waitlist form in the Court Document register.
+ *
+ * Reads as a one-page application: small-caps labels, underlined
+ * fill-in-the-blank inputs, a stamped italic primary button. On
+ * success it returns a "received" notice with the position number
+ * in mono.
+ */
+export function WaitlistForm({ variant = "full", source }: Props) {
   const [email, setEmail] = useState("");
   const [role, setRole] = useState<Role | "">("");
   const [useCase, setUseCase] = useState("");
@@ -74,43 +79,70 @@ export function WaitlistForm({
 
   if (done) {
     return (
-      <div
-        className={
-          surface === "card"
-            ? "rounded-xl border border-[var(--accent-strong)]/40 bg-[var(--accent-soft)] p-5"
-            : "rounded-xl border border-[var(--accent-strong)]/40 bg-transparent p-5"
-        }
-      >
-        <div className="flex items-start gap-3">
-          <CheckCircle2 className="h-5 w-5 mt-0.5 shrink-0 text-[var(--accent-strong)]" />
-          <div>
-            <div className="text-[14px] font-medium text-[var(--foreground)]">
-              You&apos;re on the list — position #{done.position}.
-            </div>
-            <div className="mt-1 text-[12px] text-[var(--foreground-muted)]">
-              Invites go out in small batches. In the meantime, the live demo is open:{" "}
-              <a
-                href="https://demo.forenix.tech"
-                className="text-[var(--accent-strong)] underline-offset-2 hover:underline"
-              >
-                demo.forenix.tech
-              </a>
-              .
-            </div>
-          </div>
+      <div className="border-y border-[var(--accent)] py-6">
+        <div className="cd-smallcaps text-[12px] text-[var(--accent)]">
+          application received
         </div>
+        <p className="mt-3 font-[family-name:var(--font-display)] text-[26px] leading-[1.15] text-[var(--fg-strong)]">
+          Position{" "}
+          <span className="cd-mono text-[22px] not-italic">
+            #{String(done.position).padStart(4, "0")}
+          </span>{" "}
+          on the docket.
+        </p>
+        <p className="mt-3 max-w-[40em] font-[family-name:var(--font-body)] text-[15px] leading-[1.55] text-[var(--fg-muted)]">
+          Invites go out in small batches. In the meantime, the full system
+          is live at{" "}
+          <a
+            href="https://demo.forenix.tech"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            demo.forenix.tech
+          </a>
+          .
+        </p>
       </div>
     );
   }
 
-  const wrap =
-    surface === "card"
-      ? "rounded-xl border border-[var(--border)] bg-[var(--background-elev)] p-5"
-      : "";
+  if (variant === "compact") {
+    // Inline single-row form for the masthead or sidebar uses.
+    return (
+      <form onSubmit={submit} className="flex flex-col gap-3 sm:flex-row sm:items-end">
+        <label className="cd-field flex-1 !my-0">
+          <span className="cd-field__label">your email</span>
+          <input
+            type="email"
+            required
+            autoComplete="email"
+            placeholder="you@work.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="cd-field__input"
+          />
+        </label>
+        <button
+          type="submit"
+          disabled={loading}
+          className="cd-btn no-underline disabled:opacity-60"
+        >
+          {loading ? "filing…" : "file"} <span aria-hidden>→</span>
+        </button>
+        {error && (
+          <div className="mt-2 w-full text-[13px] text-[var(--danger)] sm:mt-0">
+            {error}
+          </div>
+        )}
+      </form>
+    );
+  }
 
+  // FULL variant — three-field document form.
   return (
-    <form onSubmit={submit} className={wrap}>
-      <div className={variant === "compact" ? "flex flex-col gap-2 sm:flex-row" : "space-y-3"}>
+    <form onSubmit={submit}>
+      <label className="cd-field">
+        <span className="cd-field__label">your email</span>
         <input
           type="email"
           required
@@ -118,52 +150,55 @@ export function WaitlistForm({
           placeholder="you@work.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="flex-1 rounded-md border border-[var(--border-strong)] bg-[var(--background)] px-3 py-2.5 text-[14px] text-[var(--foreground)] placeholder:text-[var(--fg-faint)] focus:border-[var(--accent-strong)] focus:outline-none"
+          className="cd-field__input"
         />
-        {variant === "full" && (
-          <>
-            <select
-              value={role}
-              onChange={(e) => setRole(e.target.value as Role | "")}
-              className="rounded-md border border-[var(--border-strong)] bg-[var(--background)] px-3 py-2.5 text-[14px] text-[var(--foreground)]"
-            >
-              <option value="">What best describes you?</option>
-              {ROLES.map((r) => (
-                <option key={r.value} value={r.value}>
-                  {r.label}
-                </option>
-              ))}
-            </select>
-            <textarea
-              rows={3}
-              maxLength={500}
-              placeholder="What would you use forenix-oss for? (optional)"
-              value={useCase}
-              onChange={(e) => setUseCase(e.target.value)}
-              className="rounded-md border border-[var(--border-strong)] bg-[var(--background)] px-3 py-2.5 text-[13px] text-[var(--foreground)] placeholder:text-[var(--fg-faint)] focus:border-[var(--accent-strong)] focus:outline-none"
-            />
-          </>
-        )}
+      </label>
+
+      <label className="cd-field">
+        <span className="cd-field__label">your role</span>
+        <select
+          value={role}
+          onChange={(e) => setRole(e.target.value as Role | "")}
+          className="cd-field__select"
+        >
+          <option value="">how would you describe what you do</option>
+          {ROLES.map((r) => (
+            <option key={r.value} value={r.value}>
+              {r.label}
+            </option>
+          ))}
+        </select>
+      </label>
+
+      <label className="cd-field">
+        <span className="cd-field__label">the case you would bring</span>
+        <textarea
+          rows={3}
+          maxLength={500}
+          placeholder="a sentence or two on the investigation you would run through forenix"
+          value={useCase}
+          onChange={(e) => setUseCase(e.target.value)}
+          className="cd-field__textarea"
+        />
+      </label>
+
+      <div className="mt-7 flex flex-wrap items-center gap-4">
         <button
           type="submit"
           disabled={loading}
-          className="inline-flex items-center justify-center gap-1.5 rounded-md bg-[var(--accent)] px-4 py-2.5 text-[13px] font-medium text-[var(--fg-on-accent)] transition hover:bg-[var(--accent-hover)] disabled:opacity-60 sm:whitespace-nowrap"
+          className="cd-btn no-underline disabled:opacity-60"
         >
-          {loading ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
-          ) : (
-            <>
-              Join waitlist <ArrowRight className="h-3.5 w-3.5" />
-            </>
-          )}
+          {loading ? "filing…" : "file application"}
+          <span aria-hidden>→</span>
         </button>
+        <span className="font-[family-name:var(--font-body)] text-[13px] italic text-[var(--fg-muted)]">
+          we only write to you about forenix; no shared lists.
+        </span>
       </div>
+
       {error && (
-        <div className="mt-3 text-[12px] text-[var(--danger)]">{error}</div>
-      )}
-      {variant === "full" && (
-        <div className="mt-3 text-[11px] text-[var(--foreground-muted)]">
-          We&apos;ll only email you about forenix-oss. No newsletters, no shared lists.
+        <div className="mt-4 border-l-2 border-[var(--danger)] pl-3 text-[13px] text-[var(--danger)]">
+          {error}
         </div>
       )}
     </form>

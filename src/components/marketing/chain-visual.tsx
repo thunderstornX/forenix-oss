@@ -48,15 +48,7 @@ export function ChainVisual() {
 
   return (
     <div className="relative w-full">
-      {/* a tiny editorial label sitting OFF the top-left of the card */}
-      <span
-        className="absolute -top-2 left-3 z-10 select-none rounded-sm border border-[var(--border)] bg-[var(--background)] px-1.5 py-0.5 font-mono text-[9px] tracking-[0.18em] text-[var(--foreground-muted)] uppercase"
-        aria-hidden
-      >
-        verify.sh
-      </span>
-
-      <div className="overflow-hidden rounded-md border border-[var(--border)] bg-[#0b0d10] shadow-[0_40px_100px_-40px_rgba(0,0,0,0.85),0_0_0_1px_color-mix(in_oklch,var(--accent-strong)_15%,transparent)]">
+      <div className="overflow-hidden rounded-sm border border-[var(--border-strong)] bg-[#0b0d10] shadow-[0_24px_60px_-28px_color-mix(in_oklch,var(--fg)_45%,transparent),0_0_0_1px_color-mix(in_oklch,var(--accent)_12%,transparent)]">
         {/* chrome */}
         <div className="flex items-center justify-between border-b border-white/[0.05] px-3 py-2">
           <div className="flex items-center gap-1.5">
@@ -85,22 +77,6 @@ export function ChainVisual() {
         </div>
       </div>
 
-      {/* slightly off-grid hand-drawn annotation */}
-      {step >= LINES.length && (
-        <motion.div
-          initial={{ opacity: 0, x: -4 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.1 }}
-          className="absolute -bottom-7 right-1 flex items-center gap-1 text-[10px] italic text-[var(--accent-strong)]"
-          style={{ transform: "rotate(-1.5deg)" }}
-        >
-          <svg width="28" height="14" viewBox="0 0 28 14" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round">
-            <path d="M2 8 C 10 1, 18 1, 24 7" />
-            <path d="M21 4 L 24 7 L 21 9" />
-          </svg>
-          <span>three independent witnesses agree</span>
-        </motion.div>
-      )}
     </div>
   );
 }

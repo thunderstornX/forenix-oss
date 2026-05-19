@@ -12,11 +12,10 @@ import { motion } from "framer-motion";
 export function RekorArtefact() {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 8 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.4 }}
-      transition={{ duration: 0.4 }}
-      className="relative overflow-hidden rounded-md border border-[var(--border)] bg-[#0b0d10] text-[12px] shadow-[0_30px_80px_-30px_rgba(0,0,0,0.65)]"
+      initial={{ opacity: 0, y: 6 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.35 }}
+      className="relative overflow-hidden rounded-sm border border-[var(--border-strong)] bg-[#0b0d10] text-[12px] shadow-[0_24px_60px_-28px_color-mix(in_oklch,var(--fg)_45%,transparent)]"
     >
       <div className="flex items-center justify-between border-b border-white/[0.05] px-3 py-2 font-mono text-[10px]">
         <span className="flex items-center gap-1.5 text-white/55">
@@ -61,11 +60,10 @@ export function ToolLoopArtefact() {
   ];
   return (
     <motion.div
-      initial={{ opacity: 0, y: 8 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.4 }}
-      transition={{ duration: 0.4 }}
-      className="relative overflow-hidden rounded-md border border-[var(--border)] bg-[#0b0d10] shadow-[0_30px_80px_-30px_rgba(0,0,0,0.65)]"
+      initial={{ opacity: 0, y: 6 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.35 }}
+      className="relative overflow-hidden rounded-sm border border-[var(--border-strong)] bg-[#0b0d10] shadow-[0_24px_60px_-28px_color-mix(in_oklch,var(--fg)_45%,transparent)]"
     >
       <div className="flex items-center justify-between border-b border-white/[0.05] px-3 py-2 font-mono text-[10px]">
         <span className="text-white/55">tool-loop · run-2487 · openrouter / openai-gpt-oss-120b</span>
@@ -78,8 +76,7 @@ export function ToolLoopArtefact() {
           <motion.li
             key={t.name}
             initial={{ opacity: 0, x: -4 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
+            animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.08 * i, duration: 0.3 }}
             className="flex items-baseline gap-3 px-4 py-2"
           >
@@ -103,11 +100,10 @@ export function ToolLoopArtefact() {
 export function VerifierArtefact() {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 8 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.4 }}
-      transition={{ duration: 0.4 }}
-      className="relative overflow-hidden rounded-md border border-[var(--border)] bg-[#0b0d10] shadow-[0_30px_80px_-30px_rgba(0,0,0,0.65)]"
+      initial={{ opacity: 0, y: 6 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.35 }}
+      className="relative overflow-hidden rounded-sm border border-[var(--border-strong)] bg-[#0b0d10] shadow-[0_24px_60px_-28px_color-mix(in_oklch,var(--fg)_45%,transparent)]"
     >
       <div className="flex items-center justify-between border-b border-white/[0.05] px-3 py-2 font-mono text-[10px]">
         <span className="text-white/55">verify-chain.py</span>

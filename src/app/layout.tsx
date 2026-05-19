@@ -18,8 +18,8 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      data-theme="dark"
-      data-accent="amber"
+      data-theme="light"
+      data-accent="court"
       data-density="standard"
       suppressHydrationWarning
     >

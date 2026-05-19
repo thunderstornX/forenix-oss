@@ -2,7 +2,7 @@
    Tailwind's downstream bundling can't inject rules above them.
    Instrument Serif is added for the marketing surface's display
    headings; the authed app keeps Inter throughout. */
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=JetBrains+Mono:wght@400;500;600&display=swap");
 @import "tailwindcss";
 
 /* =====================================================================
@@ -18,6 +18,10 @@
   --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
   --font-display: "Instrument Serif", "Cambria", "Georgia", serif;
+  /* Body serif for the marketing surface — distinct from --font-sans
+     (Inter) so the authed dashboard stays sans-serif while the document
+     surface stays in serif end-to-end. */
+  --font-body: "Newsreader", "Hoefler Text", "Georgia", serif;
 
   --fs-3xs: 10px;
   --fs-2xs: 11px;
@@ -89,24 +93,29 @@
 }
 
 /* ── light theme ────────────────────────────────────────────────────── */
+/* The cool blue-grey 250 hue used to anchor light mode reads as "SaaS
+   dashboard". The Court Document direction wants warmth — parchment,
+   ink, hand-set page. Hues nudge to 60-80 (cream/wheat) for surfaces
+   and 35 (warm graphite) for ink; chroma stays low so the page never
+   feels coloured, just *warm*. */
 [data-theme="light"] {
-  --bg:           oklch(0.985 0.002 250);
-  --bg-elev:      oklch(1 0 0);
-  --bg-sunken:    oklch(0.965 0.004 250);
-  --bg-subtle:    oklch(0.955 0.005 250);
-  --bg-hover:     oklch(0.95 0.006 250);
-  --bg-active:    oklch(0.93 0.008 250);
+  --bg:           oklch(0.965 0.014 80);
+  --bg-elev:      oklch(0.985 0.010 80);
+  --bg-sunken:    oklch(0.945 0.018 75);
+  --bg-subtle:    oklch(0.935 0.020 75);
+  --bg-hover:     oklch(0.925 0.022 75);
+  --bg-active:    oklch(0.905 0.024 70);
 
-  --border:       oklch(0.91 0.005 250);
-  --border-strong:oklch(0.84 0.008 250);
+  --border:       oklch(0.87 0.018 70);
+  --border-strong:oklch(0.78 0.022 60);
   --border-focus: var(--accent);
 
-  --fg:           oklch(0.18 0.012 250);
-  --fg-strong:    oklch(0.12 0.014 250);
-  --fg-muted:     oklch(0.47 0.012 250);
-  --fg-subtle:    oklch(0.6 0.01 250);
-  --fg-faint:     oklch(0.72 0.008 250);
-  --fg-on-accent: oklch(1 0 0);
+  --fg:           oklch(0.18 0.018 35);
+  --fg-strong:    oklch(0.12 0.020 35);
+  --fg-muted:     oklch(0.42 0.018 35);
+  --fg-subtle:    oklch(0.55 0.014 40);
+  --fg-faint:     oklch(0.68 0.012 50);
+  --fg-on-accent: oklch(0.985 0.010 80);
 
   --success:      oklch(0.5 0.13 150);
   --success-bg:   oklch(0.95 0.04 150);
@@ -128,24 +137,28 @@
 }
 
 /* ── dark theme ─────────────────────────────────────────────────────── */
+/* Dark mode shifts to warm dark slate (think midnight reading room with
+   a brass lamp) — same warmth axis as light, just inverted in lightness.
+   Authed app surfaces still look correct because the only thing that
+   changes is the hue of the neutral, not the relative contrast. */
 [data-theme="dark"] {
-  --bg:           oklch(0.155 0.006 250);
-  --bg-elev:      oklch(0.195 0.007 250);
-  --bg-sunken:    oklch(0.13 0.006 250);
-  --bg-subtle:    oklch(0.22 0.007 250);
-  --bg-hover:     oklch(0.24 0.008 250);
-  --bg-active:    oklch(0.27 0.009 250);
+  --bg:           oklch(0.155 0.010 35);
+  --bg-elev:      oklch(0.195 0.012 35);
+  --bg-sunken:    oklch(0.13 0.010 35);
+  --bg-subtle:    oklch(0.22 0.012 35);
+  --bg-hover:     oklch(0.24 0.013 35);
+  --bg-active:    oklch(0.27 0.014 35);
 
-  --border:       oklch(0.28 0.008 250);
-  --border-strong:oklch(0.36 0.01 250);
+  --border:       oklch(0.28 0.012 40);
+  --border-strong:oklch(0.36 0.014 45);
   --border-focus: var(--accent);
 
-  --fg:           oklch(0.96 0.003 250);
-  --fg-strong:    oklch(1 0 0);
-  --fg-muted:     oklch(0.7 0.008 250);
-  --fg-subtle:    oklch(0.56 0.008 250);
-  --fg-faint:     oklch(0.42 0.008 250);
-  --fg-on-accent: oklch(0.13 0.005 250);
+  --fg:           oklch(0.95 0.012 80);
+  --fg-strong:    oklch(0.99 0.008 80);
+  --fg-muted:     oklch(0.7 0.012 80);
+  --fg-subtle:    oklch(0.56 0.014 75);
+  --fg-faint:     oklch(0.42 0.014 70);
+  --fg-on-accent: oklch(0.14 0.012 35);
 
   --success:      oklch(0.78 0.14 150);
   --success-bg:   oklch(0.28 0.05 150);
@@ -166,15 +179,32 @@
   --scrim:     oklch(0 0 0 / 0.6);
 }
 
-/* ── accent: emerald (forensic green, default) ─────────────────────── */
-[data-accent="emerald"][data-theme="light"], [data-theme="light"]:not([data-accent]) {
+/* ── accent: court (oxblood / brass — the document default) ────────── */
+[data-accent="court"][data-theme="light"], [data-theme="light"]:not([data-accent]) {
+  --accent:        oklch(0.38 0.13 28);
+  --accent-hover:  oklch(0.32 0.14 28);
+  --accent-soft:   oklch(0.92 0.04 35);
+  --accent-soft-border: oklch(0.80 0.08 30);
+  --accent-fg-on-soft:  oklch(0.28 0.13 28);
+}
+[data-accent="court"][data-theme="dark"], [data-theme="dark"]:not([data-accent]) {
+  --accent:        oklch(0.78 0.12 60);
+  --accent-hover:  oklch(0.84 0.13 60);
+  --accent-soft:   oklch(0.28 0.06 55);
+  --accent-soft-border: oklch(0.42 0.10 55);
+  --accent-fg-on-soft:  oklch(0.86 0.12 60);
+  --fg-on-accent: oklch(0.14 0.012 35);
+}
+
+/* ── accent: emerald (forensic green) ──────────────────────────────── */
+[data-accent="emerald"][data-theme="light"] {
   --accent:        oklch(0.45 0.1 165);
   --accent-hover:  oklch(0.4 0.11 165);
   --accent-soft:   oklch(0.94 0.04 165);
   --accent-soft-border: oklch(0.82 0.08 165);
   --accent-fg-on-soft:  oklch(0.34 0.1 165);
 }
-[data-accent="emerald"][data-theme="dark"], [data-theme="dark"]:not([data-accent]) {
+[data-accent="emerald"][data-theme="dark"] {
   --accent:        oklch(0.75 0.12 165);
   --accent-hover:  oklch(0.82 0.13 165);
   --accent-soft:   oklch(0.28 0.05 165);
@@ -803,6 +833,384 @@ a { color: inherit; text-decoration: none; }
   color: var(--fg-muted);
 }
 
+/* =====================================================================
+   Court Document primitives  -  cd-*
+   ---------------------------------------------------------------------
+   The marketing surface is set as a single legal-style document: serif
+   body, numbered sections, drop caps, marginalia, footnotes, hairline
+   rules. Scoped under .cd-doc so none of this leaks into /app or any
+   other dashboard surface.
+   ===================================================================== */
+
+.cd-doc {
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.62;
+  color: var(--fg);
+  font-feature-settings: "kern", "liga", "onum", "pnum";
+  text-rendering: optimizeLegibility;
+}
+.cd-doc p { margin: 0 0 1.05em; }
+.cd-doc p + p { text-indent: 1.6em; }
+.cd-doc strong { font-weight: 600; color: var(--fg-strong); }
+.cd-doc em { font-style: italic; }
+.cd-doc a {
+  color: var(--fg-strong);
+  text-decoration: underline;
+  text-decoration-thickness: 0.04em;
+  text-underline-offset: 0.18em;
+  text-decoration-color: color-mix(in oklch, var(--accent) 55%, transparent);
+}
+.cd-doc a:hover { text-decoration-color: var(--accent); }
+
+/* Drop cap — opens a section in a printed-page register. The first
+   word's first letter rises to display size, sits flush against the
+   paragraph, with the rest of the first line wrapping around it. */
+.cd-dropcap::first-letter {
+  font-family: var(--font-display);
+  font-size: 4.4em;
+  line-height: 0.88;
+  float: left;
+  padding: 0.08em 0.12em 0 0;
+  margin: 0.04em 0.08em -0.1em 0;
+  color: var(--accent);
+  font-weight: 400;
+  font-style: normal;
+}
+
+/* Small caps — for labels, footnote attributions, section eyebrows */
+.cd-smallcaps {
+  font-variant: all-small-caps;
+  letter-spacing: 0.10em;
+  font-weight: 500;
+  color: var(--fg-muted);
+}
+
+/* Hairline rule — single line across the column, paper-thin */
+.cd-rule {
+  border: 0;
+  height: 1px;
+  background: var(--border-strong);
+  margin: 0;
+}
+/* Double rule — for exhibits + section breaks */
+.cd-rule--double {
+  height: 4px;
+  background: transparent;
+  border-top: 1px solid var(--border-strong);
+  border-bottom: 1px solid var(--border-strong);
+}
+
+/* Centered ornament — a small mark between sections (§, ❦, ◆) */
+.cd-ornament {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  color: var(--fg-faint);
+  font-family: var(--font-display);
+  font-size: 18px;
+  line-height: 1;
+}
+.cd-ornament::before, .cd-ornament::after {
+  content: "";
+  flex: 1;
+  max-width: 80px;
+  height: 1px;
+  background: var(--border);
+}
+
+/* Section number — Roman numeral / § / article marker */
+.cd-section__num {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-style: italic;
+  color: var(--accent);
+  letter-spacing: 0.04em;
+}
+
+/* Section title — serif display, restrained */
+.cd-section__title {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(28px, 4vw, 44px);
+  line-height: 1.08;
+  letter-spacing: -0.005em;
+  color: var(--fg-strong);
+  margin: 6px 0 0;
+}
+
+/* Body prose column inside a section — narrower than the document
+   frame, so the reading measure stays comfortable (~62 characters). */
+.cd-prose {
+  max-width: 30em;
+}
+
+/* Marginalia — italic side notes that sit in the left margin on
+   desktop and inline (italic + indent) on smaller screens. */
+.cd-margin {
+  font-family: var(--font-body);
+  font-style: italic;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--fg-muted);
+}
+@media (min-width: 1024px) {
+  .cd-margin-col {
+    display: grid;
+    grid-template-columns: 12em 1fr;
+    gap: 36px;
+  }
+  .cd-margin-col > .cd-margin {
+    padding-top: 0.4em;
+    text-align: right;
+    border-right: 1px solid var(--border);
+    padding-right: 18px;
+  }
+}
+
+/* Footnote markers — superscript Roman numeral or digit */
+.cd-fn {
+  font-family: var(--font-display);
+  font-size: 0.62em;
+  vertical-align: super;
+  line-height: 0;
+  color: var(--accent);
+  font-style: italic;
+  margin: 0 0.06em 0 0.04em;
+}
+.cd-fn-list {
+  list-style: none;
+  padding: 0;
+  margin: 24px 0 0;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--fg-muted);
+  counter-reset: fn;
+}
+.cd-fn-list li {
+  position: relative;
+  padding-left: 1.6em;
+  margin-bottom: 0.5em;
+  text-indent: 0;
+}
+.cd-fn-list li::before {
+  counter-increment: fn;
+  content: counter(fn, lower-roman) ".";
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-family: var(--font-display);
+  font-style: italic;
+  color: var(--accent);
+  width: 1.4em;
+  text-align: right;
+}
+
+/* Exhibit — frame for an embedded product artefact. Double rule top
+   and bottom, small-caps caption above, italic source below. The art
+   inside keeps its own visual identity (often a dark terminal) — the
+   frame is the document context wrapping it. */
+.cd-exhibit {
+  margin: 28px 0;
+}
+.cd-exhibit__cap {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 4px 0;
+  font-family: var(--font-body);
+  font-style: italic;
+  font-size: 13px;
+  color: var(--fg-muted);
+  border-top: 1px solid var(--border-strong);
+  border-bottom: 1px solid var(--border-strong);
+}
+.cd-exhibit__label {
+  font-style: normal;
+  font-variant: all-small-caps;
+  letter-spacing: 0.10em;
+  color: var(--fg);
+  font-weight: 500;
+}
+.cd-exhibit__source {
+  font-family: var(--font-mono);
+  font-style: normal;
+  font-size: 11px;
+  color: var(--fg-faint);
+  letter-spacing: 0.02em;
+}
+.cd-exhibit__art {
+  margin-top: 14px;
+}
+
+/* Document margin rule — a thin vertical line at the left edge of
+   the marketing page, like a printed-page binding margin. Disabled on
+   mobile to save space. */
+.cd-margin-rule {
+  display: none;
+}
+@media (min-width: 1024px) {
+  .cd-margin-rule {
+    display: block;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 1px;
+    background: var(--border);
+    opacity: 0.6;
+  }
+}
+
+/* Pull quote — large display serif, indented, for the §IV centerpiece */
+.cd-pull {
+  font-family: var(--font-display);
+  font-size: clamp(26px, 3.4vw, 38px);
+  font-weight: 400;
+  line-height: 1.22;
+  color: var(--fg-strong);
+  letter-spacing: -0.005em;
+}
+.cd-pull em { color: var(--accent); }
+
+/* Numeric set — small column of label + value for the colophon */
+.cd-set {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 4px 20px;
+  font-size: 13px;
+}
+.cd-set dt {
+  font-variant: all-small-caps;
+  letter-spacing: 0.10em;
+  color: var(--fg-faint);
+  font-weight: 500;
+}
+.cd-set dd {
+  margin: 0;
+  color: var(--fg);
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+
+/* Stamp — for the "v0.4.0" / "SEALED" markers, slight rotation, no fill */
+.cd-stamp {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 9px;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: var(--accent);
+  border: 1px solid currentColor;
+  border-radius: 2px;
+  transform: rotate(-2deg);
+  background: transparent;
+}
+
+/* Underlined fill-in-the-blank input — for the waitlist / sign-in
+   form fields. Reads like a legal form rather than a SaaS UI. */
+.cd-field {
+  position: relative;
+  display: block;
+  margin: 22px 0;
+}
+.cd-field__label {
+  display: block;
+  font-variant: all-small-caps;
+  letter-spacing: 0.10em;
+  font-size: 12px;
+  color: var(--fg-muted);
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+.cd-field__input,
+.cd-field__select,
+.cd-field__textarea {
+  width: 100%;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--border-strong);
+  border-radius: 0;
+  padding: 6px 0 8px;
+  font-family: var(--font-body);
+  font-size: 16px;
+  color: var(--fg-strong);
+  outline: 0;
+  transition: border-color var(--dur) var(--ease);
+}
+.cd-field__textarea { resize: vertical; min-height: 64px; line-height: 1.5; }
+.cd-field__input::placeholder,
+.cd-field__textarea::placeholder {
+  color: var(--fg-faint);
+  font-style: italic;
+}
+.cd-field__input:focus,
+.cd-field__select:focus,
+.cd-field__textarea:focus {
+  border-bottom-color: var(--accent);
+  box-shadow: 0 1px 0 0 var(--accent);
+}
+.cd-field__select {
+  appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, var(--fg-muted) 50%),
+                    linear-gradient(135deg, var(--fg-muted) 50%, transparent 50%);
+  background-position: calc(100% - 12px) 50%, calc(100% - 6px) 50%;
+  background-size: 6px 6px;
+  background-repeat: no-repeat;
+  padding-right: 24px;
+}
+
+/* Stamped primary button — for "File application" / "Petition entry" */
+.cd-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 11px 22px;
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-style: italic;
+  color: var(--fg-on-accent);
+  background: var(--accent);
+  border: 0;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: background var(--dur) var(--ease), transform var(--dur) var(--ease);
+}
+.cd-btn:hover { background: var(--accent-hover); transform: translateY(-1px); }
+.cd-btn:active { transform: translateY(0); }
+.cd-btn--ghost {
+  background: transparent;
+  color: var(--fg-strong);
+  border: 1px solid var(--border-strong);
+  font-style: normal;
+  font-family: var(--font-body);
+  font-size: 15px;
+  padding: 10px 18px;
+}
+.cd-btn--ghost:hover { background: var(--bg-hover); border-color: var(--fg-faint); }
+
+/* Mono inline accent — for case numbers, hashes, anywhere we want a
+   typewritten texture inside running serif copy. */
+.cd-mono {
+  font-family: var(--font-mono);
+  font-size: 0.86em;
+  color: var(--fg-muted);
+  font-feature-settings: "tnum";
+}
+
+@media print {
+  .cd-doc { background: white; color: black; }
+}
+
+/* Tailwind 4 @theme directive — kept at the very end so that any
+   custom CSS placed above it is processed normally. Earlier placement
+   caused everything below the block to be stripped from the build. */
 @theme inline {
   --color-background: var(--bg);
   --color-background-elev: var(--bg-elev);

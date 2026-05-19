@@ -1,85 +1,90 @@
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
 
 import { MarketingShell } from "@/components/marketing/marketing-shell";
 import { WaitlistForm } from "@/components/marketing/waitlist-form";
 
 export const metadata = {
-  title: "Join the waitlist — forenix-oss",
+  title: "Petition for entry — forenix/oss",
   description:
-    "Get early access to forenix-oss. We send invites in small batches to analysts, investigators, and security teams who want to try the full workflow against a real case.",
+    "Apply for the hosted edition of forenix-oss. Invites go out in small batches to analysts, investigators, and security teams who want to run the full workflow against a real case.",
 };
 
 export default function WaitlistPage() {
   return (
     <MarketingShell>
-      <section className="relative mx-auto max-w-2xl px-4 pt-20 pb-16 sm:px-6 sm:pt-28">
-        <Link
-          href="/"
-          className="inline-flex items-center gap-1.5 text-[12px] text-[var(--foreground-muted)] hover:text-[var(--foreground)]"
-        >
-          <ArrowLeft className="h-3.5 w-3.5" />
-          Back home
-        </Link>
-        <h1 className="mt-6 text-balance font-[family-name:var(--font-display)] text-[44px] font-normal leading-[1.1] tracking-[-0.01em] text-[var(--foreground)] sm:text-[56px]">
-          Join the <span className="italic text-[var(--accent-strong)]">forenix/oss</span> waitlist.
-        </h1>
-        <p className="mt-5 font-mono text-[13px] leading-relaxed text-[var(--foreground-muted)] sm:text-[14px]">
-          small batches. real invites. no waitlist drip campaigns.
-        </p>
-        <p className="mt-4 text-[14px] leading-relaxed text-[var(--foreground-muted)]">
-          Tell us a little about yourself and the case you&apos;d like to run through it.
-          That&apos;s how we prioritise.
-        </p>
-        <div className="mt-8">
+      <section className="pt-12 pb-16 sm:pt-20">
+        <div className="flex items-baseline justify-between gap-4">
+          <Link
+            href="/"
+            className="cd-smallcaps text-[12px] no-underline hover:text-[var(--fg-strong)]"
+          >
+            ← return to the document
+          </Link>
+          <span className="cd-smallcaps text-[12px]">art. 5.1</span>
+        </div>
+
+        <div className="mt-10 cd-margin-col">
+          <aside className="cd-margin">
+            <span className="cd-section__num">§ V.</span>{" "}
+            <em>Of admission.</em>
+            <br />
+            <span className="cd-mono not-italic text-[11px]">art. 5.1</span>
+          </aside>
+
+          <div className="cd-prose">
+            <h1 className="cd-section__title">
+              Petition for entry to the hosted edition.
+            </h1>
+
+            <p className="cd-dropcap mt-7">
+              The hosted edition of <em>forenix/oss</em> opens in small
+              batches, each one matched to the analysts, investigators, and
+              security teams who have a real case to put through the
+              workflow. Tell us a little about yours; that is how we
+              prioritise. The source remains MIT-licensed and self-hostable
+              from the first commit, with no waiting required.
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-10 max-w-[42em]">
           <WaitlistForm variant="full" source="waitlist-page" />
         </div>
 
-        <ul className="mt-10 space-y-3 text-[13px] text-[var(--foreground-muted)]">
-          <Bullet>
-            <strong className="text-[var(--foreground)]">Already have access?</strong>{" "}
-            <Link href="/sign-in" className="text-[var(--accent-strong)] hover:underline">
-              Sign in
-            </Link>{" "}
-            to your team workspace.
-          </Bullet>
-          <Bullet>
-            <strong className="text-[var(--foreground)]">Want to look around first?</strong>{" "}
+        <hr className="cd-rule mt-16" />
+
+        <div className="cd-smallcaps mt-6 text-[12px]">also of note</div>
+        <ul className="cd-fn-list">
+          <li>
+            <strong>Already an admitted party?</strong>{" "}
+            <Link href="/sign-in">Sign in</Link> to your team workspace.
+          </li>
+          <li>
+            <strong>Wish to read first?</strong>{" "}
             The full feature set is live at{" "}
             <a
               href="https://demo.forenix.tech"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[var(--accent-strong)] hover:underline"
             >
               demo.forenix.tech
             </a>
             .
-          </Bullet>
-          <Bullet>
-            <strong className="text-[var(--foreground)]">Self-hosting?</strong>{" "}
+          </li>
+          <li>
+            <strong>Self-hosting?</strong>{" "}
             The source is MIT-licensed at{" "}
             <a
               href="https://github.com/thunderstornX/forenix-oss"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[var(--accent-strong)] hover:underline"
             >
               github.com/thunderstornX/forenix-oss
             </a>
-            .
-          </Bullet>
+            . Clone and run; no application needed.
+          </li>
         </ul>
       </section>
     </MarketingShell>
-  );
-}
-
-function Bullet({ children }: { children: React.ReactNode }) {
-  return (
-    <li className="flex items-start gap-2.5">
-      <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-[var(--accent-strong)]" />
-      <span>{children}</span>
-    </li>
   );
 }

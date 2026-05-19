@@ -107,6 +107,24 @@ Full tour with screenshots: [`docs/FEATURES.md`](docs/FEATURES.md).
 
 ---
 
+## The landing surface
+
+The marketing surface at [forenix.tech](https://forenix.tech) is set as a single legal-style document: numbered sections, drop caps, marginalia, footnotes, exhibits, the chain-of-custody verifier as a live read-out. Light and dark variants.
+
+<p align="center">
+  <a href="docs/manual_screenshots/marketing-landing-light.png"><img src="docs/manual_screenshots/marketing-landing-light.png" alt="forenix/oss landing surface, light mode" width="49%"/></a>
+  <a href="docs/manual_screenshots/marketing-landing-dark.png"><img src="docs/manual_screenshots/marketing-landing-dark.png" alt="forenix/oss landing surface, dark mode" width="49%"/></a>
+</p>
+
+The petition form (waitlist) and admitted-party sign-in are set in the same register:
+
+<p align="center">
+  <a href="docs/manual_screenshots/marketing-waitlist.png"><img src="docs/manual_screenshots/marketing-waitlist.png" alt="Petition for entry — waitlist" width="49%"/></a>
+  <a href="docs/manual_screenshots/marketing-sign-in.png"><img src="docs/manual_screenshots/marketing-sign-in.png" alt="Sign in" width="32%"/></a>
+</p>
+
+---
+
 ## Quick start
 
 ```bash

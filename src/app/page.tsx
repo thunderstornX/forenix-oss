@@ -12,344 +12,357 @@ import { WaitlistForm } from "@/components/marketing/waitlist-form";
 export const metadata = {
   title: "forenix/oss — court-admissible OSINT, from the first finding",
   description:
-    "Open-source platform that bridges public-source leads to chain-of-custody evidence. SHA-256-chained audit log, real Git per case, 20 OSS OSINT tools, witnessed on Sigstore Rekor. MIT licensed.",
+    "An open-source platform that bridges public-source leads to chain-of-custody evidence. SHA-256-chained audit log, real Git per case, twenty OSS tools, witnessed on Sigstore Rekor. MIT-licensed.",
 };
+
+/* ─────────────────────────────────────────────────────────────────
+   The landing page is set as a single document. Preamble → §I–§V →
+   footnotes. Drop cap on §I. Ornamental rules between sections.
+   Marginalia in the desktop left-margin where a claim needs an
+   aside. Footnote markers tie technical claims to a closing list.
+   ────────────────────────────────────────────────────────────────── */
 
 export default function LandingPage() {
   return (
     <MarketingShell>
-      <Hero />
-      <Capabilities />
-      <ChainShelf />
-      <ToolsShelf />
-      <AttestShelf />
-      <VerifyMoment />
-      <StackLine />
-      <FinalInvite />
+      <Preamble />
+      <SectionI />
+      <Ornament />
+      <SectionII />
+      <Ornament />
+      <SectionIII />
+      <Ornament />
+      <SectionIV />
+      <Ornament />
+      <SectionV />
+      <Footnotes />
     </MarketingShell>
   );
 }
 
-/* ──────────────────────────  HERO  ─────────────────────────────
-   Asymmetric editorial split. Serif display H1 with mid-sentence
-   italic, mono lowercase verb-stack underneath, two CTAs, real
-   CLI artefact on the right. No "v0.4.0 NEW" eyebrow chip — it'd
-   compete with the headline.
-   ──────────────────────────────────────────────────────────────── */
+/* ─────────────────────────────  PREAMBLE  ────────────────────────
+   The caption block of a published opinion. Case number top-left,
+   stamp top-right, then the title and a one-line abstract. Two
+   CTAs styled as a primary stamp (waitlist) + a ghost (live demo).
+   ────────────────────────────────────────────────────────────────── */
 
-function Hero() {
+function Preamble() {
   return (
-    <section className="relative pt-12 sm:pt-20">
-      <div className="mx-auto grid max-w-6xl items-start gap-10 px-4 sm:px-6 lg:grid-cols-12 lg:gap-10">
-        <div className="lg:col-span-7">
-          <h1 className="text-balance font-[family-name:var(--font-display)] text-[34px] font-normal leading-[1.05] tracking-[-0.02em] text-[var(--foreground)] sm:text-[52px] md:text-[60px] lg:text-[68px]">
-            Court-admissible OSINT,
-            <br className="hidden sm:block" />
-            <span className="sm:hidden"> </span>
-            from the{" "}
-            <span className="italic text-[var(--accent-strong)]">first finding</span>.
-          </h1>
+    <section className="pt-12 pb-10 sm:pt-20">
+      <div className="flex items-start justify-between gap-4">
+        <div className="cd-smallcaps text-[12px]">
+          In re: <span className="cd-mono not-italic">CASE-2026-014</span>
+        </div>
+        <span className="cd-stamp">sealed · v0.4.0</span>
+      </div>
 
-          <p className="mt-7 max-w-xl font-mono text-[13px] leading-relaxed text-[var(--foreground-muted)] sm:text-[14px]">
-            <span className="text-[var(--foreground)]">collect.</span>{" "}
-            <span className="text-[var(--foreground)]">correlate.</span>{" "}
-            <span className="text-[var(--foreground)]">attest.</span>
-            <br />
-            one workflow, one git-style case repo, one offline-verifiable chain of custody.
+      <h1 className="mt-6 max-w-[18ch] text-balance font-[family-name:var(--font-display)] text-[48px] font-normal leading-[1.02] tracking-[-0.01em] text-[var(--fg-strong)] sm:text-[68px] md:text-[80px]">
+        Court-admissible OSINT,
+        <br className="hidden sm:block" />
+        <span className="sm:hidden"> </span>
+        from the <em className="italic text-[var(--accent)]">first finding</em>.
+      </h1>
+
+      <p className="mt-7 max-w-[42ch] font-[family-name:var(--font-body)] text-[18px] leading-[1.55] text-[var(--fg-muted)]">
+        A claim about evidence is a claim about provenance. <em>forenix/oss</em>{" "}
+        treats that obligation literally: every finding lands in a real Git
+        case-repo, every state change appends to a SHA-256 forward-chained
+        audit log, and the head of that chain is witnessed externally so it
+        cannot be silently rewritten.
+      </p>
+
+      <div className="mt-9 flex flex-wrap items-center gap-4">
+        <Link href="/waitlist" className="cd-btn no-underline">
+          file an application
+          <span aria-hidden>→</span>
+        </Link>
+        <a
+          href="https://demo.forenix.tech"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="cd-btn cd-btn--ghost no-underline"
+        >
+          read the live demo
+          <span aria-hidden className="text-[var(--fg-faint)]">↗</span>
+        </a>
+      </div>
+
+      <hr className="mt-14 cd-rule" />
+    </section>
+  );
+}
+
+/* ─────────────────────────────  §I  ──────────────────────────────
+   On the chain. Drop cap opens. Body sits in left-margin column on
+   desktop with marginalia in the gutter. Exhibit A = the Python
+   recipe.
+   ────────────────────────────────────────────────────────────────── */
+
+function SectionI() {
+  return (
+    <section id="i" className="pt-16 sm:pt-24">
+      <div className="cd-margin-col">
+        <aside className="cd-margin">
+          <span className="cd-section__num">§ I.</span>{" "}
+          <em>On the chain.</em>
+          <br />
+          <span className="cd-mono not-italic text-[11px]">art. 1.1–1.4</span>
+        </aside>
+
+        <div className="cd-prose">
+          <h2 className="cd-section__title">A hash chain that survives a hostile DBA.</h2>
+
+          <p className="cd-dropcap mt-7">
+            Every state change <em>forenix</em> ever performs against a case
+            appends a row to an audit log whose entries are linked by their
+            SHA-256 hashes <span className="cd-fn">i</span>. The head of the
+            chain commits not only to the latest action but to every action
+            preceding it; a tampering attempt rewrites the head, but not the
+            replay, and the discrepancy is detectable in a single pass.
           </p>
 
-          <div className="mt-8 flex flex-wrap items-center gap-3">
-            <Link
-              href="/waitlist"
-              className="group inline-flex items-center gap-2 rounded-md bg-[var(--accent)] px-5 py-2.5 text-[14px] font-medium text-[var(--fg-on-accent)] transition hover:bg-[var(--accent-hover)]"
-            >
-              Join the waitlist
-              <span aria-hidden className="transition group-hover:translate-x-0.5">→</span>
-            </Link>
-            <a
-              href="https://demo.forenix.tech"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-md border border-[var(--border-strong)] px-5 py-2.5 text-[14px] font-medium text-[var(--foreground)] transition hover:bg-[var(--bg-hover)]"
-            >
-              try the live demo
-              <span aria-hidden className="text-[var(--foreground-muted)]">↗</span>
-            </a>
-          </div>
-
-          <ul className="mt-10 flex flex-wrap gap-x-7 gap-y-2 font-mono text-[11px] uppercase tracking-[0.14em] text-[var(--foreground-muted)]">
-            <Pill>MIT licensed</Pill>
-            <Pill>SHA-256 chained</Pill>
-            <Pill>Sigstore-attested</Pill>
-            <Pill>20 OSS tools</Pill>
-            <Pill>Self-hostable</Pill>
-          </ul>
-        </div>
-
-        <div className="lg:col-span-5">
-          {/* Slight rotation so it doesn't feel grid-perfect */}
-          <div className="lg:mt-4" style={{ transform: "rotate(0.35deg)" }}>
-            <ChainVisual />
-          </div>
+          <p>
+            The verifier is, deliberately, twelve lines of Python. It does
+            not depend on this codebase, on our schema, on our deployment.
+            An auditor who suspects collusion can compute the chain from
+            the bytes on disk and compare them to whatever head they have
+            been given.
+          </p>
         </div>
       </div>
-    </section>
-  );
-}
 
-function Pill({ children }: { children: React.ReactNode }) {
-  return (
-    <li className="flex items-center gap-2">
-      <span className="h-[3px] w-[3px] rounded-full bg-[var(--accent-strong)]" />
-      {children}
-    </li>
-  );
-}
-
-/* ─────────────────────  CAPABILITIES (lowercase verb-stack)  ────
-   Big lowercase numerals + verbs, no cards, broken baseline.
-   ──────────────────────────────────────────────────────────────── */
-
-function Capabilities() {
-  const items = [
-    {
-      n: "01",
-      verb: "collect",
-      body: "Wire any of 20 OSS reconnaissance tools — sherlock, subfinder, theHarvester, exiftool, the ProjectDiscovery suite — behind a SAT-grounded LLM tool-use loop that picks the right one for the task.",
-    },
-    {
-      n: "02",
-      verb: "correlate",
-      body: "Promote findings into evidence; the case grows a real git branch. Entities cross-link automatically. Every state change appends to a SHA-256 forward-chained audit log.",
-    },
-    {
-      n: "03",
-      verb: "attest",
-      body: "Pin the chain head to an external witness — Sigstore Rekor, a GitHub-issue comment, or a local HMAC archive — so even a DB admin can't silently rewrite history.",
-    },
-  ];
-  return (
-    <section id="how" className="relative mx-auto mt-20 sm:mt-32 max-w-6xl px-4 sm:px-6">
-      <div className="grid gap-12 lg:grid-cols-3 lg:gap-8">
-        {items.map((it, i) => (
-          <div key={it.n} className={i === 1 ? "lg:mt-8" : i === 2 ? "lg:mt-4" : ""}>
-            <div className="flex items-baseline gap-3">
-              <span className="font-mono text-[11px] tracking-[0.18em] text-[var(--fg-faint)]">
-                {it.n}
-              </span>
-              <h3 className="font-[family-name:var(--font-display)] text-[36px] font-normal italic leading-none text-[var(--foreground)]">
-                {it.verb}.
-              </h3>
-            </div>
-            <p className="mt-4 max-w-sm text-[14px] leading-relaxed text-[var(--foreground-muted)]">
-              {it.body}
-            </p>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-/* ─────────────────────  FEATURE SHELVES  ────────────────────────
-   Horizontal staggered rows (Vercel-style) — copy on one side,
-   real product artefact on the other. Alternating sides keeps the
-   page feeling editorial, not gridded.
-   ──────────────────────────────────────────────────────────────── */
-
-function ChainShelf() {
-  return (
-    <Shelf
-      id="chain"
-      eyebrow="The chain"
-      title="A hash chain that survives a hostile DBA."
-      body="Every state change appends a SHA-256 row that forward-links to the previous one. Tampering is detectable in a single replay, and a 12-line Python recipe reproduces the verifier exactly — no SDK required to prove the chain is intact."
-      side="left"
-      art={<VerifierArtefact />}
-    />
-  );
-}
-
-function ToolsShelf() {
-  return (
-    <Shelf
-      eyebrow="The pipeline"
-      title="20 OSS tools, one SAT-grounded loop."
-      body="The LLM doesn't fish for an answer — it picks tools from a typed registry, runs them, reads the output, and writes a structured trace using Coulthart/Heuer structured analytic techniques. Bring your own key for OpenRouter, Claude, Groq, GLM, NVIDIA, Ollama, or run mock."
-      side="right"
-      art={<ToolLoopArtefact />}
-    />
-  );
-}
-
-function AttestShelf() {
-  return (
-    <Shelf
-      eyebrow="The witness"
-      title="External attestation, in three flavours."
-      body="The chain alone catches DB tampering — but only if no one re-signed it from genesis. Pin the head to an external witness on a cadence and that gap closes. Three backends ship in v0.4.0, more drop in through one adapter contract."
-      side="left"
-      art={<RekorArtefact />}
-      newBadge="v0.4.0"
-    />
-  );
-}
-
-function Shelf({
-  id,
-  eyebrow,
-  title,
-  body,
-  side,
-  art,
-  newBadge,
-}: {
-  id?: string;
-  eyebrow: string;
-  title: string;
-  body: string;
-  side: "left" | "right";
-  art: React.ReactNode;
-  newBadge?: string;
-}) {
-  return (
-    <section id={id} className="relative mx-auto mt-20 sm:mt-32 max-w-6xl px-4 sm:px-6">
-      <div
-        className={
-          side === "left"
-            ? "grid items-center gap-10 lg:grid-cols-[1.05fr_1.2fr]"
-            : "grid items-center gap-10 lg:grid-cols-[1.2fr_1.05fr]"
-        }
+      <Exhibit
+        letter="A"
+        label="the verifier"
+        source="verify-chain.py · offline, no SDK"
       >
-        {side === "left" ? (
-          <>
-            <ShelfText eyebrow={eyebrow} title={title} body={body} newBadge={newBadge} />
-            <div>{art}</div>
-          </>
-        ) : (
-          <>
-            <div className="order-2 lg:order-1">{art}</div>
-            <div className="order-1 lg:order-2">
-              <ShelfText eyebrow={eyebrow} title={title} body={body} newBadge={newBadge} />
-            </div>
-          </>
-        )}
+        <VerifierArtefact />
+      </Exhibit>
+    </section>
+  );
+}
+
+/* ─────────────────────────────  §II  ─────────────────────────────
+   On the witness. External attestation. Three backends. Exhibit B
+   = the Rekor JSON.
+   ────────────────────────────────────────────────────────────────── */
+
+function SectionII() {
+  return (
+    <section id="ii" className="pt-12 sm:pt-20">
+      <div className="cd-margin-col">
+        <aside className="cd-margin">
+          <span className="cd-section__num">§ II.</span>{" "}
+          <em>On the witness.</em>
+          <br />
+          <span className="cd-mono not-italic text-[11px]">art. 2.1–2.5</span>
+        </aside>
+
+        <div className="cd-prose">
+          <h2 className="cd-section__title">A second set of eyes, on someone else&apos;s clock.</h2>
+
+          <p className="mt-7">
+            The chain catches a DBA who edits rows. It does not catch a DBA
+            who edits rows <em>and</em> re-derives the chain from genesis. To
+            close that gap an external witness must publish, periodically,
+            the head it observed at a given moment <span className="cd-fn">ii</span>.
+          </p>
+
+          <p>
+            Three backends ship in this edition. The local backend keeps an
+            HMAC archive under your own secret; the GitHub backend posts the
+            head as an issue comment, dated by the platform; the Sigstore
+            Rekor backend pins each head to the public transparency log. New
+            witnesses arrive through a single adapter contract, which means a
+            paranoid operator can run all three on different cadences and
+            cross-check.
+          </p>
+        </div>
+      </div>
+
+      <Exhibit
+        letter="B"
+        label="exhibit b"
+        source="rekor.sigstore.dev / api / v1 / log / entries / 24296fb…"
+      >
+        <RekorArtefact />
+      </Exhibit>
+    </section>
+  );
+}
+
+/* ─────────────────────────────  §III  ────────────────────────────
+   On the loop. The LLM tool-use side. Exhibit C = the typed tool
+   trace.
+   ────────────────────────────────────────────────────────────────── */
+
+function SectionIII() {
+  return (
+    <section id="iii" className="pt-12 sm:pt-20">
+      <div className="cd-margin-col">
+        <aside className="cd-margin">
+          <span className="cd-section__num">§ III.</span>{" "}
+          <em>On the loop.</em>
+          <br />
+          <span className="cd-mono not-italic text-[11px]">art. 3.1–3.3</span>
+        </aside>
+
+        <div className="cd-prose">
+          <h2 className="cd-section__title">Twenty open-source tools, one SAT-grounded loop.</h2>
+
+          <p className="mt-7">
+            The model does not fish for an answer. It picks tools from a
+            typed registry, runs them, reads the output, and writes a
+            structured trace using the analytic techniques described by
+            Coulthart <span className="cd-fn">iii</span> and Heuer
+            <span className="cd-fn">iv</span> — Key Assumptions Check, ACH,
+            indicators &amp; warning, source-credibility evaluation.
+          </p>
+
+          <p>
+            Bring your own key. Adapters ship for OpenRouter, Anthropic,
+            Groq, GLM, NVIDIA, and Ollama. A <em>mock</em> adapter exists
+            for tests and demos so the workflow never depends on a live
+            credential to be exercised.
+          </p>
+        </div>
+      </div>
+
+      <Exhibit
+        letter="C"
+        label="exhibit c"
+        source="tool-loop · run-2487 · openrouter / openai-gpt-oss-120b"
+      >
+        <ToolLoopArtefact />
+      </Exhibit>
+    </section>
+  );
+}
+
+/* ─────────────────────────────  §IV  ─────────────────────────────
+   The verifier — the pull-quote centerpiece. The live ChainVisual
+   sits below it as the live evidentiary act.
+   ────────────────────────────────────────────────────────────────── */
+
+function SectionIV() {
+  return (
+    <section id="iv" className="pt-16 sm:pt-24">
+      <div className="mx-auto max-w-[40em] text-center">
+        <span className="cd-section__num">§ IV.</span>
+        <p className="cd-pull mt-4">
+          &ldquo;Chain of custody&rdquo; is a <em>verb</em>, not a screenshot
+          in a sales deck. If an auditor cannot replay the chain to genesis
+          from the bytes on disk, you do not have one.
+        </p>
+        <p className="cd-smallcaps mt-6 text-[12px]">that is the bar we built to.</p>
+      </div>
+
+      <div className="mt-12 sm:mt-16">
+        <Exhibit letter="D" label="live verification" source="$ forenix verify --case CASE-2026-014">
+          <ChainVisual />
+        </Exhibit>
       </div>
     </section>
   );
 }
 
-function ShelfText({
-  eyebrow,
-  title,
-  body,
-  newBadge,
-}: {
-  eyebrow: string;
-  title: string;
-  body: string;
-  newBadge?: string;
-}) {
+/* ─────────────────────────────  §V  ──────────────────────────────
+   Of admission. Closing prose + the waitlist as an embedded
+   application form.
+   ────────────────────────────────────────────────────────────────── */
+
+function SectionV() {
   return (
-    <div>
-      <div className="flex items-center gap-3">
-        <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-[var(--accent-strong)]">
-          {eyebrow}
-        </span>
-        {newBadge && (
-          <span className="rounded-full bg-[var(--accent-soft)] px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.16em] text-[var(--accent-strong)]">
-            {newBadge}
-          </span>
-        )}
+    <section id="v" className="pt-16 sm:pt-24">
+      <div className="cd-margin-col">
+        <aside className="cd-margin">
+          <span className="cd-section__num">§ V.</span>{" "}
+          <em>Of admission.</em>
+          <br />
+          <span className="cd-mono not-italic text-[11px]">art. 5.1</span>
+        </aside>
+
+        <div className="cd-prose">
+          <h2 className="cd-section__title">Building <em>forenix/oss</em> in the open.</h2>
+
+          <p className="mt-7">
+            Invitations to the hosted edition go out in small batches to
+            analysts, investigators, and security teams who would like to
+            run the full workflow against a real case. Tell us a little
+            about yours. The source is freely available, MIT-licensed, and
+            self-hostable from the first commit.
+          </p>
+        </div>
       </div>
-      <h2 className="mt-3 max-w-md text-balance font-[family-name:var(--font-display)] text-[34px] font-normal leading-[1.1] tracking-[-0.01em] text-[var(--foreground)] sm:text-[40px]">
-        {title}
-      </h2>
-      <p className="mt-5 max-w-md text-[14px] leading-relaxed text-[var(--foreground-muted)]">
-        {body}
-      </p>
+
+      <div className="mt-10 max-w-[42em]">
+        <WaitlistForm variant="full" source="landing-final" surface="bare" />
+      </div>
+    </section>
+  );
+}
+
+/* ─────────────────────────────  FOOTNOTES  ──────────────────────── */
+
+function Footnotes() {
+  return (
+    <section className="pt-20 sm:pt-28">
+      <hr className="cd-rule" />
+      <div className="cd-smallcaps mt-6 text-[12px]">footnotes</div>
+      <ol className="cd-fn-list">
+        <li>
+          The hash of every row is computed over the previous row&apos;s
+          hash plus the row&apos;s own canonical payload, in field order.
+          The verifier recipe is reproduced in Exhibit A.
+        </li>
+        <li>
+          See: J. Buchanan et al., <em>External Witnessing for Append-Only
+          Logs</em>, Sigstore design notes, 2023. The same model used by
+          container-image transparency.
+        </li>
+        <li>
+          R. J. Heuer Jr., <em>Psychology of Intelligence Analysis</em>,
+          CIA Center for the Study of Intelligence, 1999.
+        </li>
+        <li>
+          S. Coulthart, <em>Why Do Analysts Use Structured Analytic
+          Techniques?</em>, Intelligence and National Security, 2016.
+        </li>
+      </ol>
+    </section>
+  );
+}
+
+/* ─────────────────────────────  HELPERS  ────────────────────────── */
+
+function Ornament() {
+  return (
+    <div className="mt-14 sm:mt-20">
+      <div className="cd-ornament">§</div>
     </div>
   );
 }
 
-/* ─────────────────────  THE VERIFY MOMENT (off-grid)  ──────────
-   The deliberate hand-set fingerprint. Slight rotation, hand-drawn
-   arrow, italics. Reads "human shipped this", not "template".
-   ──────────────────────────────────────────────────────────────── */
-
-function VerifyMoment() {
+function Exhibit({
+  letter,
+  label,
+  source,
+  children,
+}: {
+  letter: string;
+  label: string;
+  source: string;
+  children: React.ReactNode;
+}) {
   return (
-    <section id="verify" className="relative mx-auto mt-24 sm:mt-40 max-w-3xl px-4 sm:px-6 text-center">
-      <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-[var(--accent-strong)]">
-        ↳ the part most platforms hand-wave
-      </span>
-      <p className="mt-5 font-[family-name:var(--font-display)] text-balance text-[28px] font-normal leading-[1.25] text-[var(--foreground)] sm:text-[36px]">
-        “Chain of custody” is a{" "}
-        <span className="italic text-[var(--accent-strong)]">verb</span>, not a screenshot in
-        a sales deck. If an auditor can&apos;t replay the chain to genesis from the bytes
-        on disk, you don&apos;t have one.
-      </p>
-      <p className="mt-6 font-mono text-[12px] text-[var(--foreground-muted)]">
-        — that&apos;s the bar we built to.
-      </p>
-    </section>
-  );
-}
-
-/* ─────────────────────  STACK LINE  ─────────────────────────────
-   Single editorial line, no card, no logos. Mono. Honest.
-   ──────────────────────────────────────────────────────────────── */
-
-function StackLine() {
-  const stack = [
-    "Next.js 16",
-    "TypeScript strict",
-    "Tailwind 4",
-    "Prisma 6",
-    "Bun",
-    "isomorphic-git",
-    "Sigstore Rekor",
-    "OpenRouter",
-    "ProjectDiscovery",
-  ];
-  return (
-    <section className="relative mx-auto mt-20 sm:mt-32 max-w-5xl px-4 sm:px-6">
-      <div className="text-center font-mono text-[11px] uppercase tracking-[0.2em] text-[var(--fg-faint)]">
-        built on
-      </div>
-      <p className="mt-3 text-center text-[14px] text-[var(--foreground-muted)]">
-        {stack.map((s, i) => (
-          <span key={s}>
-            <span className="text-[var(--foreground)]">{s}</span>
-            {i < stack.length - 1 && (
-              <span className="px-3 text-[var(--fg-faint)]">·</span>
-            )}
-          </span>
-        ))}
-      </p>
-    </section>
-  );
-}
-
-/* ─────────────────────  FINAL INVITE  ──────────────────────────
-   Editorial, not corporate. Serif headline, embedded form.
-   ──────────────────────────────────────────────────────────────── */
-
-function FinalInvite() {
-  return (
-    <section className="relative mx-auto mt-20 sm:mt-32 max-w-2xl px-4 sm:px-6 text-center">
-      <h2 className="text-balance font-[family-name:var(--font-display)] text-[36px] font-normal leading-[1.1] text-[var(--foreground)] sm:text-[44px]">
-        Building <span className="italic text-[var(--accent-strong)]">forenix/oss</span> in
-        the open.
-      </h2>
-      <p className="mx-auto mt-5 max-w-md text-[14px] leading-relaxed text-[var(--foreground-muted)]">
-        Invites go out in small batches to analysts, investigators, and security teams
-        who&apos;d like to run the full workflow against a real case. Tell us a little
-        about yours.
-      </p>
-      <div className="mx-auto mt-8 max-w-lg text-left">
-        <WaitlistForm variant="full" source="landing-final" surface="bare" />
-      </div>
-    </section>
+    <figure className="cd-exhibit">
+      <figcaption className="cd-exhibit__cap">
+        <span className="cd-exhibit__label">
+          exhibit {letter} · {label}
+        </span>
+        <span className="cd-exhibit__source">{source}</span>
+      </figcaption>
+      <div className="cd-exhibit__art">{children}</div>
+    </figure>
   );
 }
