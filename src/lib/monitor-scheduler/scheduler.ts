@@ -31,6 +31,7 @@ import "server-only";
 
 import { appendAudit } from "@/lib/audit";
 import { prisma } from "@/lib/db";
+import { emit } from "@/lib/events/emitter";
 import { ALL_TOOLS } from "@/lib/tools/registry";
 import type { Tool } from "@/lib/tools/types";
 
@@ -141,6 +142,8 @@ async function runOneMonitor(m: MonitorWithInv): Promise<{ findingsCount: number
     },
   });
 
+  emit("monitor.run.started", { monitorId: m.id, runId: run.id });
+
   let findingsCount = 0;
 
   try {
@@ -177,6 +180,7 @@ async function runOneMonitor(m: MonitorWithInv): Promise<{ findingsCount: number
         completedAt: new Date(),
       },
     });
+    emit("monitor.run.completed", { monitorId: m.id, runId: run.id, status: "succeeded" });
   } catch (e) {
     await prisma.monitorRun.update({
       where: { id: run.id },
@@ -186,6 +190,7 @@ async function runOneMonitor(m: MonitorWithInv): Promise<{ findingsCount: number
         completedAt: new Date(),
       },
     });
+    emit("monitor.run.completed", { monitorId: m.id, runId: run.id, status: "failed" });
     throw e;
   }
 

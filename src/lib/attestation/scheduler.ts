@@ -85,10 +85,14 @@ export async function runAttestTick(opts?: {
     const started = Date.now();
     let attestationId: string | undefined;
     let runError: string | undefined;
+    // runAttestation() emits started + completed on its own, so manual
+    // and scheduled paths produce identical event streams. We pass the
+    // scheduleId so the emit envelope can correlate to this row.
     try {
       const att = await runAttestation({
         backend: s.backend,
         actorId: null, // system-initiated
+        scheduleId: s.id,
       });
       attestationId = att.id;
       if (att.status === "failed") {

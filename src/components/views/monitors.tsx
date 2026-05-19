@@ -11,8 +11,10 @@ import {
   Trash2,
   Zap,
 } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
+import { useLiveEvents } from "@/hooks/use-live-events";
 import {
   useCreateMonitor,
   useDeleteMonitor,
@@ -45,6 +47,15 @@ export function MonitorsView() {
   const me = useMe();
   const role = me.data?.data?.role;
   const canWrite = role === "admin" || role === "investigator";
+
+  // Live updates: when a monitor run starts or finishes (whether from
+  // the operator's "Run now" or from a cron tick), refetch the list so
+  // the row status reflects the live state without manual reload.
+  const qc = useQueryClient();
+  useLiveEvents(["monitor.run.started", "monitor.run.completed"], () => {
+    qc.invalidateQueries({ queryKey: ["monitors"] });
+    qc.invalidateQueries({ queryKey: ["audit"] });
+  });
 
   const [creating, setCreating] = useState(false);
 

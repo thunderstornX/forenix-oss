@@ -12,6 +12,7 @@ import {
 import { signOut } from "next-auth/react";
 import { useState } from "react";
 
+import { useLiveEvents } from "@/hooks/use-live-events";
 import { useUI, NAV, type ViewType } from "@/lib/store";
 import { useHealth, useMe } from "@/lib/hooks";
 import { useTheme, type AccentKey } from "@/lib/theme";
@@ -36,6 +37,10 @@ export function Topbar() {
   const { theme, accent, toggleTheme, setAccent } = useTheme();
   const [accentOpen, setAccentOpen] = useState(false);
 
+  // Drives the LIVE indicator. We don't care about specific topics
+  // here, just whether the SSE connection is healthy.
+  const { connected: liveConnected } = useLiveEvents(undefined, () => {});
+
   return (
     <header className="fx-top">
       <div className="fx-top__left">
@@ -59,6 +64,22 @@ export function Topbar() {
         <span className="fx-row" style={{ gap: 6 }}>
           <span className="fx-status-dot" />
           {health?.status === "ok" ? "online" : "starting"}
+        </span>
+        <span
+          className="fx-row"
+          style={{ gap: 5, fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: "0.16em", textTransform: "uppercase", color: liveConnected ? "var(--accent)" : "var(--fg-faint)" }}
+          title={liveConnected ? "Receiving live events from the server" : "Live stream offline"}
+        >
+          <span
+            aria-hidden
+            style={{
+              width: 6, height: 6, borderRadius: "var(--r-pill)",
+              background: liveConnected ? "var(--accent)" : "var(--fg-faint)",
+              boxShadow: liveConnected ? `0 0 0 3px color-mix(in oklch, var(--accent) 22%, transparent)` : undefined,
+              animation: liveConnected ? "fx-pulse 1.6s ease-in-out infinite" : undefined,
+            }}
+          />
+          live
         </span>
 
         {/* Accent picker */}

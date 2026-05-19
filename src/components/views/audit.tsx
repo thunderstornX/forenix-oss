@@ -2,8 +2,10 @@
 
 import { useState } from "react";
 import { GitCommit, Eye, Telescope, Folders } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
 
 import { FilterInput, matchesQuery } from "@/components/filter-input";
+import { useLiveEvents } from "@/hooks/use-live-events";
 import { useAudit } from "@/lib/hooks";
 import { useUI } from "@/lib/store";
 import { cn, relTime, shortHash } from "@/lib/utils";
@@ -16,6 +18,13 @@ export function AuditView() {
   const setInv = useUI((s) => s.setActiveInvestigation);
   const setCase = useUI((s) => s.setActiveCase);
   const [filter, setFilter] = useState("");
+
+  // Live updates: every appendAudit() call emits, so new rows slide
+  // into the table the moment they hit the chain.
+  const qc = useQueryClient();
+  useLiveEvents(["audit.append"], () => {
+    qc.invalidateQueries({ queryKey: ["audit"] });
+  });
   const rows = (audit.data?.data ?? []).filter((r) =>
     matchesQuery(filter, r.action, r.entity, r.entityId ?? "", r.hash ?? ""),
   );

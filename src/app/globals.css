@@ -1218,6 +1218,12 @@ a { color: inherit; text-decoration: none; }
   .cd-doc { background: white; color: black; }
 }
 
+/* Topbar 'live' pulse - subtle breathing dot driven by SSE connection. */
+@keyframes fx-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: 0.6; transform: scale(0.85); }
+}
+
 /* Tailwind 4 @theme directive — kept at the very end so that any
    custom CSS placed above it is processed normally. Earlier placement
    caused everything below the block to be stripped from the build. */

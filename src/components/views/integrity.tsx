@@ -18,6 +18,9 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
+import { useQueryClient } from "@tanstack/react-query";
+
+import { useLiveEvents } from "@/hooks/use-live-events";
 import {
   useAttestations,
   useAttestationSchedules,
@@ -40,6 +43,19 @@ export function IntegrityView() {
   const integ = useIntegrity();
   const data = integ.data?.data;
   const ok = data?.ok === true;
+
+  // Live updates: attestation runs (manual or scheduled) and every
+  // audit append both move the head, so we refresh the integrity view
+  // and the attestation tables on either signal.
+  const qc = useQueryClient();
+  useLiveEvents(
+    ["attestation.run.started", "attestation.run.completed", "audit.append"],
+    () => {
+      qc.invalidateQueries({ queryKey: ["integrity"] });
+      qc.invalidateQueries({ queryKey: ["attestations"] });
+      qc.invalidateQueries({ queryKey: ["attestation-schedules"] });
+    },
+  );
 
   return (
     <ViewShell

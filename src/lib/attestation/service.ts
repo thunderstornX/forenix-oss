@@ -21,6 +21,7 @@ import "server-only";
 
 import { appendAudit } from "@/lib/audit";
 import { prisma } from "@/lib/db";
+import { emit } from "@/lib/events/emitter";
 
 import { getAttestationBackend, getAttestationBackendByName } from "./factory";
 import type {
@@ -34,6 +35,8 @@ export interface RunAttestationOptions {
   backend?: string;
   /** Audit-log actor id; null = system-initiated. */
   actorId?: string | null;
+  /** Scheduler-only: id of the AttestationSchedule row that fired this run. */
+  scheduleId?: string;
   /**
    * Inject a backend directly. Tests use this to avoid hitting the
    * factory / env layer. Routes never pass it.
@@ -59,6 +62,8 @@ export async function runAttestation(opts: RunAttestationOptions = {}) {
   const backend: AttestationBackend =
     opts.backendInstance ??
     (opts.backend ? getAttestationBackendByName(opts.backend) : getAttestationBackend());
+
+  emit("attestation.run.started", { scheduleId: opts.scheduleId, backend: backend.name });
 
   const head = await captureHead();
   const result = await backend.attest(head);
@@ -94,6 +99,13 @@ export async function runAttestation(opts: RunAttestationOptions = {}) {
       headHash: head.headHash,
       externalRef: result.externalRef,
     },
+  });
+
+  emit("attestation.run.completed", {
+    scheduleId: opts.scheduleId,
+    backend: backend.name,
+    attestationId: row.id,
+    status: result.status === "failed" ? "failed" : "succeeded",
   });
 
   return row;
