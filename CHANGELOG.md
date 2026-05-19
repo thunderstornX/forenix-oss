@@ -6,6 +6,42 @@ and the project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added - DigitalOcean auto-deploy + waitlist sync
+
+Stops the DO droplet (demo.forenix.tech, the paid SaaS) from drifting
+out of sync with `main`, and unifies the waitlist so admins on DO see
+every signup from both surfaces.
+
+- **`.github/workflows/deploy-droplet.yml`** - on every push to `main`
+  (and via workflow_dispatch), checks out OSS Core + the private
+  overlay (`thunderstornX/forenix-saas`, pulled via
+  `SAAS_REPO_TOKEN`), assembles them, rsyncs onto the droplet, then
+  runs the deploy script. Includes a `/api/health` smoke check.
+- **`scripts/deploy-droplet.sh`** - runs on the droplet: install,
+  prisma generate + push (postgres), build, `sudo systemctl restart
+  forenix.service`. Idempotent; safe to re-run by hand.
+- **`POST /api/admin/waitlist-import`** - token-gated receiver for
+  signups arriving from another deployment. Idempotent on email,
+  preserves the original createdAt so queue positions stay meaningful.
+- **`POST /api/waitlist` forwards** - after the local upsert, fires a
+  best-effort `POST` to `WAITLIST_SYNC_URL` with `Authorization:
+  Bearer $WAITLIST_SYNC_TOKEN`. Vercel sets these env vars to point
+  at the DO droplet so signups on forenix.tech mirror to
+  demo.forenix.tech. Fire-and-forget; never blocks the user.
+- **`scripts/sync-waitlist-once.ts`** - one-time backfill helper.
+  Reads every waitlist row from the local DB and POSTs to
+  `WAITLIST_SYNC_URL`. Idempotent.
+- **`docs/09-RUNBOOK.md` §13 + §14** - full operator runbook for
+  setting up the deploy secrets, droplet sudoers entry, and the
+  cross-deployment sync (env vars + backfill).
+
+### Changed
+
+- **`chore(saas)`** (commit 14e52c4): premium tier extracted into a
+  private overlay (`thunderstornX/forenix-saas`). Public repo no
+  longer ships premium code. See [`docs/SAAS.md`](docs/SAAS.md) for
+  the overlay model.
+
 ### Added - SSE live updates (Phase 9.3 / item 3 of 3, closes sprint)
 
 The dashboard now reflects monitor runs, attestation runs, and

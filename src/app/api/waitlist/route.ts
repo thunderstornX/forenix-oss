@@ -93,6 +93,19 @@ export async function POST(request: Request) {
       details: { role: row.role ?? null, source: row.source ?? null },
     });
 
+    // Cross-deployment sync: forward the signup to another instance's
+    // /api/admin/waitlist-import if WAITLIST_SYNC_URL is set. Used by
+    // the Vercel concept surface to mirror entries to the paid SaaS
+    // on the DigitalOcean droplet. Fire-and-forget; never blocks the
+    // user's signup if the upstream is down.
+    void forwardToSyncTarget({
+      email: body.email.toLowerCase(),
+      role: body.role,
+      useCase: body.useCase,
+      source: body.source,
+      originalCreatedAt: row.createdAt.toISOString(),
+    });
+
     return Response.json({ data: { ok: true, position: await positionOf(row.id) } });
   } catch (err) {
     if (err instanceof z.ZodError) {
@@ -114,4 +127,41 @@ async function positionOf(id: string): Promise<number> {
   return prisma.waitlistSignup.count({
     where: { createdAt: { lte: row.createdAt } },
   });
+}
+
+interface SyncPayload {
+  email: string;
+  role?: string;
+  useCase?: string;
+  source?: string;
+  originalCreatedAt: string;
+}
+
+async function forwardToSyncTarget(payload: SyncPayload): Promise<void> {
+  const url = process.env.WAITLIST_SYNC_URL;
+  const token = process.env.WAITLIST_SYNC_TOKEN;
+  if (!url || !token) return;
+
+  // Tag where this row originated so the downstream can distinguish
+  // organically-signed-up rows from imported ones.
+  const origin = process.env.WAITLIST_SYNC_ORIGIN ?? "vercel-forenix-tech";
+
+  try {
+    const res = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      },
+      body: JSON.stringify({ ...payload, origin }),
+      // Best-effort: cap the wait so a slow upstream doesn't pile up
+      // Vercel function instances.
+      signal: AbortSignal.timeout(5_000),
+    });
+    if (!res.ok) {
+      console.warn("[waitlist sync] non-200:", res.status);
+    }
+  } catch (err) {
+    console.warn("[waitlist sync] failed:", (err as Error).message);
+  }
 }

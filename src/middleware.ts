@@ -18,9 +18,10 @@ const PUBLIC_ROUTES = new Set<string>([
 // Keep it under the middleware umbrella.
 const PUBLIC_PREFIXES = [
   "/api/auth/",
-  "/api/admin/seed-demo", // token-gated, bootstraps fresh deploys
-  "/api/waitlist",        // public sign-up endpoint
-  "/api/internal/",       // token-gated scheduler tick (MONITOR_CRON_TOKEN / CRON_SECRET)
+  "/api/admin/seed-demo",        // token-gated, bootstraps fresh deploys
+  "/api/admin/waitlist-import",  // token-gated cross-deployment waitlist sync (WAITLIST_SYNC_TOKEN)
+  "/api/waitlist",               // public sign-up endpoint
+  "/api/internal/",              // token-gated scheduler tick (MONITOR_CRON_TOKEN / CRON_SECRET)
   "/_next/",
   "/_vercel/",
 ];

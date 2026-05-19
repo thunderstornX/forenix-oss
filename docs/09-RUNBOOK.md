@@ -308,3 +308,145 @@ tick.
 #    - Actions: github.com/.../actions/workflows/monitor-tick.yml
 #    - Droplet: journalctl -u forenix-monitor-tick.service -n 30
 ```
+
+
+## 13. Routine  -  SaaS auto-deploy (DigitalOcean)
+
+The paid SaaS at [demo.forenix.tech](https://demo.forenix.tech)
+auto-deploys on every push to `main` via the GitHub Actions
+workflow at `.github/workflows/deploy-droplet.yml`. The workflow
+checks out OSS Core + the private SaaS overlay
+(github.com/thunderstornX/forenix-saas), assembles them, rsyncs
+onto the droplet, then runs `scripts/deploy-droplet.sh` to install,
+build, and restart the systemd service.
+
+### One-time setup
+
+**Repo secrets** (forenix-oss → Settings → Secrets and variables → Actions):
+
+| Secret | Value |
+|---|---|
+| `SAAS_REPO_TOKEN` | Fine-grained PAT with READ access to `thunderstornX/forenix-saas`. Scope: Repository contents → Read-only |
+| `DROPLET_HOST` | IP or DNS of the droplet (e.g. `demo.forenix.tech`) |
+| `DROPLET_USER` | Deploy user on the droplet (typically `forenix`) |
+| `DROPLET_SSH_KEY` | Private SSH key (PEM, including headers) whose public side is in the deploy user's `~/.ssh/authorized_keys` |
+| `DROPLET_DEPLOY_PATH` | Repo path on the droplet (typically `/opt/forenix`) |
+
+**On the droplet:**
+
+```bash
+# Sudoers entry — the deploy user needs to restart the service.
+sudo tee /etc/sudoers.d/forenix-deploy <<'SUDO'
+forenix ALL=(root) NOPASSWD: /bin/systemctl restart forenix.service
+SUDO
+sudo chmod 0440 /etc/sudoers.d/forenix-deploy
+
+# Add the GH Actions runner's SSH public key to the deploy user.
+# (Whatever you put in DROPLET_SSH_KEY, append its .pub here.)
+sudo -u forenix tee -a /home/forenix/.ssh/authorized_keys < gh-actions.pub
+```
+
+### Manual trigger
+
+The workflow has `workflow_dispatch`, so you can trigger an ad-hoc
+deploy from the Actions tab without pushing:
+
+```
+GitHub → Actions → "Deploy SaaS (DigitalOcean)" → Run workflow
+```
+
+### Smoke check
+
+The workflow polls `https://demo.forenix.tech/api/health` for up to
+~15 s after restart and fails if it doesn't return 200. If the
+deploy reports "✓" but the smoke check fails, the build is on the
+droplet but the service didn't come back; see `journalctl -u
+forenix.service -n 100` on the droplet.
+
+### Updating the overlay
+
+When you make changes in `thunderstornX/forenix-saas` (the private
+overlay) without a corresponding OSS change, the public repo's
+auto-deploy won't fire. Two options:
+
+```bash
+# Option A (recommended): land an empty commit on OSS main to retrigger
+cd forenix-oss && git commit --allow-empty -m "chore: redeploy for overlay change v0.4.0+saasN" && git push
+
+# Option B: manual workflow_dispatch from the Actions tab
+```
+
+
+## 14. Routine  -  Cross-deployment waitlist sync
+
+Both forenix.tech (Vercel concept) and demo.forenix.tech (paid
+SaaS on DO) host the same `POST /api/waitlist` endpoint. To keep
+ALL signups in the DO database (so admins have one canonical view),
+the Vercel surface forwards every signup to the DO surface's
+`POST /api/admin/waitlist-import`.
+
+### Wiring (one-time)
+
+**Generate the shared secret:**
+
+```bash
+openssl rand -hex 32
+# copy the output  -  call it $TOKEN below
+```
+
+**On the DO droplet** (`/opt/forenix/.env`):
+
+```
+WAITLIST_SYNC_TOKEN=<TOKEN>
+```
+
+DO does NOT set `WAITLIST_SYNC_URL`  -  it is the receiver, not a
+forwarder.
+
+**On Vercel** (project Settings → Environment Variables, Production):
+
+```
+WAITLIST_SYNC_URL=https://demo.forenix.tech/api/admin/waitlist-import
+WAITLIST_SYNC_TOKEN=<TOKEN>          # same value as on DO
+WAITLIST_SYNC_ORIGIN=vercel-forenix-tech
+```
+
+Redeploy both surfaces so the env takes effect.
+
+### One-time backfill
+
+After wiring is live, push every existing Vercel row into DO:
+
+```bash
+# From a machine with Vercel's DATABASE_URL (vercel env pull .env first):
+WAITLIST_SYNC_URL=https://demo.forenix.tech/api/admin/waitlist-import \
+WAITLIST_SYNC_TOKEN=<TOKEN> \
+WAITLIST_SYNC_ORIGIN=vercel-forenix-tech-backfill \
+bun scripts/sync-waitlist-once.ts
+```
+
+Idempotent. The receiver upserts by email, so re-running just
+returns "exists" for rows already present.
+
+### Verifying it works
+
+After a fresh signup on forenix.tech, the row should appear
+within a few seconds in:
+
+```bash
+# On the droplet:
+sudo -u forenix psql -U forenix -d forenix -c \
+  "SELECT email, source, createdAt FROM \"WaitlistSignup\" ORDER BY createdAt DESC LIMIT 5;"
+```
+
+The `source` column reads `<original>+vercel-forenix-tech` (or
+similar) for synced rows, distinguishing them from native DO
+signups.
+
+### Failure modes
+
+The sync is fire-and-forget on the Vercel side; if the upstream is
+down, the user's signup still succeeds locally on Vercel, and the
+row will be picked up by the next backfill run. The Vercel
+function logs `[waitlist sync] failed: …` on errors so you can
+spot a sustained outage.
