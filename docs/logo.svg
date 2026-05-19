@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" role="img" aria-label="forenix/oss seal">
+  <!-- A wax-seal / certification mark: an italic serif 'f' inside a
+       hairline double ring. Single colour (oxblood) on transparent so
+       it composites onto parchment (light) or warm slate (dark).
+       Rendered with the system serif if Instrument Serif is not
+       installed; the visual still reads as a refined seal. -->
+  <defs>
+    <style>
+      .ring  { fill: none; stroke: currentColor; }
+      .glyph { font-family: "Instrument Serif", "Hoefler Text", "Cambria", "Garamond", serif; font-style: italic; fill: currentColor; }
+      .micro { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 8px; letter-spacing: 0.2em; fill: currentColor; opacity: 0.7; }
+    </style>
+  </defs>
+  <g color="#a14a2a">
+    <circle class="ring" cx="100" cy="100" r="92" stroke-width="2"/>
+    <circle class="ring" cx="100" cy="100" r="86" stroke-width="0.6"/>
+    <text class="glyph" x="100" y="148" text-anchor="middle" font-size="140">f</text>
+    <!-- micro inscription around the bottom of the seal -->
+    <path id="arc" d="M 30 100 A 70 70 0 0 0 170 100" fill="none"/>
+    <text class="micro" text-anchor="middle">
+      <textPath href="#arc" startOffset="50%">FORENIX · OSS · MMXXVI</textPath>
+    </text>
+  </g>
+</svg>

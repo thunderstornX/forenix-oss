@@ -1,106 +1,61 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 360" width="1280" height="360" role="img" aria-label="forenix-oss — OSINT × Forensics, one workflow">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 420" width="1600" height="420" role="img" aria-label="forenix/oss — court-admissible OSINT, from the first finding">
+  <!--
+    Editorial banner for the README.
+
+    Composition reads as a printed document title block:
+      ── top accent stripe (one thin oxblood line)
+      ── centred wax-seal mark (italic 'f' in a hairline double ring)
+      ── serif wordmark "forenix/oss" with the slash italic + oxblood
+      ── italic tagline below
+      ── bottom hairline double-rule + small-caps colophon line
+
+    All on a warm parchment background. Renders cleanly inline on
+    GitHub and at the top of the README on any client.
+  -->
+
   <defs>
-    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
-      <stop offset="0"   stop-color="#0d0f13"/>
-      <stop offset=".55" stop-color="#161922"/>
-      <stop offset="1"   stop-color="#1b1f2a"/>
-    </linearGradient>
-    <linearGradient id="accent" x1="0" x2="1" y1="0" y2="0">
-      <stop offset="0"   stop-color="#c97a2f"/>
-      <stop offset="1"   stop-color="#e6a655"/>
-    </linearGradient>
-    <pattern id="grid" x="0" y="0" width="42" height="42" patternUnits="userSpaceOnUse">
-      <path d="M42 0H0V42" fill="none" stroke="#ffffff" stroke-opacity=".035" stroke-width="1"/>
-    </pattern>
-    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-      <feGaussianBlur stdDeviation="14" result="b"/>
-      <feMerge>
-        <feMergeNode in="b"/>
-        <feMergeNode in="SourceGraphic"/>
-      </feMerge>
-    </filter>
     <style>
-      .title { font: 700 96px "Inter", -apple-system, "Segoe UI", sans-serif; letter-spacing: -0.035em; fill: #f5f6f8; }
-      .title-tail { fill: #c97a2f; }
-      .eyebrow { font: 600 13px "JetBrains Mono", "SF Mono", Menlo, monospace; letter-spacing: 0.34em; fill: #8a8f99; text-transform: uppercase; }
-      .strap { font: 500 18px "Inter", sans-serif; fill: #b4bac4; letter-spacing: 0.005em; }
-      .pill { font: 600 11px "JetBrains Mono", monospace; letter-spacing: 0.2em; fill: #c97a2f; text-transform: uppercase; }
-      .hash { font: 500 11px "JetBrains Mono", monospace; fill: #5a606d; letter-spacing: 0.02em; }
-      .verb { font: 500 12px "Inter", sans-serif; fill: #b4bac4; }
-      .meta { font: 500 12px "JetBrains Mono", monospace; fill: #8a8f99; }
+      .serif       { font-family: "Instrument Serif", "Hoefler Text", "Cambria", "Garamond", serif; font-style: normal; }
+      .serif-it    { font-family: "Instrument Serif", "Hoefler Text", "Cambria", "Garamond", serif; font-style: italic; }
+      .mono        { font-family: "JetBrains Mono", ui-monospace, monospace; }
+      .ink         { fill: #221912; }
+      .accent      { fill: #a14a2a; }
+      .muted       { fill: #6b574a; }
+      .ring        { fill: none; stroke: #a14a2a; }
+      .rule        { fill: none; stroke: #c4ad96; }
     </style>
   </defs>
 
-  <!-- bg + subtle grid -->
-  <rect width="100%" height="100%" fill="url(#bg)"/>
-  <rect width="100%" height="100%" fill="url(#grid)"/>
+  <!-- parchment field -->
+  <rect width="1600" height="420" fill="#f7f0e2"/>
 
-  <!-- left accent bar -->
-  <rect x="0" y="0" width="3" height="360" fill="url(#accent)"/>
+  <!-- top accent stripe -->
+  <rect x="0" y="0" width="1600" height="4" fill="#a14a2a"/>
 
-  <!-- eyebrow -->
-  <text x="64" y="78" class="eyebrow">OSINT × Forensics — open source</text>
+  <!-- micro-inscription, top-right -->
+  <text class="mono muted" x="1560" y="34" text-anchor="end" font-size="11" letter-spacing="2.5">VOL. 0 · ED. 4 · v0.4.0 · MIT</text>
 
-  <!-- title — "forenix" with "-oss" muted tail -->
-  <g filter="url(#glow)">
-    <text x="62" y="178" class="title">forenix<tspan class="title-tail">-oss</tspan></text>
+  <!-- seal mark, centred -->
+  <g transform="translate(800, 145)">
+    <circle class="ring" cx="0" cy="0" r="60" stroke-width="1.5"/>
+    <circle class="ring" cx="0" cy="0" r="55" stroke-width="0.6"/>
+    <text class="serif-it accent" x="0" y="32" text-anchor="middle" font-size="92">f</text>
   </g>
 
-  <!-- strap line -->
-  <text x="64" y="222" class="strap">One workflow from public-source lead to chain-of-custody evidence.</text>
-
-  <!-- small status pills row -->
-  <g transform="translate(64,260)">
-    <g>
-      <rect width="118" height="26" rx="4" fill="#c97a2f22" stroke="#c97a2f88" stroke-width="1"/>
-      <text x="14" y="18" class="pill">MIT · v0.2.0</text>
-    </g>
-    <g transform="translate(128,0)">
-      <rect width="146" height="26" rx="4" fill="#ffffff08" stroke="#ffffff20" stroke-width="1"/>
-      <text x="14" y="18" class="verb">Real Git per case</text>
-    </g>
-    <g transform="translate(284,0)">
-      <rect width="194" height="26" rx="4" fill="#ffffff08" stroke="#ffffff20" stroke-width="1"/>
-      <text x="14" y="18" class="verb">SHA-256 forward-chain audit</text>
-    </g>
-    <g transform="translate(488,0)">
-      <rect width="158" height="26" rx="4" fill="#ffffff08" stroke="#ffffff20" stroke-width="1"/>
-      <text x="14" y="18" class="verb">SAT-grounded analysis</text>
-    </g>
+  <!-- wordmark — single line, centred under the seal -->
+  <g transform="translate(0, 280)">
+    <text class="serif ink" x="800" y="0" text-anchor="middle" font-size="96" letter-spacing="-0.5">
+      <tspan>forenix</tspan><tspan class="serif-it accent">/</tspan><tspan>oss</tspan>
+    </text>
   </g>
 
-  <!-- right-side "chain-of-custody" graphic: stacked commit-like rows -->
-  <g transform="translate(820,76)">
-    <!-- vertical chain line -->
-    <line x1="14" y1="0" x2="14" y2="220" stroke="#3a3f4a" stroke-width="1"/>
+  <!-- tagline -->
+  <text class="serif-it muted" x="800" y="335" text-anchor="middle" font-size="24">court-admissible OSINT, from the first finding.</text>
 
-    <!-- node 1 -->
-    <circle cx="14" cy="18" r="6" fill="#c97a2f"/>
-    <text x="40" y="14" class="meta">7f3a9c</text>
-    <text x="40" y="30" class="hash">add: evidence captured</text>
+  <!-- bottom double-rule -->
+  <line class="rule" x1="540" y1="375" x2="1060" y2="375" stroke-width="1"/>
+  <line class="rule" x1="540" y1="382" x2="1060" y2="382" stroke-width="0.5"/>
 
-    <!-- node 2 -->
-    <circle cx="14" cy="78" r="6" fill="#5a606d" stroke="#c97a2f" stroke-width="1.5"/>
-    <text x="40" y="74" class="meta">b21de4</text>
-    <text x="40" y="90" class="hash">verify: hash matches</text>
-
-    <!-- node 3 -->
-    <circle cx="14" cy="138" r="6" fill="#5a606d" stroke="#c97a2f" stroke-width="1.5"/>
-    <text x="40" y="134" class="meta">c40f1a</text>
-    <text x="40" y="150" class="hash">promote: finding → evidence</text>
-
-    <!-- node 4 (HEAD) -->
-    <circle cx="14" cy="198" r="7" fill="#c97a2f" stroke="#e6a655" stroke-width="2"/>
-    <text x="40" y="194" class="meta">9d8e02</text>
-    <text x="40" y="210" class="hash">seal: chain locked</text>
-
-    <!-- HEAD pill -->
-    <g transform="translate(248,186)">
-      <rect width="40" height="20" rx="3" fill="#c97a2f33" stroke="#c97a2f99"/>
-      <text x="9" y="14" class="pill">HEAD</text>
-    </g>
-  </g>
-
-  <!-- bottom-left fine print -->
-  <text x="64" y="332" class="hash">// public-source intelligence, verifiable in court — github.com/thunderstornX/forenix-oss</text>
+  <!-- bottom colophon -->
+  <text class="mono muted" x="800" y="404" text-anchor="middle" font-size="11" letter-spacing="3">AN  OPEN-SOURCE  INSTRUMENT  OF  EVIDENCE</text>
 </svg>

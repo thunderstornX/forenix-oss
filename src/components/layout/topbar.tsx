@@ -39,7 +39,7 @@ export function Topbar() {
   return (
     <header className="fx-top">
       <div className="fx-top__left">
-        <span className="fx-top__crumb">forenix-oss</span>
+        <span className="fx-top__crumb">forenix/oss</span>
         <span className="fx-top__sep">/</span>
         <h1 className="fx-top__title">{viewLabel(activeView)}</h1>
       </div>

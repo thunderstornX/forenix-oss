@@ -71,10 +71,10 @@ export function Sidebar() {
     <aside className="fx-side">
       {/* Brand */}
       <div className="fx-side__brand">
-        <div className="fx-side__mark">FX</div>
+        <div className="fx-side__mark">f</div>
         {!sidebarCollapsed && (
           <div>
-            <div className="fx-side__name">forenix-oss</div>
+            <div className="fx-side__name">forenix<em>/</em>oss</div>
             <div className="fx-side__tag">osint x forensics</div>
           </div>
         )}

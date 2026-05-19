@@ -99,15 +99,15 @@
    and 35 (warm graphite) for ink; chroma stays low so the page never
    feels coloured, just *warm*. */
 [data-theme="light"] {
-  --bg:           oklch(0.965 0.014 80);
-  --bg-elev:      oklch(0.985 0.010 80);
-  --bg-sunken:    oklch(0.945 0.018 75);
-  --bg-subtle:    oklch(0.935 0.020 75);
-  --bg-hover:     oklch(0.925 0.022 75);
-  --bg-active:    oklch(0.905 0.024 70);
+  --bg:           oklch(0.975 0.005 85);
+  --bg-elev:      oklch(0.990 0.003 85);
+  --bg-sunken:    oklch(0.960 0.006 80);
+  --bg-subtle:    oklch(0.950 0.007 80);
+  --bg-hover:     oklch(0.940 0.008 80);
+  --bg-active:    oklch(0.920 0.010 75);
 
-  --border:       oklch(0.87 0.018 70);
-  --border-strong:oklch(0.78 0.022 60);
+  --border:       oklch(0.88 0.008 80);
+  --border-strong:oklch(0.80 0.010 75);
   --border-focus: var(--accent);
 
   --fg:           oklch(0.18 0.018 35);
@@ -379,19 +379,26 @@ a { color: inherit; text-decoration: none; }
   display: grid; place-items: center;
   border: 1px solid var(--border-strong);
   background: var(--bg-elev);
-  color: var(--fg-strong);
-  font-family: var(--font-mono);
-  font-weight: 600;
-  font-size: var(--fs-sm);
+  color: var(--accent);
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-style: italic;
+  font-size: 18px;
   border-radius: var(--r-sm);
   flex-shrink: 0;
+  line-height: 1;
 }
 .fx-side__name {
-  font-size: var(--fs-md);
-  font-weight: 600;
-  letter-spacing: var(--tracking-tight);
+  font-family: var(--font-display);
+  font-size: 19px;
+  font-weight: 400;
+  letter-spacing: -0.01em;
   color: var(--fg-strong);
-  line-height: 1.1;
+  line-height: 1;
+}
+.fx-side__name em {
+  color: var(--accent);
+  font-style: italic;
 }
 .fx-side__tag {
   font-family: var(--font-mono);
@@ -540,17 +547,19 @@ a { color: inherit; text-decoration: none; }
   border-bottom: 1px solid var(--border);
 }
 .fx-pagehead__title {
-  font-size: var(--fs-2xl);
-  font-weight: 600;
-  letter-spacing: var(--tracking-tight);
+  font-family: var(--font-display);
+  font-size: 30px;
+  font-weight: 400;
+  letter-spacing: -0.01em;
   color: var(--fg-strong);
   margin: 0;
-  line-height: 1.2;
+  line-height: 1.1;
 }
 .fx-pagehead__sub {
-  margin: 6px 0 0;
+  margin: 8px 0 0;
   color: var(--fg-muted);
-  font-size: var(--fs-sm);
+  font-size: var(--fs-md);
+  line-height: 1.5;
   max-width: 720px;
 }
 
@@ -603,13 +612,14 @@ a { color: inherit; text-decoration: none; }
   font-weight: 600;
 }
 .fx-stat__value {
-  font-size: var(--fs-3xl);
-  font-weight: 600;
-  letter-spacing: -0.02em;
+  font-family: var(--font-display);
+  font-size: 40px;
+  font-weight: 400;
+  letter-spacing: -0.015em;
   color: var(--fg-strong);
   font-variant-numeric: tabular-nums;
   line-height: 1;
-  margin-top: 2px;
+  margin-top: 4px;
 }
 .fx-stat__sub { font-size: var(--fs-xs); color: var(--fg-muted); margin-top: 4px; }
 .fx-stat__delta { font-family: var(--font-mono); font-size: var(--fs-2xs); color: var(--fg-subtle); }

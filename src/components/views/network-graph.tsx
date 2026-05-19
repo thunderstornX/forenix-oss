@@ -96,7 +96,7 @@ export function NetworkGraphView() {
           <svg viewBox={`0 0 ${W} ${H}`} className="w-full" style={{ height: H }}>
             <defs>
               <marker id="arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto">
-                <path d="M0,0 L8,4 L0,8 z" fill="rgba(255,255,255,0.35)" />
+                <path d="M0,0 L8,4 L0,8 z" style={{ fill: "var(--fg-muted)" }} />
               </marker>
             </defs>
             {/* Edges */}
@@ -108,7 +108,7 @@ export function NetworkGraphView() {
                 <g key={i}>
                   <line
                     x1={a.x} y1={a.y} x2={b.x} y2={b.y}
-                    stroke="rgba(255,255,255,0.18)"
+                    style={{ stroke: "var(--border-strong)" }}
                     strokeWidth={1.2}
                     markerEnd="url(#arrow)"
                   />
@@ -121,13 +121,13 @@ export function NetworkGraphView() {
                 <circle
                   r={KIND_RADIUS[n.kind]}
                   fill={KIND_COLOR[n.kind]}
-                  stroke="rgba(255,255,255,0.18)"
-                  strokeWidth={1}
+                  style={{ stroke: "var(--bg-elev)" }}
+                  strokeWidth={1.5}
                 />
                 <title>{`${n.kind}: ${n.label}`}</title>
                 <text
                   y={KIND_RADIUS[n.kind] + 11}
-                  fill="rgba(233,236,242,0.85)"
+                  style={{ fill: "var(--fg)" }}
                   fontSize={9}
                   textAnchor="middle"
                   fontFamily="ui-sans-serif, system-ui"

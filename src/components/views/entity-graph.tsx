@@ -103,13 +103,13 @@ export function EntityGraphView() {
                 <g key={r.id}>
                   <line
                     x1={a.x} y1={a.y} x2={b.x} y2={b.y}
-                    stroke="#14b8a6"
+                    style={{ stroke: "var(--accent)" }}
                     strokeOpacity={opacity}
                     strokeWidth={1.5}
                   />
                   <text
                     x={(a.x + b.x) / 2} y={(a.y + b.y) / 2 - 4}
-                    fill="rgba(255,255,255,0.5)"
+                    style={{ fill: "var(--fg-muted)" }}
                     fontSize={9}
                     textAnchor="middle"
                   >
@@ -121,10 +121,10 @@ export function EntityGraphView() {
             {/* Nodes */}
             {positioned.map((n) => (
               <g key={n.id} transform={`translate(${n.x},${n.y})`}>
-                <circle r={9} fill={TYPE_COLOR[n.type] ?? "#9aa3b2"} stroke="rgba(255,255,255,0.2)" strokeWidth={1} />
+                <circle r={9} fill={TYPE_COLOR[n.type] ?? "#9aa3b2"} style={{ stroke: "var(--bg-elev)" }} strokeWidth={1.5} />
                 <text
                   y={22}
-                  fill="rgba(233,236,242,0.9)"
+                  style={{ fill: "var(--fg)" }}
                   fontSize={10}
                   textAnchor="middle"
                   fontFamily="ui-sans-serif, system-ui"

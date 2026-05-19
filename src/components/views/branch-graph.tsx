@@ -184,8 +184,8 @@ function BranchGraphForCase({ caseId }: { caseId: string }) {
                 cy={8 + idx * rowHeight + rowHeight / 2 - 4}
                 r={5}
                 fill={n.branch.color}
-                stroke={n.verified ? "#34d399" : "rgba(255,255,255,0.2)"}
-                strokeWidth={n.verified ? 2 : 1}
+                style={{ stroke: n.verified ? "var(--success)" : "var(--bg-elev)" }}
+                strokeWidth={n.verified ? 2 : 1.5}
               />
             ))}
           </svg>
