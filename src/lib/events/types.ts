@@ -28,9 +28,20 @@ export interface EventMap {
   "audit.append":             { hash: string; action: string; entity: string };
 }
 
-/** Wire envelope every connected SSE client receives. */
+/** Wire envelope every connected SSE client receives.
+ *
+ * `orgId` is the tenant the event belongs to. Producers populate it
+ * from the actor / entity context. The SSE route uses it to filter
+ * what each connection receives:
+ *
+ *   envelope.orgId === null   ⇒ "global" / system event, everyone sees it
+ *   envelope.orgId === "X"    ⇒ only members of org X (+ super-admin) see it
+ *
+ * Single-tenant deployments (OSS, today's Vercel + DO) emit with
+ * orgId=null and behave exactly as before. The filter is additive. */
 export interface EventEnvelope<T extends EventTopic = EventTopic> {
   topic: T;
   payload: EventMap[T];
   at: string;  // ISO timestamp
+  orgId?: string | null;
 }

@@ -8,16 +8,15 @@
  * Auth: standard session-gated route (middleware enforces this for
  * everything under /api/* that isn't on the public list).
  *
- * MULTI-TENANT NOTE (Phase 9.5+): once organisations land in the
- * private overlay, this endpoint MUST filter events by the
- * caller's org. Today every authenticated user receives every
- * emitted event regardless of which org owned the underlying row.
- * That's correct on the single-tenant deployments we run today
- * (Vercel concept + DO single-tenant SaaS) but would be a leak the
- * moment multiple paying customers share a droplet. Fix: the
- * emitter envelope grows an optional `orgId` field, producers
- * populate it, the subscribe() helper takes an actor.orgId and
- * the SSE route hands each connection a per-org filter.
+ * MULTI-TENANT FILTER (Phase 9.5b chunk 3):
+ *   - super-admin (role=admin, orgId=null) sees every envelope
+ *   - everyone else sees envelopes where envelope.orgId is null
+ *     (global / system events) OR envelope.orgId === actor.orgId
+ *
+ * Producers that handle tenant-scoped state populate envelope.orgId.
+ * Anything left as null is treated as "global" and reaches every
+ * subscriber. Single-tenant OSS deployments emit only globals and
+ * behave exactly as before.
  *
  * Topics: comma-separated list. Omit ?topics= for "all events".
  *
@@ -36,8 +35,8 @@
 import "server-only";
 
 import { subscribe } from "@/lib/events/emitter";
-import type { EventTopic } from "@/lib/events/types";
-import { requireSession } from "@/lib/rbac";
+import type { EventEnvelope, EventTopic } from "@/lib/events/types";
+import { type ActorContext, requireSession } from "@/lib/rbac";
 
 export const dynamic = "force-dynamic";  // never cache an open stream
 export const runtime = "nodejs";          // EventEmitter needs Node, not Edge
@@ -61,15 +60,27 @@ function parseTopics(raw: string | null): EventTopic[] | undefined {
   return out.length > 0 ? out : undefined;
 }
 
+/** Per-actor envelope filter — mirrors the rbac decision matrix. */
+function orgFilterFor(actor: ActorContext): (env: EventEnvelope) => boolean {
+  // Super-admin (operator account on single-tenant or unscoped admin):
+  // no filter, sees everything.
+  if (actor.role === "admin" && !actor.orgId) return () => true;
+  // Everyone else: globals + own-org only.
+  const myOrg = actor.orgId;
+  return (env) => env.orgId == null || env.orgId === myOrg;
+}
+
 export async function GET(req: Request) {
+  let actor: ActorContext;
   try {
-    await requireSession();
+    actor = await requireSession();
   } catch {
     return new Response("Unauthorized", { status: 401 });
   }
 
   const url = new URL(req.url);
   const topics = parseTopics(url.searchParams.get("topics"));
+  const filter = orgFilterFor(actor);
 
   const stream = new ReadableStream({
     start(controller) {
@@ -86,9 +97,13 @@ export async function GET(req: Request) {
       // Initial hello — client uses this to confirm the stream opened.
       send(`event: hello\ndata: {"ok":true}\n\n`);
 
-      const unsubscribe = subscribe(topics, (envelope) => {
-        send(`event: ${envelope.topic}\ndata: ${JSON.stringify(envelope)}\n\n`);
-      });
+      const unsubscribe = subscribe(
+        topics,
+        (envelope) => {
+          send(`event: ${envelope.topic}\ndata: ${JSON.stringify(envelope)}\n\n`);
+        },
+        filter,
+      );
 
       const keepalive = setInterval(() => {
         send(`:keepalive ${Date.now()}\n\n`);

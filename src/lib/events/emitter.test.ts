@@ -89,4 +89,35 @@ describe("event emitter", () => {
     expect(countA).toBe(1);
     expect(countB).toBe(1);
   });
+
+  it("stamps envelopes with the supplied orgId; defaults to null", () => {
+    const all: EventEnvelope[] = [];
+    subscribe(undefined, (env) => all.push(env));
+
+    emit("audit.append", { hash: "g", action: "a", entity: "e" });            // no orgId
+    emit("audit.append", { hash: "o", action: "a", entity: "e" }, "org_123"); // scoped
+
+    expect(all).toHaveLength(2);
+    expect(all[0].orgId).toBeNull();
+    expect(all[1].orgId).toBe("org_123");
+  });
+
+  it("filter only delivers envelopes that match (multi-tenant SSE)", () => {
+    const received: EventEnvelope[] = [];
+    // Mimic the SSE route's per-actor filter: caller is a member of
+    // org_red, so they should see envelopes with orgId === null OR
+    // orgId === "org_red", but never "org_blue".
+    subscribe(
+      undefined,
+      (env) => received.push(env),
+      (env) => env.orgId == null || env.orgId === "org_red",
+    );
+
+    emit("audit.append", { hash: "g", action: "a", entity: "e" });            // global → in
+    emit("audit.append", { hash: "r", action: "a", entity: "e" }, "org_red"); // own org → in
+    emit("audit.append", { hash: "b", action: "a", entity: "e" }, "org_blue"); // foreign org → blocked
+
+    expect(received).toHaveLength(2);
+    expect(received.map((r) => (r.payload as { hash: string }).hash)).toEqual(["g", "r"]);
+  });
 });

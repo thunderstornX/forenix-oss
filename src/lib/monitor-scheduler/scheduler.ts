@@ -142,7 +142,15 @@ async function runOneMonitor(m: MonitorWithInv): Promise<{ findingsCount: number
     },
   });
 
-  emit("monitor.run.started", { monitorId: m.id, runId: run.id });
+  // Derive tenant scope from the monitor's linked investigation, when
+  // present. Standalone monitors stay global (orgId=null).
+  const monitorOrgId = m.investigation
+    ? (await prisma.investigation
+        .findUnique({ where: { id: m.investigation.id }, select: { orgId: true } })
+        .then((row) => row?.orgId ?? null))
+    : null;
+
+  emit("monitor.run.started", { monitorId: m.id, runId: run.id }, monitorOrgId);
 
   let findingsCount = 0;
 
@@ -180,7 +188,7 @@ async function runOneMonitor(m: MonitorWithInv): Promise<{ findingsCount: number
         completedAt: new Date(),
       },
     });
-    emit("monitor.run.completed", { monitorId: m.id, runId: run.id, status: "succeeded" });
+    emit("monitor.run.completed", { monitorId: m.id, runId: run.id, status: "succeeded" }, monitorOrgId);
   } catch (e) {
     await prisma.monitorRun.update({
       where: { id: run.id },
@@ -190,7 +198,7 @@ async function runOneMonitor(m: MonitorWithInv): Promise<{ findingsCount: number
         completedAt: new Date(),
       },
     });
-    emit("monitor.run.completed", { monitorId: m.id, runId: run.id, status: "failed" });
+    emit("monitor.run.completed", { monitorId: m.id, runId: run.id, status: "failed" }, monitorOrgId);
     throw e;
   }
 

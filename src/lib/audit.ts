@@ -27,6 +27,9 @@ export interface AuditEntryInput {
   caseId?: string | null;
   investigationId?: string | null;
   details?: Record<string, unknown>;
+  /** Phase 9.5: tenant scope for live-bus delivery. Pass actor.orgId
+   *  from the route handler (or omit for system / single-tenant events). */
+  orgId?: string | null;
 }
 
 /**
@@ -66,12 +69,17 @@ export async function appendAudit(input: AuditEntryInput) {
 
   // Broadcast on the live bus so the Audit view + topbar status can
   // refresh without polling. Fires once per append; consumers throttle
-  // on their end if needed.
-  emit("audit.append", {
-    hash,
-    action: input.action,
-    entity: input.entity,
-  });
+  // on their end if needed. `orgId` scopes delivery in SaaS mode; null
+  // means "global" and reaches every subscriber (OSS default).
+  emit(
+    "audit.append",
+    {
+      hash,
+      action: input.action,
+      entity: input.entity,
+    },
+    input.orgId ?? null,
+  );
 
   return row;
 }

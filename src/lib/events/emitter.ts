@@ -44,12 +44,22 @@ function getBus(): EventEmitter {
   return g[GLOBAL_KEY]!;
 }
 
-/** Emit a typed event. Producers call this; consumers never do. */
-export function emit<T extends EventTopic>(topic: T, payload: EventMap[T]): void {
+/** Emit a typed event. Producers call this; consumers never do.
+ *
+ * `orgId` is the tenant scope. Pass actor.orgId (or the orgId derived
+ * from the affected entity) for multi-tenant SaaS. Pass null (or omit)
+ * for events that aren't tenant-scoped — system maintenance, the
+ * single-tenant OSS deployment, the audit chain genesis, etc. */
+export function emit<T extends EventTopic>(
+  topic: T,
+  payload: EventMap[T],
+  orgId: string | null = null,
+): void {
   const envelope: EventEnvelope<T> = {
     topic,
     payload,
     at: new Date().toISOString(),
+    orgId,
   };
   // Same payload published on the topic AND on a wildcard channel so
   // an SSE connection with a topic-filter can listen on just "*".
@@ -62,18 +72,26 @@ export function emit<T extends EventTopic>(topic: T, payload: EventMap[T]): void
  *
  * If `topics` is empty or omitted, subscribes to all events via the
  * "*" wildcard channel.
+ *
+ * If `filter` is provided, the handler is only invoked for envelopes
+ * where filter(env) returns true. Used by the SSE route to apply
+ * per-actor org scoping without changing the bus shape.
  */
 export function subscribe(
   topics: EventTopic[] | undefined,
   handler: (envelope: EventEnvelope) => void,
+  filter?: (envelope: EventEnvelope) => boolean,
 ): () => void {
   const bus = getBus();
+  const wrapped: (envelope: EventEnvelope) => void = filter
+    ? (env) => { if (filter(env)) handler(env); }
+    : handler;
   if (!topics || topics.length === 0) {
-    bus.on("*", handler);
-    return () => bus.off("*", handler);
+    bus.on("*", wrapped);
+    return () => bus.off("*", wrapped);
   }
-  for (const t of topics) bus.on(t, handler);
+  for (const t of topics) bus.on(t, wrapped);
   return () => {
-    for (const t of topics) bus.off(t, handler);
+    for (const t of topics) bus.off(t, wrapped);
   };
 }
