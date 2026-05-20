@@ -43,27 +43,43 @@ export function Topbar() {
 
   return (
     <header className="fx-top">
-      <div className="fx-top__left">
-        <span className="fx-top__crumb">forenix/oss</span>
-        <span className="fx-top__sep">/</span>
-        <h1 className="fx-top__title">{viewLabel(activeView)}</h1>
+      <div className="fx-top__left" style={{ minWidth: 0, overflow: "hidden" }}>
+        <span className="fx-top__crumb hidden lg:inline">forenix/oss</span>
+        <span className="fx-top__sep hidden lg:inline">/</span>
+        <h1 className="fx-top__title" style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+          {viewLabel(activeView)}
+        </h1>
       </div>
 
-      <div className="fx-top__right">
-        <span className="fx-row" style={{ gap: 6 }}>
+      <div className="fx-top__right" style={{ flexShrink: 0 }}>
+        <span
+          className="fx-row hidden xl:flex"
+          style={{ gap: 6 }}
+          title={`adapter ${health?.adapter ?? "—"}`}
+        >
           <Activity size={13} style={{ color: "var(--accent)" }} />
           adapter{" "}
           <span style={{ fontFamily: "var(--font-mono)", color: "var(--fg)" }}>
             {health?.adapter ?? " - "}
           </span>
         </span>
-        <span className="fx-row" style={{ gap: 6 }}>
+        <span
+          className="fx-row hidden xl:flex"
+          style={{ gap: 6 }}
+          title={`v${health?.version ?? "0.2.0"}`}
+        >
           <GitMerge size={13} style={{ color: "var(--accent)" }} />
           v{health?.version ?? "0.2.0"}
         </span>
-        <span className="fx-row" style={{ gap: 6 }}>
+        <span
+          className="fx-row"
+          style={{ gap: 6 }}
+          title={health?.status === "ok" ? "online" : "starting"}
+        >
           <span className="fx-status-dot" />
-          {health?.status === "ok" ? "online" : "starting"}
+          <span className="hidden lg:inline">
+            {health?.status === "ok" ? "online" : "starting"}
+          </span>
         </span>
         <span
           className="fx-row"
@@ -79,7 +95,7 @@ export function Topbar() {
               animation: liveConnected ? "fx-pulse 1.6s ease-in-out infinite" : undefined,
             }}
           />
-          live
+          <span className="hidden md:inline">live</span>
         </span>
 
         {/* Accent picker */}
@@ -149,9 +165,14 @@ export function Topbar() {
         </button>
 
         {me?.data && (
-          <span className="fx-chip fx-chip--accent">
+          <span
+            className="fx-chip fx-chip--accent"
+            title={`${me.data.name ?? me.data.email} | ${me.data.role}`}
+          >
             <UserIcon size={11} />
-            {me.data.name ?? me.data.email} | {me.data.role}
+            <span className="hidden md:inline">
+              {me.data.name ?? me.data.email} | {me.data.role}
+            </span>
           </span>
         )}
 
@@ -159,9 +180,10 @@ export function Topbar() {
           type="button"
           onClick={() => signOut({ callbackUrl: "/sign-in" })}
           className="fx-btn fx-btn--ghost fx-btn--sm"
+          title="Sign out"
         >
           <LogOut size={13} />
-          sign out
+          <span className="hidden md:inline">sign out</span>
         </button>
       </div>
     </header>

@@ -156,7 +156,7 @@ export function Sidebar() {
               {userName}
             </div>
             <div style={{ fontSize: "var(--fs-3xs)", color: "var(--fg-faint)" }}>
-              {isAdmin ? "admin" : "analyst"}
+              {me.data?.data?.role ?? "viewer"}
             </div>
           </div>
         )}
