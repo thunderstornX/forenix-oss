@@ -117,6 +117,25 @@ export async function POST(
     details: { adapter: adapter.name, groups },
   });
 
+  // Defensive cleanup if the client disconnects mid-run. Without
+  // this, an aborted POST leaves the investigation stuck at
+  // status="running" forever — the closing "complete" update at
+  // the bottom of this handler never fires because the host kills
+  // the function. The listener fires synchronously; the actual
+  // DB write is best-effort (it may or may not get to execute,
+  // depending on how aggressively the host terminates). The
+  // try/catch around the work below is the belt-and-braces guard
+  // that covers the common cases.
+  request.signal.addEventListener("abort", () => {
+    prisma.investigation
+      .updateMany({
+        where: { id, status: "running" },
+        data: { status: "failed" },
+      })
+      .catch(() => {});
+  });
+
+  try {
   // ── Step 1: parallel agent-group runs ──────────────────────────
   const analyses: PipelineAnalysis[] = await Promise.all(
     groups.map((g) => adapter.analyzePipeline(inv.target, g, syntheticSearchResults(inv.target, g))),
@@ -261,4 +280,32 @@ export async function POST(
     },
     { status: 201 },
   );
+  } catch (err) {
+    // Anything thrown between "Step 1" and the closing complete
+    // write lands here. Move the row to a terminal state so the
+    // UI doesn't show a phantom "running" forever, then surface
+    // the error to the caller.
+    const message = (err as Error)?.message?.slice(0, 500) ?? "unknown";
+    try {
+      await prisma.investigation.update({
+        where: { id },
+        data: { status: "failed" },
+      });
+      await appendAudit({
+        action: "pipeline_failed",
+        entity: "Investigation",
+        entityId: id,
+        investigationId: id,
+        details: { reason: message },
+      });
+    } catch {
+      // best-effort — if the DB itself is failing there's not
+      // much more we can do here. The next operator deploy / a
+      // sweep script will reconcile the orphan row.
+    }
+    return Response.json(
+      { error: "pipeline_failed", message },
+      { status: 500 },
+    );
+  }
 }
