@@ -23,6 +23,7 @@ import { ReviewsView } from "@/components/views/reviews";
 import { SettingsView } from "@/components/views/settings";
 import { TeamsView } from "@/components/views/teams";
 import { VerificationView } from "@/components/views/verification";
+import { WaitlistAdminView } from "@/components/views/waitlist-admin";
 
 import { NAV, useUI, type ViewType } from "@/lib/store";
 
@@ -55,6 +56,7 @@ function ViewRouter() {
     case "teams":          return <TeamsView />;
     case "settings":       return <SettingsView />;
     case "admin":          return <AdminView />;
+    case "waitlist-admin": return <WaitlistAdminView />;
   }
 }
 

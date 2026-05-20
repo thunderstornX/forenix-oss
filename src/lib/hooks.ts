@@ -835,3 +835,59 @@ export function useCreateCase() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["cases"] }),
   });
 }
+
+// ─────────────────────────  Admin waitlist  ───────────────────────
+
+export interface WaitlistAdminRow {
+  id: string;
+  email: string;
+  role: string | null;
+  useCase: string | null;
+  source: string | null;
+  status: "pending" | "invited" | "declined";
+  createdAt: string;
+  invitedAt: string | null;
+}
+
+export function useAdminWaitlist() {
+  return useQuery({
+    queryKey: ["admin", "waitlist"],
+    queryFn: () => http<{ data: WaitlistAdminRow[]; total: number }>("/api/admin/waitlist"),
+  });
+}
+
+export interface WaitlistApproveResult {
+  user: { id: string; email: string; name: string; role: string };
+  credentials: { email: string; password: string };
+  note: string;
+}
+
+export function useApproveWaitlist() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, role, name }: { id: string; role?: string; name?: string }) =>
+      http<{ data: WaitlistApproveResult }>(`/api/admin/waitlist/${id}/approve`, {
+        method: "POST",
+        body: JSON.stringify({ role, name }),
+      }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["admin", "waitlist"] });
+      qc.invalidateQueries({ queryKey: ["admin", "users"] });
+      qc.invalidateQueries({ queryKey: ["audit"] });
+    },
+  });
+}
+
+export function useDeclineWaitlist() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) =>
+      http<{ data: { ok: true; status: "declined" } }>(`/api/admin/waitlist/${id}/decline`, {
+        method: "POST",
+      }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["admin", "waitlist"] });
+      qc.invalidateQueries({ queryKey: ["audit"] });
+    },
+  });
+}
