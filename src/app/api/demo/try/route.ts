@@ -43,7 +43,7 @@ export async function GET() {
   // Upsert keeps this idempotent across re-deploys and lets us rotate
   // the password by changing DEMO_PASSWORD + redeploying.
   const passwordHash = await bcrypt.hash(DEMO_PASSWORD, 10);
-  await prisma.user.upsert({
+  const user = await prisma.user.upsert({
     where: { email: DEMO_EMAIL },
     create: {
       email: DEMO_EMAIL,
@@ -57,7 +57,25 @@ export async function GET() {
       role: "viewer",
       disabled: false,
     },
+    select: { id: true },
   });
+
+  // Add the demo user to every existing team as a member. Without
+  // this they're a global viewer with no team memberships, which
+  // means every list endpoint (investigations, cases, evidence,
+  // monitors, ...) filters them out and the dashboard reads 0/0/0
+  // even though the seed populated data. We don't need to worry
+  // about over-permissive access — DEMO_VISITOR_ENABLED is set
+  // only on the Vercel concept surface where all data is seeded
+  // and meant to be poked.
+  const teams = await prisma.team.findMany({ select: { id: true } });
+  for (const t of teams) {
+    await prisma.teamMember.upsert({
+      where: { teamId_userId: { teamId: t.id, userId: user.id } },
+      create: { teamId: t.id, userId: user.id, role: "member" },
+      update: {},
+    });
+  }
 
   return Response.json({
     data: {
