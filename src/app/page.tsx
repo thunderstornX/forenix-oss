@@ -7,7 +7,13 @@ import {
 } from "@/components/marketing/artefacts";
 import { ChainVisual } from "@/components/marketing/chain-visual";
 import { MarketingShell } from "@/components/marketing/marketing-shell";
+import { TryDemoButton } from "@/components/marketing/try-demo-button";
 import { WaitlistForm } from "@/components/marketing/waitlist-form";
+
+// Whether to render the "try the demo" CTA. True on Vercel where
+// DEMO_VISITOR_ENABLED is set; false on the DigitalOcean paid surface
+// (which is invite-only and shouldn't offer a public backdoor).
+const SHOW_DEMO_CTA = process.env.DEMO_VISITOR_ENABLED === "true";
 
 export const metadata = {
   title: "forenix/oss — court-admissible OSINT, from the first finding",
@@ -73,18 +79,10 @@ function Preamble() {
 
       <div className="mt-9 flex flex-wrap items-center gap-4">
         <Link href="/waitlist" className="cd-btn no-underline">
-          file an application
+          join the waitlist
           <span aria-hidden>→</span>
         </Link>
-        <a
-          href="https://demo.forenix.tech"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="cd-btn cd-btn--ghost no-underline"
-        >
-          read the live demo
-          <span aria-hidden className="text-[var(--fg-faint)]">↗</span>
-        </a>
+        {SHOW_DEMO_CTA && <TryDemoButton />}
       </div>
 
       <hr className="mt-14 cd-rule" />

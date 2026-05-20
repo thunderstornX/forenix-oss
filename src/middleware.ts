@@ -21,6 +21,7 @@ const PUBLIC_PREFIXES = [
   "/api/auth/",
   "/api/admin/seed-demo",        // token-gated, bootstraps fresh deploys
   "/api/admin/waitlist-import",  // token-gated cross-deployment waitlist sync (WAITLIST_SYNC_TOKEN)
+  "/api/demo/try",               // env-gated visitor demo path (DEMO_VISITOR_ENABLED)
   "/api/waitlist",               // public sign-up endpoint
   "/api/internal/",              // token-gated scheduler tick (MONITOR_CRON_TOKEN / CRON_SECRET)
   "/_next/",
