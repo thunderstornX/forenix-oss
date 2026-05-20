@@ -45,6 +45,13 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
+  // ── Phase 9.5: organisation membership (SaaS overlay) ──
+  // NULL in OSS single-tenant deployments and on legacy rows. The
+  // overlay populates this when SAAS_MODE=true; without the overlay
+  // nothing reads it and behaviour is unchanged.
+  orgId        String?
+  org          Organization? @relation(fields: [orgId], references: [id], onDelete: SetNull)
+
   caseAssignments   CaseAssignment[]
   comments          Comment[]
   reviewedMRs       MergeRequest[]
@@ -53,6 +60,8 @@ model User {
   teamMemberships   TeamMember[]
   sentInvites       TeamInvite[]    @relation("InviteSentBy")
   apiKeysSet        ApiKey[]        @relation("ApiKeySetBy")
+
+  @@index([orgId])
 }
 
 // ───────────────────────── Teams ─────────────────────────
@@ -69,10 +78,38 @@ model Team {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
+  // ── Phase 9.5: organisation a team belongs to ──
+  orgId       String?
+  org         Organization? @relation(fields: [orgId], references: [id], onDelete: SetNull)
+
   members        TeamMember[]
   invites        TeamInvite[]
   cases          Case[]
   investigations Investigation[]
+
+  @@index([orgId])
+}
+
+// ───────────────────────── Organisations (Phase 9.5) ────
+//
+// SaaS-tier construct. In OSS single-tenant deployments every
+// tenant-scoped table carries `orgId = null` and nothing reads it.
+// The forenix-saas overlay activates org-scoping behind SAAS_MODE
+// and runs every query through an org-resolving middleware. Schema
+// lives here so OSS Core's Prisma client stays in lockstep with
+// what the overlay needs — the overlay adds code, never schema.
+model Organization {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique
+  status    String   @default("active") // active | suspended | trial
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  users          User[]
+  teams          Team[]
+  investigations Investigation[]
+  cases          Case[]
 }
 
 model TeamMember {
@@ -154,12 +191,20 @@ model Investigation {
   teamId  String?
   team    Team?    @relation(fields: [teamId], references: [id], onDelete: SetNull)
 
+  // ── Phase 9.5: denormalised org owner (SaaS overlay) ──
+  // Kept in sync with team.orgId by the overlay so list queries
+  // can filter by org without joining through Team.
+  orgId   String?
+  org     Organization? @relation(fields: [orgId], references: [id], onDelete: SetNull)
+
   findings    Finding[]
   entities    EntityRelation[]
   monitors    Monitor[]
   auditLogs   AuditLog[]
   reports     Report[]
   schedules   PipelineSchedule[]
+
+  @@index([orgId])
 }
 
 // SOURCE: argus  (with new bridge column `evidenceId`)
@@ -319,6 +364,10 @@ model Case {
   teamId String?
   team   Team?   @relation(fields: [teamId], references: [id], onDelete: SetNull)
 
+  // ── Phase 9.5: denormalised org owner (SaaS overlay) ──
+  orgId  String?
+  org    Organization? @relation(fields: [orgId], references: [id], onDelete: SetNull)
+
   evidence       Evidence[]
   branches       Branch[]
   mergeRequests  MergeRequest[]
@@ -328,6 +377,8 @@ model Case {
   assignments    CaseAssignment[]
   reports        Report[]
   investigations Investigation[]
+
+  @@index([orgId])
 }
 
 // SOURCE: forenix
