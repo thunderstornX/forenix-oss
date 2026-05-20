@@ -6,6 +6,46 @@ and the project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+(no changes yet)
+
+## [0.5.0] - 2026-05-20
+
+The visitor-funnel + ops-automation release. Vercel concept surface
+gains a "try the demo" path; admins on DO get an in-app waitlist
+triage view; the deploy pipeline auto-syncs OSS + private overlay to
+the DO droplet on every push; security pass on every token-gated
+endpoint. Premium code extracted to a private overlay; OSS Core is
+now pure OSS, deployable end-to-end without any premium dependency.
+
+### Added - Phase 9.4b: admin waitlist UI
+
+In-app surface to triage waitlist signups: filter by pending /
+invited / declined / all, approve (creates User, shows credentials
+once for the admin to email), decline (reversible), live updates
+via SSE on `audit.append`. New views entry under Account, admin-only.
+- `POST /api/admin/waitlist/[id]/approve`: generates an 18-char
+  base64url password, hashes it, creates the user, marks the
+  waitlist row invited, returns the credentials in the response.
+- `POST /api/admin/waitlist/[id]/decline`: idempotent mark-declined.
+- `useAdminWaitlist` / `useApproveWaitlist` / `useDeclineWaitlist`
+  hooks in `src/lib/hooks.ts`.
+
+### Added - Phase 9.4a: visitor "try the demo" path
+
+Public funnel from `forenix.tech` into the seeded dashboard
+without joining the waitlist. Gated by `DEMO_VISITOR_ENABLED=true`
+(set on Vercel only; the DO paid surface stays invite-only).
+- `GET /api/demo/try`: env-gated, rate-limited (20/IP/min),
+  idempotently upserts a `viewer`-role demo user and adds them to
+  every existing team so they see seeded data. Respects manual
+  disable. Returns the demo credentials for the client to
+  `signIn()` with.
+- `TryDemoButton` client component on the marketing page,
+  conditionally rendered server-side based on the env flag.
+- Drops the broken `demo.forenix.tech` link from marketing
+  (that surface is invite-only and was sending visitors into a
+  sign-in wall).
+
 ### Added - DigitalOcean auto-deploy + waitlist sync
 
 Stops the DO droplet (demo.forenix.tech, the paid SaaS) from drifting
@@ -41,6 +81,68 @@ every signup from both surfaces.
   private overlay (`thunderstornX/forenix-saas`). Public repo no
   longer ships premium code. See [`docs/SAAS.md`](docs/SAAS.md) for
   the overlay model.
+
+### Security
+
+- Constant-time bearer comparison for every token-gated route
+  (`MONITOR_CRON_TOKEN` / `CRON_SECRET` on `monitor-tick` +
+  `attest-tick`, `WAITLIST_SYNC_TOKEN` on `waitlist-import`,
+  `SEED_TOKEN` on `seed-demo`). Shared helper at
+  `src/lib/security.ts` (timingSafeEqual on padded buffers).
+  Closes a low-severity timing-side-channel that could leak
+  short prefixes of any of those secrets under repeated probing.
+- Security headers on every response via `next.config.ts`:
+  `Strict-Transport-Security` (2y + preload),
+  `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`,
+  `Referrer-Policy: strict-origin-when-cross-origin`,
+  `Permissions-Policy` denying camera/microphone/geolocation/
+  payment/usb. CSP deliberately deferred — needs careful design
+  around Tailwind 4 inline `@theme` + the Next bootstrap script.
+- `/api/demo/try` now rate-limited (20/IP/min) and respects a
+  manually disabled demo user (no silent re-enable on next visit).
+- 4 new unit tests for `timingSafeStringEqual` + `bearerFromHeader`.
+
+### Marketing / UI
+
+- Court Document design language across landing, waitlist, sign-in
+  (commit 2ff6058). Serif `Newsreader` body + `Instrument Serif`
+  display, parchment + oxblood palette, numbered §I-§V sections
+  with drop caps, marginalia, footnotes, exhibits, italic stamps.
+- Editorial repo banner + wax-seal logo (commit 99ed4d4). Centred
+  badges in README. Dashboard typography polish (sidebar wordmark
+  in serif with italic slash, page H1 + stat values in display
+  serif).
+- Light-mode contrast + mobile responsive fixes (commit 33bc932).
+- Topbar responsive fixes (commit de0f356): right-cluster items
+  collapse to icons at narrow widths, breadcrumb hides below `lg`,
+  title truncates with ellipsis. Sidebar footer now shows the
+  actual user role rather than a hardcoded "analyst" fallback.
+
+### Docs
+
+- `docs/SAAS.md`: rewritten as a short pointer to the overlay
+  model + the three-lane map.
+- `docs/OSS_INSTALL.md`: new unified self-host guide (Docker,
+  VPS, local dev).
+- `docs/DEV_FLOW.md`: new — where work lands, push-to-deploy
+  pipelines, catch-up across surfaces, testing layers, release
+  cadence.
+- `docs/09-RUNBOOK.md` §13 + §14: deploy automation + waitlist
+  sync runbooks.
+
+### Fixed
+
+- `vercel-build` runs `scripts/seed-if-empty.ts` between db push
+  and `next build`, so a fresh Vercel deploy lands with seeded
+  demo data instead of an empty dashboard. Checks Investigation
+  count (not User) since demo-visitor upserts create users but no
+  investigations.
+- Demo visitor added to every existing team on first sign-in, so
+  the dashboard shows the seeded data instead of 0/0/0.
+- `/api/health` joined `PUBLIC_ROUTES` so smoke checks + load
+  balancers can reach it without a session.
+- Deploy script PATH no longer requires `~/.bashrc` to be sourced
+  (`scripts/deploy-droplet.sh` exports `$HOME/.bun/bin` directly).
 
 ### Added - SSE live updates (Phase 9.3 / item 3 of 3, closes sprint)
 

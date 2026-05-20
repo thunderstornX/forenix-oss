@@ -14,6 +14,7 @@ import { z } from "zod";
 
 import { computeAuditHash, GENESIS_HASH } from "@/lib/audit-chain";
 import { prisma } from "@/lib/db";
+import { timingSafeStringEqual } from "@/lib/security";
 
 const Body = z.object({
   token: z.string().min(8),
@@ -38,7 +39,7 @@ export async function POST(request: Request) {
   if (!expected) {
     return Response.json({ error: "no_seed_token_configured" }, { status: 503 });
   }
-  if (body.token !== expected) {
+  if (!timingSafeStringEqual(body.token, expected)) {
     return Response.json({ error: "forbidden" }, { status: 403 });
   }
 

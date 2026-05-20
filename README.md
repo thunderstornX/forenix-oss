@@ -346,32 +346,34 @@ docs/
 
 ---
 
-## Open core / premium split
+## Contributing / dev flow
 
-| Tier | Distribution | Includes |
-|---|---|---|
-| **Core (MIT)** | Self-host / `bun run` | Every analyst feature, all 7 adapters, hash-chain audit, branch graph, integrity verifier, the full tool registry. |
-| **Team** (planned) | Hosted single-tenant | Managed Postgres + backups + dashboards + email support. |
-| **SaaS Premium** (planned) | Hosted multi-tenant | Org isolation, SSO, usage metering, advanced OSINT sources, PDF export. |
-| **Enterprise** (planned) | Air-gapped / annual | Custom adapters, in-jurisdiction hosting, SOC 2 attestation. |
+If you want to add features, fix bugs, or just understand how the
+three surfaces stay in sync, start with
+[`docs/DEV_FLOW.md`](docs/DEV_FLOW.md). It covers: where each kind
+of change lands (OSS feature vs. private overlay vs. marketing
+tweak), the push-to-deploy pipeline (Vercel + GitHub Actions →
+DigitalOcean droplet), how to catch up when surfaces drift, the
+testing layers (`typecheck` / `lint` / `bun test` / smoke check /
+manual), and the release cadence.
 
-`SAAS_MODE=true` is the **only** premium gate  -  core paths run identically whether it's set or not.
+The single hard rule for premium code is:
+[`src/lib/saas/`](src/lib/saas/) does not exist in this repo — it
+lives in the private overlay (`forenix-saas`) and is layered on at
+deploy time. OSS code paths must keep working without it.
 
 ---
 
 ## Roadmap
 
-- [x] Phase 1  -  Foundation: adapter pattern, merged schema, seed, app shell, 3 API routes
-- [x] Phase 2  -  Investigation + Case detail with full CRUD + analyst actions
-- [x] Phase 3  -  Pipeline runner + bridge + 7 AI adapters
-- [x] Phase 4  -  Evidence chain-of-custody UI + Integrity Dashboard
-- [x] Phase 5  -  Unified entity / network graph
-- [x] Phase 6  -  AI Lab, Monitors, Verification
-- [x] Phase 7  -  Report viewer + live adapter testing
-- [x] Phase 8  -  Real Git engine (isomorphic-git) + structured SAT prompts + 20-tool registry + AES-encrypted admin vault + light/dark redesign
-- [x] Phase 9.1  -  File-byte evidence storage (content-addressed disk store, real SHA-256 over bytes, atomic dedup, byte-level verify endpoint, download streaming)
-- [x] Phase 9.2  -  PDF export of admissible case reports (chain-of-custody attestation block, evidence inventory, finding summaries, audit-log sample, embedded report digest)
-- [ ] Phase 9.3  -  Scheduled Monitors | Multi-tenant orgs | WebSocket live updates
+- [x] Phase 1–8  -  Foundation through file-byte evidence + PDF export
+- [x] Phase 9.1  -  Content-addressed disk store + byte-level verify
+- [x] Phase 9.2  -  PDF export of admissible case reports
+- [x] Phase 9.3  -  Scheduled monitors + scheduled attestations + SSE live updates
+- [x] Phase 9.4a  -  Public "try the demo" visitor path on the Vercel concept
+- [x] Phase 9.4b  -  Admin waitlist triage UI on DO (approve / decline / live updates)
+- [ ] Phase 9.5  -  Multi-tenant org isolation (private overlay)
+- [ ] Phase 9.6  -  Billing, SSO, advanced OSINT adapters (private overlay)
 
 ---
 

@@ -7,13 +7,12 @@
  * (whichever cron is configured fires both endpoints).
  */
 import { runAttestTick } from "@/lib/attestation/scheduler";
+import { bearerFromHeader, timingSafeStringEqual } from "@/lib/security";
 
 function isAuthorised(req: Request): boolean {
   const expected = process.env.MONITOR_CRON_TOKEN ?? process.env.CRON_SECRET ?? "";
   if (!expected) return false;
-  const got = req.headers.get("authorization") ?? "";
-  const bare = got.replace(/^Bearer\s+/i, "").trim();
-  return bare === expected;
+  return timingSafeStringEqual(bearerFromHeader(req), expected);
 }
 
 export async function POST(request: Request) {

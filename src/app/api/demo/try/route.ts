@@ -23,6 +23,7 @@
  * seeded data"; there is no secret to protect.
  */
 import bcrypt from "bcryptjs";
+import { createHash } from "node:crypto";
 
 import { prisma } from "@/lib/db";
 
@@ -34,14 +35,59 @@ const DEMO_NAME = "Demo Visitor";
 // surface can sign in as this user.
 const DEMO_PASSWORD = "try-the-demo";
 
-export async function GET() {
+// In-process token bucket for the visitor demo endpoint. Public,
+// DB-writing, so we don't want a single client to hammer it. Same
+// shape as the bucket in /api/waitlist. Single-instance only (good
+// enough for Vercel functions which run a small handful of warm
+// instances in parallel).
+const BUCKETS = new Map<string, { count: number; resetAt: number }>();
+const RATE_WINDOW_MS = 60 * 1000;     // 1 min
+const RATE_LIMIT     = 20;            // 20 try-the-demo clicks per IP per minute
+
+function hashIp(req: Request): string {
+  const ip =
+    req.headers.get("cf-connecting-ip") ??
+    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+    req.headers.get("x-real-ip") ??
+    "unknown";
+  return createHash("sha256").update(ip).digest("hex");
+}
+
+function rateLimit(ipHash: string): { ok: boolean; retryAfterSec: number } {
+  const now = Date.now();
+  const cur = BUCKETS.get(ipHash);
+  if (!cur || cur.resetAt < now) {
+    BUCKETS.set(ipHash, { count: 1, resetAt: now + RATE_WINDOW_MS });
+    return { ok: true, retryAfterSec: 0 };
+  }
+  cur.count += 1;
+  if (cur.count > RATE_LIMIT) {
+    return { ok: false, retryAfterSec: Math.ceil((cur.resetAt - now) / 1000) };
+  }
+  return { ok: true, retryAfterSec: 0 };
+}
+
+export async function GET(request: Request) {
   if (process.env.DEMO_VISITOR_ENABLED !== "true") {
     return new Response("Not Found", { status: 404 });
+  }
+
+  const rl = rateLimit(hashIp(request));
+  if (!rl.ok) {
+    return Response.json(
+      { error: "rate_limited", retryAfter: rl.retryAfterSec },
+      { status: 429, headers: { "Retry-After": String(rl.retryAfterSec) } },
+    );
   }
 
   // Make sure the demo user exists with the expected password hash.
   // Upsert keeps this idempotent across re-deploys and lets us rotate
   // the password by changing DEMO_PASSWORD + redeploying.
+  //
+  // The update branch deliberately does NOT clear `disabled`, so an
+  // admin who manually disables the demo user (e.g. after spotting
+  // abuse on Vercel) is respected — the next visitor will see a
+  // failed sign-in rather than silently re-enabling the account.
   const passwordHash = await bcrypt.hash(DEMO_PASSWORD, 10);
   const user = await prisma.user.upsert({
     where: { email: DEMO_EMAIL },
@@ -55,10 +101,16 @@ export async function GET() {
       // Keep the hash current in case DEMO_PASSWORD changes.
       passwordHash,
       role: "viewer",
-      disabled: false,
     },
-    select: { id: true },
+    select: { id: true, disabled: true },
   });
+
+  if (user.disabled) {
+    return Response.json(
+      { error: "demo_disabled", note: "An admin has disabled the demo account on this surface." },
+      { status: 503 },
+    );
+  }
 
   // Add the demo user to every existing team as a member. Without
   // this they're a global viewer with no team memberships, which

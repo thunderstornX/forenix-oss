@@ -14,16 +14,15 @@
  * from the Droplet timer.
  */
 import { runMonitorTick } from "@/lib/monitor-scheduler/scheduler";
+import { bearerFromHeader, timingSafeStringEqual } from "@/lib/security";
 
 function isAuthorised(req: Request): boolean {
   const expected = process.env.MONITOR_CRON_TOKEN ?? process.env.CRON_SECRET ?? "";
   if (!expected) return false;
-  const got = req.headers.get("authorization") ?? "";
   // Accept both "Bearer <token>" and bare "<token>" so the Vercel Cron
   // built-in `CRON_SECRET` (which sends "Bearer ...") and a curl from
   // the Droplet timer can both reach us.
-  const bare = got.replace(/^Bearer\s+/i, "").trim();
-  return bare === expected;
+  return timingSafeStringEqual(bearerFromHeader(req), expected);
 }
 
 export async function POST(request: Request) {

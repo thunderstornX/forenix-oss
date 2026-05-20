@@ -8,6 +8,17 @@
  * Auth: standard session-gated route (middleware enforces this for
  * everything under /api/* that isn't on the public list).
  *
+ * MULTI-TENANT NOTE (Phase 9.5+): once organisations land in the
+ * private overlay, this endpoint MUST filter events by the
+ * caller's org. Today every authenticated user receives every
+ * emitted event regardless of which org owned the underlying row.
+ * That's correct on the single-tenant deployments we run today
+ * (Vercel concept + DO single-tenant SaaS) but would be a leak the
+ * moment multiple paying customers share a droplet. Fix: the
+ * emitter envelope grows an optional `orgId` field, producers
+ * populate it, the subscribe() helper takes an actor.orgId and
+ * the SSE route hands each connection a per-org filter.
+ *
  * Topics: comma-separated list. Omit ?topics= for "all events".
  *
  * Wire format (SSE spec):

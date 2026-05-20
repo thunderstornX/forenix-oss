@@ -19,6 +19,7 @@ import { z } from "zod";
 import { appendAudit } from "@/lib/audit";
 import { prisma } from "@/lib/db";
 import { httpErrorResponse } from "@/lib/rbac";
+import { bearerFromHeader, timingSafeStringEqual } from "@/lib/security";
 
 const Body = z.object({
   email: z.string().email().max(254),
@@ -34,12 +35,7 @@ const Body = z.object({
 function authorised(req: Request): boolean {
   const token = process.env.WAITLIST_SYNC_TOKEN;
   if (!token) return false; // never accept if no secret is configured
-  const header = req.headers.get("authorization") ?? "";
-  const presented = header.startsWith("Bearer ") ? header.slice(7) : header;
-  // Constant-time-ish comparison would be nicer but the secret is
-  // short and short-circuit timing is not a meaningful side-channel
-  // here (the token is server-to-server, not user-typed).
-  return presented === token;
+  return timingSafeStringEqual(bearerFromHeader(req), token);
 }
 
 export async function POST(request: Request) {
