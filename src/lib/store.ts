@@ -34,6 +34,7 @@ export const VIEWS = [
   "settings",
   "admin",
   "waitlist-admin",
+  "saas-organisations",
 ] as const;
 
 export type ViewType = (typeof VIEWS)[number];
@@ -66,6 +67,7 @@ export const NAV: NavItem[] = [
   { id: "settings",       label: "Settings",       section: "account" },
   { id: "admin",          label: "Admin",          section: "account", adminOnly: true },
   { id: "waitlist-admin", label: "Waitlist",       section: "account", adminOnly: true },
+  { id: "saas-organisations", label: "Organisations", section: "account", adminOnly: true },
 ];
 
 interface UIState {

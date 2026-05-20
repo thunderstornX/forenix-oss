@@ -63,10 +63,13 @@ jobs:
       - name: Assemble build tree (OSS + overlay)
         run: |
           # Copy the overlay's `overlay/` tree on top of the OSS tree.
-          # rsync preserves any new directories the overlay introduces
-          # and never overwrites OSS files (the contract is that the
-          # overlay only ADDS).
-          rsync -av --ignore-existing overlay/overlay/ oss/
+          # Files that exist in both — i.e. view-component stubs OSS
+          # ships so its TypeScript build resolves — are replaced by
+          # the overlay's full implementation. The contract is that
+          # the overlay either ADDs files (new endpoints, new libs)
+          # or REPLACES a documented stub (a file in OSS whose top
+          # comment explicitly says "overlay overrides this").
+          rsync -av overlay/overlay/ oss/
           echo "── assembled tree ──"
           find oss/src/lib/saas -type f | head -20
 
