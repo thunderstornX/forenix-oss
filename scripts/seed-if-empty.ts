@@ -24,22 +24,27 @@ async function main() {
   const prisma = new PrismaClient();
 
   try {
-    const userCount = await prisma.user.count();
+    // Check Investigation count rather than User count. Users can
+    // exist for many reasons (demo-visitor upserts via /api/demo/try,
+    // earlier manual setup, etc.) but Investigation rows only land
+    // via the seed. So "no Investigations" = "demo data is missing"
+    // = "we should seed."
+    const invCount = await prisma.investigation.count();
 
-    if (userCount > 0 && !force) {
+    if (invCount > 0 && !force) {
       console.log(
-        `✓ DB has ${userCount} user(s) — skipping seed (set FORCE_RESEED=true to override)`,
+        `✓ DB has ${invCount} investigation(s) — skipping seed (set FORCE_RESEED=true to override)`,
       );
       await prisma.$disconnect();
       return 0;
     }
 
-    if (force && userCount > 0) {
+    if (force && invCount > 0) {
       console.log(
-        `! FORCE_RESEED set — wiping + reseeding (${userCount} existing user(s))`,
+        `! FORCE_RESEED set — wiping + reseeding (${invCount} existing investigation(s))`,
       );
     } else {
-      console.log("✓ Empty DB detected — seeding…");
+      console.log("✓ No demo data found — seeding…");
     }
   } catch (err) {
     // Couldn't connect or query — that's usually a transient build
