@@ -64,3 +64,8 @@ server.log
 # local-only / private (not for the public repo)
 /private/
 *.private.*
+
+# Local symlink to the private forenix-saas overlay during dev.
+# The actual src/lib/saas tree lives in the private repo; the deploy
+# pipeline rsyncs it into place. Never commit the symlink.
+src/lib/saas
