@@ -56,15 +56,30 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           email: user.email,
           name: user.name,
           role: user.role,
+          orgId: user.orgId,
         };
       },
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger }) {
       if (user) {
         token.id = user.id as string;
         token.role = (user as { role?: string }).role ?? "investigator";
+        token.orgId = (user as { orgId?: string | null }).orgId ?? null;
+      }
+      // Phase 9.5: if a user's primary org changes mid-session (admin
+      // moves them, first-time onboarding), refresh from the DB on
+      // next-auth's `update` trigger so the JWT doesn't go stale.
+      if (trigger === "update" && token.id) {
+        const fresh = await prisma.user.findUnique({
+          where: { id: token.id as string },
+          select: { orgId: true, role: true },
+        });
+        if (fresh) {
+          token.orgId = fresh.orgId;
+          token.role = fresh.role;
+        }
       }
       return token;
     },
@@ -72,6 +87,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (token && session.user) {
         session.user.id = token.id as string;
         session.user.role = (token.role as string) ?? "investigator";
+        session.user.orgId = (token.orgId as string | null | undefined) ?? null;
       }
       return session;
     },

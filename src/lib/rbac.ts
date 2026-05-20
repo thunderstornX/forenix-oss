@@ -39,6 +39,8 @@ export interface ActorContext {
   name: string | null;
   role: GlobalRole;
   teamIds: string[];
+  /** Phase 9.5: actor's primary org (NULL in OSS / unassigned). */
+  orgId: string | null;
 }
 
 export async function requireSession(): Promise<ActorContext> {
@@ -60,6 +62,7 @@ export async function requireSession(): Promise<ActorContext> {
     name: session.user.name ?? null,
     role,
     teamIds,
+    orgId: session.user.orgId ?? null,
   };
 }
 
@@ -69,17 +72,35 @@ export function requireRole(actor: ActorContext, atLeast: GlobalRole) {
   }
 }
 
-/** Returns a Prisma where-clause that scopes to the actor's teams.
- *  Admins see everything; everyone else sees rows owned by a team
- *  they're a member of, plus rows without a team (legacy/global). */
+/** Returns a Prisma where-clause that scopes to the actor's teams,
+ *  and (in SaaS, when `actor.orgId` is set) also to the actor's org.
+ *
+ *  Decision matrix:
+ *
+ *  | actor.role | actor.orgId | result                                                 |
+ *  |------------|-------------|--------------------------------------------------------|
+ *  | admin      | null        | {} — operator / super-admin sees everything            |
+ *  | admin      | set         | { orgId } — sees everything within their org           |
+ *  | non-admin  | null        | { OR: [team null, team in actor.teamIds] } — OSS legacy|
+ *  | non-admin  | set         | AND of the two clauses above                           |
+ *
+ *  Called with models that carry both `teamId` and `orgId` (Investigation,
+ *  Case, and Evidence-via-Case). New tenant-scoped models that join this
+ *  party should also carry both columns. */
 export function teamScopeWhere(actor: ActorContext) {
-  if (actor.role === "admin") return {};
-  return {
-    OR: [
-      { teamId: null },
-      { teamId: { in: actor.teamIds } },
-    ],
-  };
+  // Operator / super-admin: role=admin AND no org → no scoping.
+  // Covers OSS single-tenant deployments + the operator bootstrap account
+  // on a SaaS deployment.
+  if (actor.role === "admin" && !actor.orgId) return {};
+
+  const orgClause = actor.orgId ? { orgId: actor.orgId } : null;
+  const teamClause =
+    actor.role === "admin"
+      ? null  // admin within org: no team restriction inside the org
+      : { OR: [{ teamId: null }, { teamId: { in: actor.teamIds } }] };
+
+  if (orgClause && teamClause) return { AND: [orgClause, teamClause] };
+  return orgClause ?? teamClause ?? {};
 }
 
 /** Turn any HttpError into a Response.json. */
