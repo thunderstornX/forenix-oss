@@ -40,13 +40,13 @@
   <img alt="Prisma 6" src="https://img.shields.io/badge/Prisma-6-2d3748?style=flat&logo=prisma&logoColor=white">
   <img alt="Tailwind 4" src="https://img.shields.io/badge/Tailwind-4-38bdf8?style=flat&logo=tailwindcss&logoColor=white">
   <img alt="next-auth v5" src="https://img.shields.io/badge/next--auth-v5-7c3aed?style=flat&logo=nextdotjs&logoColor=white">
-  <img alt="Tests" src="https://img.shields.io/badge/tests-91_passing-2f8754?style=flat">
+  <img alt="Tests" src="https://img.shields.io/badge/tests-94_passing-2f8754?style=flat">
 </p>
 
 <!-- Cryptographic posture -->
 <p align="center">
   <a href="docs/07-SECURITY.md"><img alt="SHA-256 chained" src="https://img.shields.io/badge/audit_log-SHA--256_chained-2f8754?style=flat"></a>
-  <a href="docs/07-SECURITY.md#attestation"><img alt="Attestation backend: Sigstore Rekor" src="https://img.shields.io/badge/attestation-Sigstore_Rekor-c97a2f?style=flat&logo=sigstore&logoColor=white"></a>
+  <a href="docs/07-SECURITY.md#attestation"><img alt="Attestation: chain head witnessed" src="https://img.shields.io/badge/attestation-chain_head_witnessed-c97a2f?style=flat"></a>
   <a href="docs/07-SECURITY.md"><img alt="Offline verifiable" src="https://img.shields.io/badge/verify-offline%2012_lines_of_python-2f8754?style=flat"></a>
   <a href="SECURITY.md"><img alt="Security policy" src="https://img.shields.io/badge/security-policy-2f8754?style=flat"></a>
   <a href="https://doi.org/10.5281/zenodo.20329059"><img alt="DOI" src="https://zenodo.org/badge/DOI/10.5281/zenodo.20329059.svg"></a>

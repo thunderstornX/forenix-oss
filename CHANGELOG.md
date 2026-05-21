@@ -8,6 +8,116 @@ and the project adheres to [Semantic Versioning](https://semver.org/).
 
 (no changes yet)
 
+## [0.5.3] - 2026-05-21
+
+Operational truthfulness pass. A claim check of the v0.5.2 docs
+against the live droplet surfaced a mix of multi-tenant
+correctness gaps, dormant scheduled features, a real Sigstore
+Rekor codec bug, and stale README badges. This release closes the
+correctness gaps, activates the dormant features, and tightens
+the badges to match operational reality.
+
+### Fixed
+
+- **Bridge endpoint tenant-scope propagation.**
+  `src/app/api/bridge/inv-to-case/[id]/route.ts` now propagates
+  `orgId` and `teamId` from the source investigation onto the new
+  Case. Before this fix, every bridged case landed at
+  `orgId=null` / `teamId=null` and silently fell out of the
+  multi-tenant scope filter, becoming invisible to org-scoped
+  users.
+- **Case-report endpoint actor scoping.**
+  `src/app/api/cases/[id]/report/route.ts` now scope-checks the
+  case against `teamScopeWhere(actor)` before rendering. Returns
+  `404` (not `403`) on foreign-org cases so existence does not
+  leak across tenants.
+- **Pipeline runner: per-actor rate limit + scope.**
+  `src/app/api/pipeline/run/[id]/route.ts` authenticates via
+  `requireSession`, scope-checks the investigation, and applies a
+  per-actor rate limit (10 runs / hour) to cap runaway-bill risk
+  from compromised accounts on the live hosted adapter.
+- **Sigstore Rekor codec: SHA-512 for Ed25519.**
+  `src/lib/attestation/backends/{rekor.ts, rekor-codec.ts}` now
+  declare `algorithm: "sha512"` in the hashedrekord and sign the
+  SHA-512 hash bytes, matching Rekor's enforcement for Ed25519
+  keys (RFC 8032). Earlier code used SHA-256 and Rekor rejected
+  every entry with `unsupported hash algorithm: "SHA-256" not in
+  [SHA-512]`. Test fixtures updated.
+- **Health endpoint reads `pkg.version`.**
+  `src/app/api/health/route.ts` was hardcoded to `"0.1.0"`; now
+  reads from `package.json` so the version stays accurate without
+  manual edits.
+- **README badge truthfulness.**
+  `tests-61_passing` updated to current count. The Sigstore Rekor
+  "attested" badge softened to a generic "attestation: chain head
+  witnessed" badge linking to the security doc. The earlier wording
+  implied operational Rekor attestation that did not yet exist on
+  the deployment.
+
+### Added
+
+- **Generic rate-limit helper + tests.**
+  New `src/lib/rate-limit.ts` exposes `checkRateLimit(key, limit,
+  windowMs)` for any route that needs a bucket. Drop-in for the
+  pattern previously duplicated in `/api/demo/try` and
+  `/api/waitlist`. Three new tests in `rate-limit.test.ts`.
+- **Audit-chain dump + verify scripts.**
+  `scripts/dump-audit-log.ts` exports the chain as JSON; the
+  v0.5.2 release referenced this script before it existed.
+  `scripts/verify-audit-chain.ts` recomputes and verifies the
+  chain using the canonical primitive from
+  `src/lib/audit-chain.ts`.
+
+### Operations on demo.forenix.tech
+
+The fix-pass on the running deployment (not part of the
+distributed release artefact but documented here for
+completeness):
+
+- Generated and provisioned `CRON_SECRET`, `MONITOR_CRON_TOKEN`,
+  and `SEED_TOKEN` on the droplet `.env`.
+- Same tokens registered as GitHub repository secrets so the
+  cron-tick workflow can authenticate against
+  `/api/internal/monitor-tick` and `/api/internal/attest-tick`.
+- Set `ATTESTATION_BACKEND=local` on the droplet so the
+  attestation system has a working default.
+- First operational attestation row written via the local HMAC
+  backend (`headHash: 991d386d9a10f810...`, covers 72 chain
+  entries).
+- Both dormant monitors fired their first scheduled runs in 7+
+  days via the now-authenticated tick endpoint.
+- Filled gaps in the OSINT toolchain on the droplet: installed
+  `amass` (Go install + symlink), reinstalled `gowitness`,
+  reinstalled `theHarvester` (pipx), and restored
+  `sherlock` / `holehe` / `maigret` / `yt-dlp` after their venv
+  was accidentally removed mid-session.
+
+### Documentation
+
+- **`.env.example` completion.** Every `process.env.*` reference
+  in the codebase is now documented in `.env.example` with a
+  one-line comment explaining what it controls. Added: `AUTH_URL`,
+  `CRON_SECRET`, `CASE_REPO_ROOT`, `FORENIX_DISABLE_PDF`,
+  `FORENIX_DISABLE_EVIDENCE_STORE`, `FORENIX_EVIDENCE_DIR`,
+  `FORENIX_FORCE_GIT`, `FORCE_RESEED`, `GROQ_MAX_TOKENS`, `HIBP_API_KEY`,
+  `HOST`, `HUNTER_API_KEY`, `NVIDIA_MAX_TOKENS`,
+  `OPENROUTER_MAX_TOKENS`, `SHODAN_API_KEY`, `WORKER_URL`,
+  `WORKER_TOKEN`. Excludes runtime-set vars (`PATH`, `NODE_ENV`,
+  `VERCEL`, `VERCEL_URL`) which the host injects.
+
+### Known issues carried forward
+
+- **Sigstore Rekor publishing.** With the SHA-512 fix, Rekor
+  accepts the algorithm but still rejects the signature for
+  reasons that need deeper investigation (likely a public-key
+  format / verifier-path interaction). The Rekor backend remains
+  implemented and useful for self-hosters running a private
+  transparency log, but submission to the public
+  `rekor.sigstore.dev` is currently failing. The local HMAC
+  backend (default) and the GitHub-issue backend are unaffected.
+
+Tests: 94 / 94 green. Typecheck clean.
+
 ## [0.5.2] - 2026-05-21
 
 Research-artefact corrections + reproducibility infrastructure.

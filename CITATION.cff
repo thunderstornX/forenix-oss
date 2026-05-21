@@ -21,7 +21,7 @@ authors:
 repository-code: "https://github.com/thunderstornX/forenix-oss"
 url: "https://github.com/thunderstornX/forenix-oss"
 license: MIT
-version: "0.5.2"
+version: "0.5.3"
 date-released: "2026-05-21"
 identifiers:
   - type: doi
@@ -30,6 +30,8 @@ identifiers:
   - type: doi
     value: "10.5281/zenodo.20329060"
     description: "Zenodo archive of v0.5.2"
+  # v0.5.3 DOI is minted by Zenodo on release; add it here once
+  # the deposit lands at https://zenodo.org/account/settings/github/
 keywords:
   - OSINT
   - digital forensics
