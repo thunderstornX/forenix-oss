@@ -8,6 +8,141 @@ and the project adheres to [Semantic Versioning](https://semver.org/).
 
 (no changes yet)
 
+## [0.5.1] - 2026-05-21
+
+The multi-tenant + research-framing release. Phase 9.5 lands
+organisation isolation end-to-end (schema, JWT, scope helper,
+admin UI in the private overlay, SSE event filtering). The
+repository also grows a research-side entry door (RESEARCH.md,
+the docs/research/ tree, machine-readable CITATION.cff) so the
+artefact can be approached as a research substrate rather than
+only as a tool.
+
+### Added - Phase 9.5: multi-tenant organisations (schema + scope)
+
+Schema substrate landed in OSS Core; admin surface ships from the
+private overlay so OSS-only deployments stay single-tenant by
+default.
+
+- `prisma/schema.prisma` + `prisma/schema.postgres.prisma`: new
+  `Organization` model; nullable `orgId` + relation + index added
+  to `User`, `Team`, `Investigation`, `Case`. Fully backward
+  compatible; existing rows stay scoped to `orgId=null`.
+- `src/auth.ts`: `orgId` propagated into the `authorize()` return,
+  the `jwt` callback, and the `session` callback. The `update`
+  trigger refreshes `orgId` + `role` from the database so an
+  admin moving a user between orgs reflects in the next request
+  without a full re-auth.
+- `src/lib/rbac.ts`: `ActorContext` gains `orgId`. `teamScopeWhere()`
+  extended with a four-row decision matrix covering super-admin,
+  admin-within-org, non-admin-without-org, and non-admin-within-
+  org. Single-tenant deployments behave identically; multi-tenant
+  deployments get correct scoping for free across every list and
+  read endpoint that already uses the helper.
+- `src/types/next-auth.d.ts`: `User`, `Session`, `JWT` augmented
+  with `orgId?: string | null`.
+- `scripts/saas-backfill-orgids.ts`: one-off backfill helper with
+  two modes (`--from-team` copies `team.orgId` onto investigations
+  and cases linked to that team; `--all-to <slug>` assigns every
+  remaining unscoped row to a named organisation).
+
+### Added - Phase 9.5b chunk 3: SSE event filter by orgId
+
+Closes the cross-tenant leak path on the live-event bus. Before
+this chunk, every authenticated SSE client received every emitted
+event regardless of which org owned the underlying row.
+
+- `src/lib/events/types.ts`: `EventEnvelope` grows an optional
+  top-level `orgId` field.
+- `src/lib/events/emitter.ts`: `emit(topic, payload, orgId?)`
+  carries tenant scope onto the wire; default `null` preserves
+  pre-9.5 behaviour. `subscribe()` takes an optional filter
+  predicate.
+- `src/app/api/events/route.ts`: derives a per-actor filter from
+  `requireSession()`. Super-admin sees every envelope; everyone
+  else sees envelopes where `envelope.orgId` is null or matches
+  `actor.orgId`.
+- Producers updated: `appendAudit()` accepts `orgId`; the monitor
+  scheduler derives the right scope from
+  `monitor.investigation.orgId`. Standalone monitors stay global.
+- Tests: two new cases in `src/lib/events/emitter.test.ts`
+  covering envelope orgId stamping and the filter predicate.
+
+### Added - `forenix init`: one-shot investigation bootstrap
+
+A "`git add .`" entry point for the platform. Takes a target,
+auto-derives a sensible default pipeline configuration based on
+the target type, creates the investigation, returns absolute
+URLs.
+
+- `scripts/init.ts`: CLI form. Direct Prisma; no @-aliases.
+  Args: `--target`, `--type`, `--objective`, `--title`,
+  `--priority`, `--created-by`.
+- `POST /api/investigations/init`: API form. Same semantics; auto-
+  derives `defaultAgentGroups` by target type.
+
+### Added - Pipeline runner reliability
+
+- `POST /api/pipeline/run/[id]`: wraps the full pipeline in
+  try/catch and registers an `AbortSignal` handler that flips
+  status to `failed` if the client disconnects mid-run. Closes
+  the path where a long LLM call could leave an investigation
+  stuck at `status=running` forever after a serverless cold-stop
+  or a tab close.
+
+### Added - `Droplet admin (one-off)` workflow
+
+- `.github/workflows/droplet-admin.yml`: workflow_dispatch entry
+  point for allow-listed ops scripts on the demo droplet. Saves
+  the round-trip of SSH-ing the droplet by hand for routine ops
+  (org bootstrap, orgId backfill). Allow-list and case-validator
+  at runtime so a malformed dispatch cannot run an arbitrary
+  command.
+
+### Added - Research-framing companion
+
+The artefact ships a research-side entry door for readers
+approaching forenix-oss as a research substrate rather than as a
+tool. Additive to the existing product-side README; no commercial
+framing changed.
+
+- `RESEARCH.md`: design-science framing, four open research
+  questions enabled by the platform, disciplinary positioning
+  across intelligence studies, information law, digital
+  forensics, and software engineering research.
+- `CITATION.cff`: machine-readable Citation File Format manifest
+  at the repository root for Zotero, Mendeley, and other
+  reference managers.
+- `docs/research/research-questions.md`: full literature-gap
+  framing for each of the four research questions.
+- `docs/research/case-studies.md`: methodology and measured
+  outputs from the two case studies (Sigstore, Internet Archive)
+  run against the deployed instance, with the rendered admissible
+  PDFs committed alongside under `docs/research/case-studies/`.
+- `docs/research/ethics.md`: intended use, operator responsibility
+  under PIPEDA / GDPR / post-Carpenter doctrine, and the
+  rights-protective design choices the platform encodes by
+  default.
+- `docs/research/REPLICATION.md`: a research-targeted quick-start
+  that gets a reviewer from `git clone` to a working local
+  instance with seeded data in approximately ten minutes.
+- `docs/research/bibliography.md` + `bibliography.bib`: working
+  bibliography in markdown and BibTeX, ~70 entries across ten
+  sections.
+- `docs/10-ANALYTIC_FRAMEWORK.md`: small opening that cross-links
+  to `RESEARCH.md` and the bibliography.
+
+### Notes
+
+The private overlay (`thunderstornX/forenix-saas`, not part of
+this repository) gained the matching org administration surface
+during this window: organisation CRUD endpoints, the admin
+Organisations view in the SPA, and the operator CLI for
+bootstrapping the first organisation. Overlay versions tracked
+as `v0.5.0+saas2`. None of that code lives in OSS Core; the
+substrate this release ships is sufficient for OSS-only
+deployments to add their own administration surface.
+
 ## [0.5.0] - 2026-05-20
 
 The visitor-funnel + ops-automation release. Vercel concept surface
