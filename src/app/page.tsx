@@ -9,6 +9,7 @@ import { ChainVisual } from "@/components/marketing/chain-visual";
 import { MarketingShell } from "@/components/marketing/marketing-shell";
 import { TryDemoButton } from "@/components/marketing/try-demo-button";
 import { WaitlistForm } from "@/components/marketing/waitlist-form";
+import pkg from "../../package.json";
 
 // Whether to render the "try the demo" CTA. True on Vercel where
 // DEMO_VISITOR_ENABLED is set; false on the DigitalOcean paid surface
@@ -59,7 +60,7 @@ function Preamble() {
         <div className="cd-smallcaps text-[12px]">
           In re: <span className="cd-mono not-italic">CASE-2026-014</span>
         </div>
-        <span className="cd-stamp">sealed · v0.4.0</span>
+        <span className="cd-stamp">sealed · v{pkg.version}</span>
       </div>
 
       <h1 className="mt-6 max-w-[18ch] text-balance font-[family-name:var(--font-display)] text-[48px] font-normal leading-[1.02] tracking-[-0.01em] text-[var(--fg-strong)] sm:text-[68px] md:text-[80px]">

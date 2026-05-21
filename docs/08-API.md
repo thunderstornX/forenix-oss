@@ -16,9 +16,9 @@ open in the OSS build. SaaS adds session cookies + RBAC checks.
 ```jsonc
 {
   "status": "ok",
-  "adapter": "mock",      // active adapter name
-  "version": "0.1.0",
-  "saasMode": false
+  "adapter": "mock",     // active adapter name (env-controlled)
+  "version": "0.5.4",    // tracks package.json automatically
+  "saasMode": false      // true when SAAS_MODE=true is set
 }
 ```
 

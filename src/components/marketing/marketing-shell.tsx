@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 
+import { version as pkgVersion } from "../../../package.json";
+
 /**
  * Marketing surface chrome.
  *
@@ -67,7 +69,7 @@ function Masthead() {
             <a href="#v"   className="no-underline hover:text-[var(--fg-strong)]">§V Admission</a>
           </nav>
           <div className="flex items-baseline gap-3 font-mono text-[11px] text-[var(--fg-muted)]">
-            <span>Vol. 0 · Ed. 4 · v0.4.0</span>
+            <span>Vol. 0 · Ed. {pkgVersion.split(".")[1]} · v{pkgVersion}</span>
             <span aria-hidden className="text-[var(--fg-faint)]">·</span>
             <a
               href="https://github.com/thunderstornX/forenix-oss"
@@ -122,7 +124,7 @@ function Colophon() {
           {/* Edition info — short numbered set */}
           <dl className="cd-set">
             <dt>Edition</dt>
-            <dd>v0.4.0 · 2026</dd>
+            <dd>v{pkgVersion} · 2026</dd>
             <dt>Licence</dt>
             <dd>MIT</dd>
             <dt>Maintainer</dt>
