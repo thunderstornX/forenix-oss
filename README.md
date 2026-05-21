@@ -284,6 +284,7 @@ For engineers, auditors, design partners, and the curious:
 - [One-pager](docs/ONE_PAGER.md) | [Demo Script](docs/DEMO_SCRIPT.md)
 - **[User Manual (PDF)](docs/USER_MANUAL.pdf)** | [markdown source](docs/USER_MANUAL.md)
 - **[How-To Guide (PDF)](docs/HOW_TO.pdf)** | [markdown source](docs/HOW_TO.md)
+- **[Research framing](RESEARCH.md)**  -  design-science methodology, open research questions, working bibliography under [`docs/research/`](docs/research/)
 
 ---
 

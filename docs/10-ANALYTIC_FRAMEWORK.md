@@ -3,6 +3,14 @@
 > Why forenix-oss isn't just an LLM that hallucinates plausible
 > findings  -  and how we're going to enforce that.
 
+This document is also the platform's scholarly anchor for the
+structured-analytic-technique literature (Heuer 1999; Heuer and
+Pherson 2010+; Coulthart 2017). Readers approaching forenix-oss
+as a research artefact rather than as a tool should pair this
+document with [`../RESEARCH.md`](../RESEARCH.md) for the wider
+research framing and [`research/bibliography.md`](research/bibliography.md)
+for full citations.
+
 ## 1. The Director-Worker pattern (OpenClaw heritage)
 
 The OSINT execution model mirrors the
