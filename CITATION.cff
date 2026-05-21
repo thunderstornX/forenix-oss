@@ -30,8 +30,9 @@ identifiers:
   - type: doi
     value: "10.5281/zenodo.20329060"
     description: "Zenodo archive of v0.5.2"
-  # v0.5.3 DOI is minted by Zenodo on release; add it here once
-  # the deposit lands at https://zenodo.org/account/settings/github/
+  - type: doi
+    value: "10.5281/zenodo.20330571"
+    description: "Zenodo archive of v0.5.3"
 keywords:
   - OSINT
   - digital forensics
