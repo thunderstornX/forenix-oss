@@ -69,9 +69,9 @@ forensic case.
   CASE-2026-003) now have real repos under
   `/opt/forenix/case-repos/<id>/`.
 - First production Rekor attestation written (above). Both
-  attestation backends — `local` (HMAC) and `rekor` (Sigstore
-  public log) — are now operationally validated against the
-  production chain head.
+  attestation backends (`local` HMAC and `rekor` Sigstore public
+  log) are now operationally validated against the production
+  chain head.
 
 Tests: 100/100 green. Typecheck clean.
 
