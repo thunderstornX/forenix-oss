@@ -49,6 +49,7 @@
   <a href="https://rekor.sigstore.dev"><img alt="Sigstore Rekor attested" src="https://img.shields.io/badge/attested-Sigstore_Rekor-c97a2f?style=flat&logo=sigstore&logoColor=white"></a>
   <a href="docs/07-SECURITY.md"><img alt="Offline verifiable" src="https://img.shields.io/badge/verify-offline%2012_lines_of_python-2f8754?style=flat"></a>
   <a href="SECURITY.md"><img alt="Security policy" src="https://img.shields.io/badge/security-policy-2f8754?style=flat"></a>
+  <a href="https://doi.org/10.5281/zenodo.20329059"><img alt="DOI" src="https://zenodo.org/badge/DOI/10.5281/zenodo.20329059.svg"></a>
 </p>
 
 **An open-source platform that fuses OSINT investigations with Git-style forensic case management. One workflow from public-source lead to chain-of-custody evidence  -  with a SHA-256 forward-chained audit log on every state change.**

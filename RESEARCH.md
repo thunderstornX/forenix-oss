@@ -206,18 +206,21 @@ your analysis ran against. A machine-readable
 root for Zotero, Mendeley, and other reference managers that
 consume the Citation File Format.
 
+Tagged releases are archived on Zenodo via the GitHub integration.
+For formal citation prefer the DOI over the GitHub URL.
+
+- **Concept DOI** (always resolves to the most recent version):
+  [10.5281/zenodo.20329059](https://doi.org/10.5281/zenodo.20329059)
+- **Version DOI for v0.5.2**:
+  [10.5281/zenodo.20329060](https://doi.org/10.5281/zenodo.20329060)
+
 A working citation form for prose use:
 
 ```
 Bhutto, A. M. (2026). forenix-oss: an open-source platform for
 lawful OSINT and forensic case management (Version 0.5.2)
-[Computer software]. https://github.com/thunderstornX/forenix-oss
+[Computer software]. https://doi.org/10.5281/zenodo.20329060
 ```
-
-Tagged releases are archived on Zenodo via the GitHub integration;
-the per-release DOI is recorded in `CITATION.cff` once minted, and
-should be preferred over the GitHub URL for formal citation once
-available.
 
 ---
 

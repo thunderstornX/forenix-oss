@@ -23,14 +23,13 @@ url: "https://github.com/thunderstornX/forenix-oss"
 license: MIT
 version: "0.5.2"
 date-released: "2026-05-21"
-# Zenodo DOI for this release will be added once the GitHub
-# integration mints one for v0.5.2; replace this placeholder with
-# the assigned DOI from https://zenodo.org/account/settings/github/
-# Example:
-#   identifiers:
-#     - type: doi
-#       value: "10.5281/zenodo.XXXXXXX"
-#       description: "Zenodo archive of v0.5.2"
+identifiers:
+  - type: doi
+    value: "10.5281/zenodo.20329059"
+    description: "Concept DOI (always resolves to the most recent version)"
+  - type: doi
+    value: "10.5281/zenodo.20329060"
+    description: "Zenodo archive of v0.5.2"
 keywords:
   - OSINT
   - digital forensics
