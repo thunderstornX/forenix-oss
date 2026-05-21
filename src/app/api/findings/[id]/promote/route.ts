@@ -18,6 +18,7 @@ import {
   writeEvidenceFile,
 } from "@/lib/git-engine";
 import { httpErrorResponse, requireSession } from "@/lib/rbac";
+import { jsonOk } from "@/lib/safe-json";
 
 export async function POST(
   _request: Request,
@@ -139,7 +140,9 @@ export async function POST(
       details: { evidenceId: evidence.id, hash, gitOid: oid },
     });
 
-    return Response.json({ data: { evidence, evidenceId: evidence.id } }, { status: 201 });
+    // Use jsonOk so the BigInt fields on Evidence (size, byteCount)
+    // round-trip as decimal strings instead of crashing JSON.stringify.
+    return jsonOk({ data: { evidence, evidenceId: evidence.id } }, { status: 201 });
   } catch (err) {
     return httpErrorResponse(err);
   }
