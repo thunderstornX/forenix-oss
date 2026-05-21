@@ -29,7 +29,7 @@ export function stringifyBigIntSafe(value: unknown): string {
 
 export function jsonOk(
   body: unknown,
-  init?: { status?: number; headers?: HeadersInit },
+  init?: { status?: number; headers?: Record<string, string> },
 ): Response {
   return new Response(stringifyBigIntSafe(body), {
     status: init?.status ?? 200,
