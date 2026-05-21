@@ -2,10 +2,15 @@
 
 ## Supported versions
 
+Security fixes are issued on the latest minor line. Older minor
+lines are not back-ported unless the issue is critical and the
+upgrade path is non-trivial.
+
 | Version | Supported |
 |---|---|
-| `0.1.x` | [x] |
-| `< 0.1` |  -  (pre-release, do not run in production) |
+| `0.5.x` (current) | [x] |
+| `0.4.x`           | best-effort, upgrade recommended |
+| `< 0.4`           | unsupported, do not run in production |
 
 ## Reporting a vulnerability
 

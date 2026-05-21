@@ -8,7 +8,7 @@ checklists for software-artefact research.
 | Item | Status |
 |---|---|
 | **Source code available** | Yes, MIT-licensed, this repository |
-| **Tagged release for the work cited** | Yes, `v0.5.2` and forward; older tags at [`https://github.com/thunderstornX/forenix-oss/releases`](https://github.com/thunderstornX/forenix-oss/releases) |
+| **Tagged release for the work cited** | Yes, `v0.5.4` and forward; older tags at [`https://github.com/thunderstornX/forenix-oss/releases`](https://github.com/thunderstornX/forenix-oss/releases) |
 | **Permanent archival identifier (DOI)** | Pending: Zenodo deposit via GitHub integration; DOI recorded in `CITATION.cff` once minted |
 | **Dependency versions pinned** | Yes, `bun.lock` (Bun lockfile) committed |
 | **Database schema versioned** | Yes, Prisma migration history under `prisma/`, dual schemas for SQLite (dev) and Postgres (prod) |

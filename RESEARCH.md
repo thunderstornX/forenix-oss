@@ -319,7 +319,7 @@ should be conducted against.
 
 **Funding.** The work to date is self-funded. No external grants,
 contracts, or institutional sponsorships have supported the
-research or the platform's development as of v0.5.2. Future
+research or the platform's development as of v0.5.4. Future
 funding (Mitacs Accelerate, IDRC, or equivalent), if obtained,
 would be disclosed in this section and in the affected
 publications.

@@ -150,7 +150,7 @@ authorities.
 
 ## 6. This statement is a living document
 
-This statement reflects the project's posture as of v0.5.1. It
+This statement reflects the project's posture as of v0.5.4. It
 will be revised as the legal and ethical landscape around OSINT
 evolves, as the platform's design changes, and in response to
 substantive feedback. Suggestions for refinement are welcome via

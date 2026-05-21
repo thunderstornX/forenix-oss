@@ -105,17 +105,22 @@ Rule of thumb: **never push code that breaks `bun run typecheck`, `bun run lint`
 
 ## 5. Release cadence
 
-We're on `v0.x.x`. Tags happen when a coherent set of work lands. Today:
+We're on `v0.x.x`. Tags happen when a coherent set of work lands. Each
+release earns a Zenodo DOI via the GitHub-integration archival path,
+recorded in `CITATION.cff`. Recent tags:
 
-- `v0.4.0` — external attestation (cron-driven), monitors v1
-- `v0.5.0` (next) — visitor demo path, waitlist admin UI, overlay
-  extraction, deploy automation
+- `v0.4.0` external attestation (cron-driven) + monitors v1
+- `v0.5.0` visitor demo path + waitlist admin UI + overlay extraction
+- `v0.5.1` multi-tenant orgs + research framing
+- `v0.5.2` research artefact corrections + reproducibility infrastructure
+- `v0.5.3` operational truthfulness pass
+- `v0.5.4` Rekor ECDSA + BigInt safe-json + case-repo backfill
 
 When tagging:
 
 ```bash
-git tag -a v0.5.0 -m "v0.5.0 — visitor funnel + ops automation"
-git push origin v0.5.0
+git tag -a v0.5.x -m "v0.5.x: <one-line summary>"
+git push origin v0.5.x
 ```
 
 Overlay tags follow the public tag with a `+saasN` suffix
