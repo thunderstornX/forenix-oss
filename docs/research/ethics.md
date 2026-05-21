@@ -95,11 +95,13 @@ They are necessary, not sufficient.
 
 - **Structured analytic discipline.** LLM-produced findings must
   carry a structured-analytic-technique trace (Heuer 1999;
-  Heuer and Pherson 2010+; Coulthart 2017). Bare conclusions
-  without a SAT trace are rejected at the storage boundary. This
-  is an epistemic constraint, not a legal one, but it makes
-  unsupported inferences harder to produce and easier to
-  identify when they happen.
+  Heuer and Pherson 2010+; Coulthart 2017). Conclusions that
+  arrive without a SAT trace are persisted with confidence
+  downgraded to `unverified` and surfaced to the operator as
+  such; the epistemic weakness is recorded in the evidence chain
+  rather than silently smoothed away. This is an epistemic
+  constraint, not a legal one, but it makes unsupported
+  inferences harder to introduce and easier to identify.
 
 - **Per-case isolation.** Every forensic case lives in its own
   Git repository with its own evidence directory. The platform

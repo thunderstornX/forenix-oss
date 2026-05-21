@@ -8,6 +8,139 @@ and the project adheres to [Semantic Versioning](https://semver.org/).
 
 (no changes yet)
 
+## [0.5.2] - 2026-05-21
+
+Research-artefact corrections + reproducibility infrastructure.
+Same-day patch on top of v0.5.1 after a thorough audit of the
+research-side documentation surfaced several bibliographic and
+methodological errors plus missing reproducibility scaffolding.
+No product-surface changes.
+
+### Fixed - Bibliography corrections
+
+Independent verification against publisher records, journal
+indexes, and library catalogues caught the following in the
+v0.5.1 bibliography:
+
+- Removed `ledueff2024hyperinvestigation`: the cited paper does
+  not exist. Le Deuff's actual 2021 monograph *Hyperdocumentation*
+  (ISTE / Wiley) remains in the bibliography.
+- Removed `geist2020privacycanada`: the book *The Law of Privacy
+  in Canada* exists but is authored by McIsaac, Shields, and Klein
+  (Thomson Carswell), not edited by Michael Geist. Replaced with
+  Geist's real edited volume *Law, Privacy and Surveillance in
+  Canada in the Post-Snowden Era* (University of Ottawa Press,
+  2015).
+- Roth (2017) *Machine testimony*: corrected page range from
+  1972-2259 to 1972-2053.
+- Tokson aftermath of Carpenter: corrected year from 2020 to
+  2022, starting page from 1791 to 1790 (Harvard Law Review 135).
+- National Data Strategy chapter (CIGI 2018): corrected venue
+  from "CIGI Paper No. 192" to chapter in the CIGI Special
+  Report *Data Governance in the Digital Age*.
+- Sidewalk Toronto governance paper: corrected year from 2019
+  to 2020 (*Technology and Regulation* 2020:44-56).
+- Human-rights approach to data protection (2020): corrected
+  venue from a journal entry to the actual book chapter in
+  *Citizenship in a Connected Canada* (U Ottawa Press).
+- Berkeley Protocol on Digital Open Source Investigations:
+  corrected year from 2022 to 2020 (launched December 2020).
+  Fixed in bibliography.md, bibliography.bib, and
+  research-questions.md.
+- Garrie (2014) digital forensic evidence: added missing co-author
+  Morrissy.
+- Henseler and van Loenhout (2018): corrected first-author given
+  name from "Jeroen" (J.) to "Hans" (H.).
+- Aronson preserving human rights media: corrected year from
+  2018 to 2017.
+- McPherson (2015) digital human rights reporting: corrected
+  book reference from *Citizen Journalism: Global Perspectives*
+  (eds. Allan and Peters) to *Producing Theory in a Digital
+  World 2.0* (ed. Lind, Vol 2 pp 193-209, Peter Lang). Different
+  book entirely.
+- Kerr *Implementing Carpenter*: corrected year from 2019 to
+  2018 (SSRN posted December 2018, USC Law Legal Studies Paper
+  No. 18-29).
+- Added Cavoukian (2009) *Privacy by Design: The 7 Foundational
+  Principles* (referenced in ethics.md but missing from the
+  bibliography in v0.5.1).
+
+### Fixed - REPLICATION.md inaccuracies
+
+The v0.5.1 REPLICATION.md referenced two scripts that did not
+exist (`scripts/dump-audit-log.ts`) and a non-existent function
+(`verifyChainStandalone`). Created the scripts to match what the
+documentation claimed; rewrote the verification section to use
+the real bundled tooling.
+
+- New: `scripts/dump-audit-log.ts` exports the full audit chain
+  as JSON to stdout. Self-contained (no `@`-aliases, no
+  `server-only` chain); usable from any shell that can reach the
+  database.
+- New: `scripts/verify-audit-chain.ts` reads the chain in
+  insertion order and recomputes each row's SHA-256 hash against
+  the previous row's hash plus the row's content. Imports
+  `computeAuditHash` and `GENESIS_HASH` directly from
+  `src/lib/audit-chain.ts` (the canonical pure helpers) so the
+  verifier uses the same primitive the platform writes with.
+  Exit code 0 on a clean chain, 1 on mismatch.
+- `docs/research/REPLICATION.md` section 4 rewritten to reference
+  the real scripts and the existing Python recipe in
+  `docs/07-SECURITY.md` section 4.
+
+### Fixed - SAT-rejection framing softened to match implementation
+
+v0.5.1's research framing described conclusions arriving without
+a SAT trace as "rejected at the storage boundary." Inspection of
+the live case-study data shows the platform actually persists
+such conclusions with confidence downgraded to `unverified` and
+surfaces the schema-conformance failure to the operator, rather
+than dropping them. The framing in `RESEARCH.md`, `docs/research/ethics.md`,
+and `docs/research/case-studies.md` is corrected to describe the
+actual behaviour.
+
+### Added - Reproducibility infrastructure
+
+- `docs/research/REPRODUCIBILITY.md`: a concise checklist of the
+  conditions under which the empirical claims in `case-studies.md`
+  and `RESEARCH.md` can be reproduced. Covers source / tag /
+  archival DOI / dependency pinning / data / seed / hardware /
+  wallclock cost / financial cost / test suite / CI / config /
+  raw data / audit-chain verifier / pre-registration / ethics /
+  conflict-of-interest / funding.
+- `docs/research/case-studies/sigstore-data.json` and
+  `archive-org-data.json`: full structured exports (investigation
+  metadata, findings, entities, relations, reports, audit subset)
+  for the two committed case studies. Lets a reviewer inspect
+  the raw data behind the rendered PDFs rather than taking the
+  PDFs on trust.
+- `case-studies.md` configuration tables now state the LLM model
+  (`openai/gpt-oss-120b:free` via OpenRouter) used for both runs.
+
+### Added - Academic-norm additions to RESEARCH.md
+
+- Section 9 (methodology cross-references): each design claim in
+  the document is linked to the specific source file path that
+  implements it, so a peer can verify implementation against
+  claim.
+- Section 10 (pre-registration): the project's intent to
+  pre-register substantive empirical work on the platform before
+  the first run.
+- Section 11 (conflict of interest and funding): discloses the
+  commercial deployment at demo.forenix.tech and the
+  self-funded status of the work to date.
+
+### Added - CITATION.cff completeness
+
+- Added author affiliation (SZABIST University, MSc Cybersecurity,
+  2026).
+- Corrected the `url:` field to point at the GitHub repository
+  rather than the marketing site (academic readers expect this to
+  point at the code or the DOI, not the product page).
+- Added a placeholder comment for the Zenodo DOI to be inserted
+  once the GitHub-integration mints one for v0.5.2.
+- Bumped version field to 0.5.2; expanded keywords.
+
 ## [0.5.1] - 2026-05-21
 
 The multi-tenant + research-framing release. Phase 9.5 lands

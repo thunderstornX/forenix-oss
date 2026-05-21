@@ -130,8 +130,10 @@ The platform is past prototype. As of 0.5.0 it ships:
 - **A structured-analytic-technique scaffold** (see
   [`docs/10-ANALYTIC_FRAMEWORK.md`](docs/10-ANALYTIC_FRAMEWORK.md))
   that requires every LLM-produced finding to carry a SAT trace.
-  Bare conclusions without a SAT trace are rejected at the storage
-  boundary.
+  Conclusions that arrive without a SAT trace are persisted with
+  confidence downgraded to `unverified` and surfaced to the
+  operator as such, so epistemic weakness is recorded in the
+  evidence chain rather than silently smoothed away.
 
 - **A real Git repository per case**, not a shadow database table.
   Evidence files are committed; branches model competing
@@ -208,9 +210,14 @@ A working citation form for prose use:
 
 ```
 Bhutto, A. M. (2026). forenix-oss: an open-source platform for
-lawful OSINT and forensic case management (Version 0.5.1)
+lawful OSINT and forensic case management (Version 0.5.2)
 [Computer software]. https://github.com/thunderstornX/forenix-oss
 ```
+
+Tagged releases are archived on Zenodo via the GitHub integration;
+the per-release DOI is recorded in `CITATION.cff` once minted, and
+should be preferred over the GitHub URL for formal citation once
+available.
 
 ---
 
@@ -222,6 +229,7 @@ lawful OSINT and forensic case management (Version 0.5.1)
 - [`docs/research/case-studies.md`](docs/research/case-studies.md)  -  methodology and measured outputs from the two case studies run against the deployed instance, with the rendered admissible PDFs committed alongside
 - [`docs/research/ethics.md`](docs/research/ethics.md)  -  intended use, operator responsibility, and the rights-protective design choices the platform encodes by default
 - [`docs/research/REPLICATION.md`](docs/research/REPLICATION.md)  -  a research-targeted quick-start that gets a reviewer from `git clone` to a working local instance with seeded data in approximately ten minutes
+- [`docs/research/REPRODUCIBILITY.md`](docs/research/REPRODUCIBILITY.md)  -  a concise checklist of the conditions under which the empirical claims here can be reproduced (source, dependency, data, seed, hardware, cost)
 - [`docs/research/bibliography.md`](docs/research/bibliography.md) / [`bibliography.bib`](docs/research/bibliography.bib)  -  the working bibliography in markdown and BibTeX
 - [`docs/07-SECURITY.md`](docs/07-SECURITY.md)  -  the audit-chain construction and threat model
 - [`docs/06-ARCHITECTURE.md`](docs/06-ARCHITECTURE.md)  -  the ADR
@@ -230,3 +238,85 @@ lawful OSINT and forensic case management (Version 0.5.1)
 The product-side documentation, the deployment guides, and the
 commercial-tier description live alongside in
 [`README.md`](README.md) and the rest of [`docs/`](docs/).
+
+---
+
+## 9. Methodology cross-references
+
+For peer review, the design claims in this document are checkable
+against the implementation at the following locations:
+
+- **SHA-256 forward chain.** Hash primitive at
+  [`src/lib/audit-chain.ts`](src/lib/audit-chain.ts); the
+  Prisma-backed wrapper that performs the append is at
+  [`src/lib/audit.ts`](src/lib/audit.ts). The chain is verified
+  end-to-end by [`scripts/verify-audit-chain.ts`](scripts/verify-audit-chain.ts)
+  and reimplemented in twelve lines of Python in
+  [`docs/07-SECURITY.md`](docs/07-SECURITY.md) section 4.
+
+- **External attestation backends.** Common interface at
+  [`src/lib/attestation/types.ts`](src/lib/attestation/types.ts);
+  three implementations under
+  [`src/lib/attestation/backends/`](src/lib/attestation/backends/)
+  (local HMAC, GitHub-issue witness, Sigstore Rekor). Each has a
+  paired `*.test.ts` covering round-trip.
+
+- **SAT discipline.** Schema for the trace at
+  [`src/lib/ai/types.ts`](src/lib/ai/types.ts); the prompts that
+  enforce structured output at
+  [`src/lib/ai/sat-prompts.ts`](src/lib/ai/sat-prompts.ts);
+  schema conformance and the confidence-downgrade behaviour for
+  non-conforming output are handled in the pipeline runner at
+  [`src/app/api/pipeline/run/[id]/route.ts`](src/app/api/pipeline/run/%5Bid%5D/route.ts).
+
+- **Real Git per case.** Engine at
+  [`src/lib/git-engine.ts`](src/lib/git-engine.ts); evidence
+  storage at [`src/lib/evidence-store.ts`](src/lib/evidence-store.ts).
+  Tests at `src/lib/git-engine.test.ts` and `evidence-store.test.ts`.
+
+- **Free-adapter substrate.** Common interface at
+  [`src/lib/ai/types.ts`](src/lib/ai/types.ts); factory at
+  [`src/lib/ai/adapter.ts`](src/lib/ai/adapter.ts); the six
+  implementations under [`src/lib/ai/adapters/`](src/lib/ai/adapters/)
+  (mock, ollama, glm, openrouter, nvidia, groq).
+
+- **Multi-tenant scope helper.** Decision matrix at
+  [`src/lib/rbac.ts`](src/lib/rbac.ts) (function `teamScopeWhere`);
+  JWT plumbing at [`src/auth.ts`](src/auth.ts).
+
+---
+
+## 10. Pre-registration
+
+Each of the empirical questions in
+[`docs/research/research-questions.md`](docs/research/research-questions.md)
+is the kind of study that benefits from pre-registration before
+data collection (the Open Science Framework, AsPredicted, or a
+discipline-specific equivalent). The project's intent for any
+substantive empirical work running on the platform is to
+pre-register the protocol and the analysis plan before the first
+case-study run. Replication artefacts (configuration, prompts,
+adapter version, seed) are expected to be committed alongside the
+study outputs.
+
+---
+
+## 11. Conflict of interest and funding
+
+**Commercial entanglement.** The author maintains a commercial
+deployment of forenix-oss at [demo.forenix.tech](https://demo.forenix.tech),
+gated behind a waitlist on the public-facing surface at
+[forenix.tech](https://forenix.tech). Revenue from this
+deployment funds continued development of the open-source
+platform. The research outputs described in this document are
+not gated behind the commercial deployment; the MIT-licensed
+artefact in this repository contains every feature on which the
+research claims rest, and is the version any empirical work
+should be conducted against.
+
+**Funding.** The work to date is self-funded. No external grants,
+contracts, or institutional sponsorships have supported the
+research or the platform's development as of v0.5.2. Future
+funding (Mitacs Accelerate, IDRC, or equivalent), if obtained,
+would be disclosed in this section and in the affected
+publications.

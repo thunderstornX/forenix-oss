@@ -1,0 +1,400 @@
+{
+  "investigation": {
+    "id": "cmpehnovb0001ab2kz5fub8vy",
+    "target": "sigstore.dev",
+    "targetType": "domain",
+    "title": "Investigation: sigstore.dev",
+    "objective": "Map public infrastructure of sigstore.dev (subdomains, CT log presence, hosting). Cross-reference against the Rekor transparency log we already attest to. Goal: a clean inventory of where the project lives on the public internet plus a sanity check that our own attestation chain integrates with their public log.",
+    "pipelineConfig": "[\"identity\",\"infrastructure\"]",
+    "status": "complete",
+    "priority": "medium",
+    "createdAt": "2026-05-20T20:02:33.767Z",
+    "updatedAt": "2026-05-21T00:24:56.297Z",
+    "caseId": "cmper13so001jabex5n3xywp2"
+  },
+  "findings": [
+    {
+      "id": "cmpeqml4c0003abexbdtwx8yr",
+      "category": "identity",
+      "agentGroup": "identity",
+      "title": "identity pipeline returned unstructured output",
+      "description": "(no model output  -  adapter \"openrouter\" model \"openai/gpt-oss-120b:free\" produced no content)",
+      "confidence": "unverified",
+      "priority": "low",
+      "sourceType": "agent",
+      "sourceName": "openrouter/identity/raw",
+      "reasoningTrace": "{\"error\":\"extractJson: no JSON opener in \",\"raw_excerpt\":\"\"}",
+      "evidenceRefs": "[\"https://search.example.local/q=sigstore.dev&g=identity\",\"https://archive.example.local/identity/sigstore.dev\"]",
+      "rawData": "{}",
+      "createdAt": "2026-05-21T00:13:38.795Z"
+    },
+    {
+      "id": "cmpeqml4w0007abexyf9frxhp",
+      "category": "infrastructure",
+      "agentGroup": "infrastructure",
+      "title": "Sigstore.dev primary infrastructure hosted on Google Cloud",
+      "description": "DNS resolution for sigstore.dev returns Google Cloud DNS name servers and A records pointing to Google Cloud IP ranges. HTTP probing of multiple subdomains (rekor, status, tuf-repo-cdn, v1.fulcio) shows server headers and technology fingerprints (Google Cloud, Google Cloud CDN, Google Cloud Storage, HTTP/3). This indicates the core services are provisioned on Google Cloud Platform.",
+      "confidence": "confirmed",
+      "priority": "high",
+      "sourceType": "agent",
+      "sourceName": "whois_dns & httpx_probe",
+      "reasoningTrace": "{\"technique\":\"QoIC\",\"inputs\":[{\"sourceId\":\"whois_dns_output\",\"summary\":\"DNS NS records point to ns-cloud-a*.googledomains.com; A records 99.83.231.61, 75.2.60.5 belong to Google Cloud.\",\"credibility\":5,\"recencyDays\":0},{\"sourceId\":\"httpx_probe_output\",\"summary\":\"Subdomains return tech fingerprints: Google Cloud, Google Cloud CDN, Google Cloud Storage, HTTP/3.\",\"credibility\":5,\"recencyDays\":0}],\"reasoning\":\"Both authoritative DNS configuration and live service fingerprints independently identify Google Cloud as the hosting environment, satisfying QoIC criteria for high‑confidence evidence.\",\"outputCandidates\":[{\"label\":\"Google Cloud hosting\",\"weight\":0.05,\"disconfirmingEvidence\":[\"Presence of non‑Google IPs or server headers indicating another provider for core services.\"]}],\"selected\":0}",
+      "evidenceRefs": "[\"https://search.example.local/q=sigstore.dev&g=infrastructure\",\"https://archive.example.local/infrastructure/sigstore.dev\"]",
+      "rawData": "{}",
+      "createdAt": "2026-05-21T00:13:38.817Z"
+    },
+    {
+      "id": "cmpeqml530009abexsqfm3ojp",
+      "category": "infrastructure",
+      "agentGroup": "infrastructure",
+      "title": "Rekor transparency log service is publicly reachable",
+      "description": "The subdomain rekor.sigstore.dev resolves and returns HTTP 200 with a page titled \"sigstore\". Technology stack includes Google Cloud CDN and HTTP/3, confirming the Rekor transparency log is operational and exposed to the internet.",
+      "confidence": "confirmed",
+      "priority": "critical",
+      "sourceType": "agent",
+      "sourceName": "httpx_probe",
+      "reasoningTrace": "{\"technique\":\"Indicators\",\"inputs\":[{\"sourceId\":\"httpx_probe_output\",\"summary\":\"rekor.sigstore.dev responded 200, title \\\"sigstore\\\", tech includes Google Cloud CDN, HTTP/3.\",\"credibility\":5,\"recencyDays\":0}],\"reasoning\":\"A live HTTP 200 response with expected service branding confirms the Rekor component is active. No redirects or errors observed.\",\"outputCandidates\":[{\"label\":\"Rekor service operational\",\"weight\":0.02,\"disconfirmingEvidence\":[\"HTTP 4xx/5xx response, service down page, or DNS NXDOMAIN for rekor.sigstore.dev.\"]}],\"selected\":0}",
+      "evidenceRefs": "[\"https://search.example.local/q=sigstore.dev&g=infrastructure\",\"https://archive.example.local/infrastructure/sigstore.dev\"]",
+      "rawData": "{}",
+      "createdAt": "2026-05-21T00:13:38.823Z"
+    },
+    {
+      "id": "cmpeqml58000babexdntzh1nd",
+      "category": "infrastructure",
+      "agentGroup": "infrastructure",
+      "title": "Sigstore blog and documentation hosted on GitHub Pages via Fastly CDN",
+      "description": "Subdomains blog.sigstore.dev and search.sigstore.dev return HTTP 200 with server header \"GitHub.com\" and technology list including Fastly, GitHub Pages, Varnish. This indicates static content is served from GitHub infrastructure, typical for open‑source project sites.",
+      "confidence": "probable",
+      "priority": "medium",
+      "sourceType": "agent",
+      "sourceName": "httpx_probe",
+      "reasoningTrace": "{\"technique\":\"QoIC\",\"inputs\":[{\"sourceId\":\"httpx_probe_output\",\"summary\":\"blog.sigstore.dev: title \\\"Sigstore Blog - Sigstore Blog\\\", tech Fastly, GitHub Pages, Varnish. search.sigstore.dev: title \\\"Rekor Search\\\", same tech stack.\",\"credibility\":5,\"recencyDays\":0}],\"reasoning\":\"Consistent server and CDN fingerprints across both subdomains strongly suggest they are served from GitHub Pages with Fastly as front‑end CDN.\",\"outputCandidates\":[{\"label\":\"GitHub Pages hosting\",\"weight\":0.08,\"disconfirmingEvidence\":[\"Server header indicating a different hosting provider (e.g., AWS, Azure) for these subdomains.\"]}],\"selected\":0}",
+      "evidenceRefs": "[\"https://search.example.local/q=sigstore.dev&g=infrastructure\",\"https://archive.example.local/infrastructure/sigstore.dev\"]",
+      "rawData": "{}",
+      "createdAt": "2026-05-21T00:13:38.828Z"
+    },
+    {
+      "id": "cmpeqml5e000dabexgh0lzgo2",
+      "category": "infrastructure",
+      "agentGroup": "infrastructure",
+      "title": "Domain ownership linked to Google-managed project (sigstore)",
+      "description": "TXT records include \"google-site-verification\" tokens and \"OSSRH-67470\" indicating verification with Google services and Maven Central. Combined with Google Cloud DNS and hosting, this points to the domain being owned and managed by the Sigstore open‑source project under Google’s umbrella.",
+      "confidence": "probable",
+      "priority": "low",
+      "sourceType": "agent",
+      "sourceName": "whois_dns",
+      "reasoningTrace": "{\"technique\":\"KAC\",\"inputs\":[{\"sourceId\":\"whois_dns_output\",\"summary\":\"TXT records: google-site-verification=..., OSSRH-67470, gradle-verification token.\",\"credibility\":4,\"recencyDays\":0}],\"reasoning\":\"Verification tokens tied to Google services and Maven Central imply control by an entity that can manage Google Cloud resources and publish artifacts, consistent with the Sigstore project’s known governance.\",\"outputCandidates\":[{\"label\":\"Google‑affiliated ownership\",\"weight\":0.12,\"disconfirmingEvidence\":[\"WHOIS record showing a different registrant unrelated to Google or Sigstore.\"]}],\"selected\":0}",
+      "evidenceRefs": "[\"https://search.example.local/q=sigstore.dev&g=infrastructure\",\"https://archive.example.local/infrastructure/sigstore.dev\"]",
+      "rawData": "{}",
+      "createdAt": "2026-05-21T00:13:38.834Z"
+    }
+  ],
+  "entities": [
+    {
+      "id": "cmpeqnk6e000gabexsg13ysfw",
+      "name": "sigstore.dev",
+      "type": "domain",
+      "properties": "{\"dnsProvider\":\"Google Cloud DNS\",\"hostingProvider\":\"Google Cloud Platform\"}",
+      "source": "Investigation: sigstore.dev",
+      "verified": true,
+      "createdAt": "2026-05-21T00:14:24.230Z"
+    },
+    {
+      "id": "cmpeqnkbw000habex034b4nc2",
+      "name": "rekor.sigstore.dev",
+      "type": "domain",
+      "properties": "{\"service\":\"Rekor transparency log\",\"hostingProvider\":\"Google Cloud Platform\",\"cdn\":\"Google Cloud CDN\",\"protocol\":\"HTTP/3\"}",
+      "source": "Investigation: sigstore.dev",
+      "verified": true,
+      "createdAt": "2026-05-21T00:14:24.429Z"
+    },
+    {
+      "id": "cmpeqnked000iabexy8yet3gx",
+      "name": "blog.sigstore.dev",
+      "type": "domain",
+      "properties": "{\"hostingProvider\":\"GitHub Pages\",\"cdn\":\"Fastly\",\"cache\":\"Varnish\"}",
+      "source": "Investigation: sigstore.dev",
+      "verified": true,
+      "createdAt": "2026-05-21T00:14:24.518Z"
+    },
+    {
+      "id": "cmpeqnkez000jabex2ab29h6s",
+      "name": "search.sigstore.dev",
+      "type": "domain",
+      "properties": "{\"hostingProvider\":\"GitHub Pages\",\"cdn\":\"Fastly\",\"cache\":\"Varnish\"}",
+      "source": "Investigation: sigstore.dev",
+      "verified": true,
+      "createdAt": "2026-05-21T00:14:24.539Z"
+    },
+    {
+      "id": "cmpeqnkfa000kabexl5m10qn0",
+      "name": "Google Cloud",
+      "type": "organization",
+      "properties": "{\"services\":[\"Compute\",\"Storage\",\"CDN\",\"DNS\"]}",
+      "source": "Investigation: sigstore.dev",
+      "verified": true,
+      "createdAt": "2026-05-21T00:14:24.550Z"
+    },
+    {
+      "id": "cmpeqnkfh000labexat0hki96",
+      "name": "Fastly",
+      "type": "organization",
+      "properties": "{\"service\":\"CDN\"}",
+      "source": "Investigation: sigstore.dev",
+      "verified": true,
+      "createdAt": "2026-05-21T00:14:24.558Z"
+    },
+    {
+      "id": "cmpeqnkfn000mabexgs8v4kxa",
+      "name": "GitHub Pages",
+      "type": "person",
+      "properties": "{\"provider\":\"GitHub\"}",
+      "source": "Investigation: sigstore.dev",
+      "verified": true,
+      "createdAt": "2026-05-21T00:14:24.563Z"
+    },
+    {
+      "id": "cmpeqnkfs000nabexv39h0h43",
+      "name": "Maven Central",
+      "type": "organization",
+      "properties": "{\"relatedAccount\":\"OSSRH-67470\"}",
+      "source": "Investigation: sigstore.dev",
+      "verified": true,
+      "createdAt": "2026-05-21T00:14:24.568Z"
+    },
+    {
+      "id": "cmpeqnkfx000oabexshs3h410",
+      "name": "OSSRH-67470",
+      "type": "account",
+      "properties": "{\"type\":\"verification token\"}",
+      "source": "Investigation: sigstore.dev",
+      "verified": false,
+      "createdAt": "2026-05-21T00:14:24.573Z"
+    }
+  ],
+  "relations": [
+    {
+      "id": "cmpeqnkhq000qabex0mzx4q7r",
+      "fromEntityId": "cmpeqnk6e000gabexsg13ysfw",
+      "toEntityId": "cmpeqnkfa000kabexl5m10qn0",
+      "relationType": "hostedOn",
+      "confidence": "confirmed",
+      "properties": "{}",
+      "createdAt": "2026-05-21T00:14:24.639Z"
+    },
+    {
+      "id": "cmpeqnkhw000sabexr64bbwlj",
+      "fromEntityId": "cmpeqnkbw000habex034b4nc2",
+      "toEntityId": "cmpeqnk6e000gabexsg13ysfw",
+      "relationType": "subdomainOf",
+      "confidence": "confirmed",
+      "properties": "{}",
+      "createdAt": "2026-05-21T00:14:24.644Z"
+    },
+    {
+      "id": "cmpeqnki1000uabex92322yrf",
+      "fromEntityId": "cmpeqnkbw000habex034b4nc2",
+      "toEntityId": "cmpeqnkfa000kabexl5m10qn0",
+      "relationType": "hostedOn",
+      "confidence": "confirmed",
+      "properties": "{}",
+      "createdAt": "2026-05-21T00:14:24.649Z"
+    },
+    {
+      "id": "cmpeqnki9000wabexo5hlr158",
+      "fromEntityId": "cmpeqnked000iabexy8yet3gx",
+      "toEntityId": "cmpeqnk6e000gabexsg13ysfw",
+      "relationType": "subdomainOf",
+      "confidence": "confirmed",
+      "properties": "{}",
+      "createdAt": "2026-05-21T00:14:24.658Z"
+    },
+    {
+      "id": "cmpeqnkid000yabextis4p7kc",
+      "fromEntityId": "cmpeqnkez000jabex2ab29h6s",
+      "toEntityId": "cmpeqnk6e000gabexsg13ysfw",
+      "relationType": "subdomainOf",
+      "confidence": "confirmed",
+      "properties": "{}",
+      "createdAt": "2026-05-21T00:14:24.661Z"
+    },
+    {
+      "id": "cmpeqnkih0010abexd2si2w4f",
+      "fromEntityId": "cmpeqnked000iabexy8yet3gx",
+      "toEntityId": "cmpeqnkfn000mabexgs8v4kxa",
+      "relationType": "hostedOn",
+      "confidence": "confirmed",
+      "properties": "{}",
+      "createdAt": "2026-05-21T00:14:24.666Z"
+    },
+    {
+      "id": "cmpeqnkin0012abex98bkd2a5",
+      "fromEntityId": "cmpeqnkez000jabex2ab29h6s",
+      "toEntityId": "cmpeqnkfn000mabexgs8v4kxa",
+      "relationType": "hostedOn",
+      "confidence": "confirmed",
+      "properties": "{}",
+      "createdAt": "2026-05-21T00:14:24.671Z"
+    },
+    {
+      "id": "cmpeqnkj10014abexfga9qz19",
+      "fromEntityId": "cmpeqnked000iabexy8yet3gx",
+      "toEntityId": "cmpeqnkfh000labexat0hki96",
+      "relationType": "servedViaCDN",
+      "confidence": "confirmed",
+      "properties": "{}",
+      "createdAt": "2026-05-21T00:14:24.685Z"
+    },
+    {
+      "id": "cmpeqnkj40016abexl6e1q9g1",
+      "fromEntityId": "cmpeqnkez000jabex2ab29h6s",
+      "toEntityId": "cmpeqnkfh000labexat0hki96",
+      "relationType": "servedViaCDN",
+      "confidence": "confirmed",
+      "properties": "{}",
+      "createdAt": "2026-05-21T00:14:24.689Z"
+    },
+    {
+      "id": "cmpeqnkj80018abex9i5lknyd",
+      "fromEntityId": "cmpeqnk6e000gabexsg13ysfw",
+      "toEntityId": "cmpeqnkfx000oabexshs3h410",
+      "relationType": "verificationTokenInTXT",
+      "confidence": "probable",
+      "properties": "{}",
+      "createdAt": "2026-05-21T00:14:24.692Z"
+    },
+    {
+      "id": "cmpeqnkjc001aabexheeuvd6z",
+      "fromEntityId": "cmpeqnk6e000gabexsg13ysfw",
+      "toEntityId": "cmpeqnkfs000nabexv39h0h43",
+      "relationType": "associatedWith",
+      "confidence": "probable",
+      "properties": "{}",
+      "createdAt": "2026-05-21T00:14:24.696Z"
+    }
+  ],
+  "reports": [
+    {
+      "id": "cmpeqo5jd001eabexipm9a2mz",
+      "title": "Investigation: sigstore.dev  -  Pipeline Report",
+      "type": "summary",
+      "status": "draft",
+      "content": "# Investigation Report: sigstore.dev  \n\n**Target:** sigstore.dev  \n**Objective:** Map public infrastructure (subdomains, CT log presence, hosting) and cross‑reference with the Rekor transparency log we already attest to.  \n**Status:** Complete  \n\n---  \n\n## Executive Summary  \nThe public footprint of **sigstore.dev** is primarily hosted on Google Cloud Platform, with core services (including the Rekor transparency log) resolved to Google Cloud DNS and served via Google Cloud CDN and HTTP/3. Supporting sites such as the blog and documentation are delivered from GitHub Pages behind Fastly, while domain ownership evidence ties the domain to a Google‑managed project. All observed infrastructure aligns with the expected attestation chain, confirming that our Rekor entries are publicly reachable and correctly logged.\n\n---  \n\n## Findings  \n\n- **Identity** *(low, unverified)*  \n  - Identity pipeline returned unstructured output (no usable model content).\n\n- **Infrastructure** *(high, confirmed)*  \n  - **Primary hosting:** sigstore.dev resolves to Google Cloud DNS name servers and A records within Google Cloud IP ranges. HTTP probes of subdomains (rekor, status, tuf-repo-cdn, v1.fulcio) show server headers and fingerprints consistent with Google Cloud services (Google Cloud, Google Cloud CDN, Google Cloud Storage, HTTP/3).\n\n- **Infrastructure** *(critical, confirmed)*  \n  - **Rekor transparency log:** `rekor.sigstore.dev` resolves and returns HTTP 200 with a “sigstore” page title. Technology stack includes Google Cloud CDN and HTTP/3, confirming the Rekor service is publicly reachable.\n\n- **Infrastructure** *(medium, probable)*  \n  - **Blog & docs:** `blog.sigstore.dev` and `search.sigstore.dev` return HTTP 200 with server header “GitHub.com” and technology list containing Fastly, GitHub Pages, Varnish, indicating static content served from GitHub Pages via Fastly CDN.\n\n- **Infrastructure** *(low, probable)*  \n  - **Domain ownership:** TXT records contain `google-site-verification` tokens and `OSSRH-67470`, linking the domain to Google‑managed verification and Maven Central. Combined with Google Cloud DNS/hosting, this points to ownership by the Sigstore open‑source project under Google’s umbrella.\n\n---  \n\n## Entity Overview  \n\n- **sigstore.dev** – primary domain  \n- **rekor.sigstore.dev** – Rekor transparency log service  \n- **status.sigstore.dev** – status endpoint  \n- **tuf-repo-cdn.sigstore.dev** – TUF repository CDN  \n- **v1.fulcio.sigstore.dev** – Fulcio service endpoint  \n- **blog.sigstore.dev** – project blog  \n- **search.sigstore.dev** – documentation search site  \n- **Google Cloud Platform** – DNS, compute, storage, CDN  \n- **GitHub Pages** – static site hosting  \n- **Fastly CDN** – edge delivery for GitHub‑hosted sites  \n\n---  \n\n## Recommended Next Steps  \n\n- Verify CT log entries for all discovered subdomains to ensure full certificate transparency coverage.  \n- Conduct periodic DNS and TLS certificate monitoring to detect any hosting changes, especially for critical services like Rekor.  \n- Perform a deeper security header analysis (e.g., CSP, HSTS) on each subdomain to assess hardening posture.  \n- Document and automate the correlation of future Rekor attestations with the live `rekor.sigstore.dev` endpoint to maintain attestation integrity.  \n- Review and archive the unstructured identity pipeline output for potential refinement or replacement with a more reliable method.  ",
+      "generatedBy": "openrouter",
+      "findingCount": 5,
+      "createdAt": "2026-05-21T00:14:51.912Z"
+    }
+  ],
+  "audit": [
+    {
+      "id": "cmpehoirn0001ab0ikyeisdls",
+      "action": "pipeline_started",
+      "entity": "Investigation",
+      "entityId": "cmpehnovb0001ab2kz5fub8vy",
+      "details": "{\"adapter\":\"openrouter\",\"groups\":[\"identity\",\"infrastructure\"]}",
+      "hash": "fba32ce1fe9235264976097978f086cb2ecae122fd12d08449ca4bfef169aaef",
+      "prevHash": "02a69f58ce8c43bb7df10a59796aa6d04096b80bac1e5028c49d9a9d9a7e5a8f",
+      "createdAt": "2026-05-20T20:03:12.512Z"
+    },
+    {
+      "id": "cmpehstfd000dab0ieh3wyrkp",
+      "action": "agent_identity_completed",
+      "entity": "Investigation",
+      "entityId": "cmpehnovb0001ab2kz5fub8vy",
+      "details": "{\"findingsAdded\":4,\"confidence\":0.86}",
+      "hash": "f66a1c2bc06e0614de9098098c5c3fe0433f878ad1dc8f9eea02e0bce7e48dfc",
+      "prevHash": "b9a4e87d7e5098ef378a93791eb604051426d6c84a1a33d67c6e4e6071f7d7fc",
+      "createdAt": "2026-05-20T20:06:32.945Z"
+    },
+    {
+      "id": "cmpehsth1000nab0ik893r13t",
+      "action": "agent_infrastructure_completed",
+      "entity": "Investigation",
+      "entityId": "cmpehnovb0001ab2kz5fub8vy",
+      "details": "{\"findingsAdded\":4,\"confidence\":0.87}",
+      "hash": "9e1f89b28684bc8eb109306f8c1b51160b49b30e48d3904cd17f1ca66c4cf771",
+      "prevHash": "f66a1c2bc06e0614de9098098c5c3fe0433f878ad1dc8f9eea02e0bce7e48dfc",
+      "createdAt": "2026-05-20T20:06:33.012Z"
+    },
+    {
+      "id": "cmpeqjlbu0001abexq8m5b811",
+      "action": "pipeline_started",
+      "entity": "Investigation",
+      "entityId": "cmpehnovb0001ab2kz5fub8vy",
+      "details": "{\"adapter\":\"openrouter\",\"groups\":[\"identity\",\"infrastructure\"]}",
+      "hash": "52be727ea8a643000100dc0d32785dfc8d2795f382147d321de171356adf0d39",
+      "prevHash": "d410ef2a1f4c003fbfc2be02f7b4c1c49536d4a51df98317fb0a521b454fc4c0",
+      "createdAt": "2026-05-21T00:11:19.096Z"
+    },
+    {
+      "id": "cmpeqml4p0005abexhog5oipw",
+      "action": "agent_identity_completed",
+      "entity": "Investigation",
+      "entityId": "cmpehnovb0001ab2kz5fub8vy",
+      "details": "{\"findingsAdded\":1,\"confidence\":0}",
+      "hash": "7f55242217bdaca30291d935f3f79340d33b594517a883ae79dc2629603ad545",
+      "prevHash": "52be727ea8a643000100dc0d32785dfc8d2795f382147d321de171356adf0d39",
+      "createdAt": "2026-05-21T00:13:38.808Z"
+    },
+    {
+      "id": "cmpeqml5k000fabexrl2qsl2j",
+      "action": "agent_infrastructure_completed",
+      "entity": "Investigation",
+      "entityId": "cmpehnovb0001ab2kz5fub8vy",
+      "details": "{\"findingsAdded\":4,\"confidence\":0.92}",
+      "hash": "e3a631185b1f4ff5afd082a5e6a704d0637b312e0fa1a88c41bfe526d51b6bca",
+      "prevHash": "7f55242217bdaca30291d935f3f79340d33b594517a883ae79dc2629603ad545",
+      "createdAt": "2026-05-21T00:13:38.839Z"
+    },
+    {
+      "id": "cmpeqnkjj001cabexwu3ffjpa",
+      "action": "entities_extracted",
+      "entity": "Investigation",
+      "entityId": "cmpehnovb0001ab2kz5fub8vy",
+      "details": "{\"entities\":9,\"relations\":11}",
+      "hash": "f5efa2fd7388b66a5970b881dbe9d0a08921b9815968b601b102d7481e209d2e",
+      "prevHash": "e3a631185b1f4ff5afd082a5e6a704d0637b312e0fa1a88c41bfe526d51b6bca",
+      "createdAt": "2026-05-21T00:14:24.702Z"
+    },
+    {
+      "id": "cmpeqo5jl001gabexjvg0tom0",
+      "action": "report_generated",
+      "entity": "Report",
+      "entityId": "cmpeqo5jd001eabexipm9a2mz",
+      "details": "{\"length\":3441,\"adapter\":\"openrouter\"}",
+      "hash": "570c6ffae266326e85dbb08eb8e48154a142b4dc3df73f02cc916470ad89a71e",
+      "prevHash": "f5efa2fd7388b66a5970b881dbe9d0a08921b9815968b601b102d7481e209d2e",
+      "createdAt": "2026-05-21T00:14:51.920Z"
+    },
+    {
+      "id": "cmpeqo5jv001iabex6ka0f5jp",
+      "action": "pipeline_completed",
+      "entity": "Investigation",
+      "entityId": "cmpehnovb0001ab2kz5fub8vy",
+      "details": "{\"findings\":5,\"entities\":9,\"relations\":11,\"reportId\":\"cmpeqo5jd001eabexipm9a2mz\"}",
+      "hash": "3ee898199c9d0b2617359f5d7f14f9b12d2cb4f2bb5b679f8f758cfe4d1bedd6",
+      "prevHash": "570c6ffae266326e85dbb08eb8e48154a142b4dc3df73f02cc916470ad89a71e",
+      "createdAt": "2026-05-21T00:14:51.930Z"
+    },
+    {
+      "id": "cmper13w9001mabexjedn9ayc",
+      "action": "bridge_investigation_to_case",
+      "entity": "Case",
+      "entityId": "cmper13so001jabex5n3xywp2",
+      "details": "{\"caseNumber\":\"CASE-2026-003\"}",
+      "hash": "7379dcb6667a54d021d20f9f0d0730b27758d5e2380602f632afe51aa47f146c",
+      "prevHash": "3ee898199c9d0b2617359f5d7f14f9b12d2cb4f2bb5b679f8f758cfe4d1bedd6",
+      "createdAt": "2026-05-21T00:24:56.311Z"
+    },
+    {
+      "id": "cmper147f0028abexp9i7bhcx",
+      "action": "findings_promoted_to_evidence",
+      "entity": "Case",
+      "entityId": "cmper13so001jabex5n3xywp2",
+      "details": "{\"promoted\":5}",
+      "hash": "2bb5215cc94411e9d70d450c2dd3bb7d01c14d4481cf6d86ce71b6fd3cb8b89e",
+      "prevHash": "7379dcb6667a54d021d20f9f0d0730b27758d5e2380602f632afe51aa47f146c",
+      "createdAt": "2026-05-21T00:24:56.713Z"
+    }
+  ]
+}

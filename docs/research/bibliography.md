@@ -79,10 +79,6 @@ loosely; this is a working document, not a publication.
 
 - Le Deuff, O. (2021). *Hyperdocumentation*. ISTE / Wiley.
 
-- Le Deuff, O., Coulet, P., and Roumieux, O. (2024).
-  Hyper-investigation and the OSINT turn in information science.
-  *Journal of Documentation* (preprint via HyperION project).
-
 ---
 
 ## C. Digital evidence, chain of custody, and forensic admissibility
@@ -97,16 +93,16 @@ loosely; this is a working document, not a publication.
 - Cohen, F. (2013). *Digital forensic evidence examination* (5th
   ed.). ASP Press.
 
-- Garrie, D. B. (2014). Digital forensic evidence in the
-  courtroom: understanding content and quality. *Northwestern
-  Journal of Technology and Intellectual Property*, 12(2),
-  121-142.
+- Garrie, D. B., and Morrissy, J. D. (2014). Digital forensic
+  evidence in the courtroom: understanding content and quality.
+  *Northwestern Journal of Technology and Intellectual Property*,
+  12(2), 121-142.
 
-- Henseler, J., and van Loenhout, S. (2018). Educating judges,
+- Henseler, H., and van Loenhout, S. (2018). Educating judges,
   prosecutors and lawyers in the use of digital forensic experts.
   *Digital Investigation*, 24, S76-S82.
 
-- Berkeley Protocol on Digital Open Source Investigations. (2022).
+- Berkeley Protocol on Digital Open Source Investigations. (2020).
   UN Office of the High Commissioner for Human Rights and Human
   Rights Center, UC Berkeley School of Law.
 
@@ -116,7 +112,7 @@ loosely; this is a working document, not a publication.
   Security Review*, 34(4), 890-900.
 
 - Roth, A. (2017). Machine testimony. *Yale Law Journal*, 126(7),
-  1972-2259.
+  1972-2053.
 
 ---
 
@@ -139,8 +135,6 @@ loosely; this is a working document, not a publication.
   on inappropriate data practices: interpretation and application
   of subsection 5(3)* (PIPEDA).
 
-- Geist, M. (Ed.). (2020). *The law of privacy in Canada*. Carswell.
-
 - Voigt, P., and von dem Bussche, A. (2017). *The EU General Data
   Protection Regulation (GDPR): a practical guide*. Springer.
 
@@ -152,15 +146,23 @@ loosely; this is a working document, not a publication.
   Internet*, 6(2), 397-413.
 
 - Scassa, T. (2018). Considerations for Canada's national data
-  strategy. CIGI Paper No. 192.
+  strategy. In *Data Governance in the Digital Age* (CIGI
+  Special Report). Centre for International Governance Innovation.
 
-- Scassa, T. (2019). Designing data governance for data sharing:
+- Scassa, T. (2020a). Designing data governance for data sharing:
   lessons from Sidewalk Toronto. *Technology and Regulation*,
-  2019, 44-56.
+  2020, 44-56.
 
-- Scassa, T. (2020). A human rights-based approach to data
-  protection in Canada. *Canadian Journal of Law and Technology*,
-  18(1), 1-29.
+- Scassa, T. (2020b). A human rights-based approach to data
+  protection in Canada. In E. Dubois and F. Martin-Bariteau
+  (Eds.), *Citizenship in a Connected Canada: A Research and
+  Policy Agenda*. University of Ottawa Press.
+
+- Geist, M. (Ed.). (2015). *Law, privacy and surveillance in
+  Canada in the post-Snowden era*. University of Ottawa Press.
+
+- Cavoukian, A. (2009). *Privacy by design: the 7 foundational
+  principles*. Information and Privacy Commissioner of Ontario.
 
 - Austin, L. M. (2003). Privacy and the question of technology.
   *Law and Philosophy*, 22(2), 119-166.
@@ -179,15 +181,16 @@ loosely; this is a working document, not a publication.
 
 - Carpenter v. United States, 585 U.S. 296 (2018).
 
-- Kerr, O. S. (2019). Implementing Carpenter. In *The digital
-  Fourth Amendment* (forthcoming chapter, draft posted SSRN).
+- Kerr, O. S. (2018). Implementing Carpenter. In *The digital
+  Fourth Amendment* (forthcoming chapter; draft posted SSRN,
+  USC Law Legal Studies Paper No. 18-29).
 
 - Solove, D. J. (2002). Conceptualizing privacy. *California Law
   Review*, 90(4), 1087-1155.
 
-- Tokson, M. (2020). The aftermath of Carpenter: an empirical
+- Tokson, M. (2022). The aftermath of Carpenter: an empirical
   study of Fourth Amendment law, 2018-2021. *Harvard Law Review*,
-  135, 1791-1858.
+  135, 1790-1858.
 
 ---
 
@@ -249,10 +252,12 @@ loosely; this is a working document, not a publication.
   University Press.
 
 - McPherson, E. (2015). Digital human rights reporting by
-  civilian witnesses. In Allan, S. and Peters, C. (Eds.), *Citizen
-  journalism: global perspectives* (Vol. 2). Peter Lang.
+  civilian witnesses: surmounting the verification barrier. In
+  R. A. Lind (Ed.), *Producing theory in a digital world 2.0:
+  the intersection of audiences and production in contemporary
+  theory* (Vol. 2, pp. 193-209). Peter Lang.
 
-- Aronson, J. D. (2018). Preserving human rights media for
+- Aronson, J. D. (2017). Preserving human rights media for
   justice, accountability, and historical clarification.
   *Genocide Studies and Prevention*, 11(1), 82-99.
 

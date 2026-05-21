@@ -17,11 +17,20 @@ authors:
   - given-names: "Ali Murtaza"
     family-names: "Bhutto"
     orcid: "https://orcid.org/0009-0007-2787-943X"
+    affiliation: "SZABIST University (MSc Cybersecurity, 2026)"
 repository-code: "https://github.com/thunderstornX/forenix-oss"
-url: "https://forenix.tech"
+url: "https://github.com/thunderstornX/forenix-oss"
 license: MIT
-version: "0.5.1"
+version: "0.5.2"
 date-released: "2026-05-21"
+# Zenodo DOI for this release will be added once the GitHub
+# integration mints one for v0.5.2; replace this placeholder with
+# the assigned DOI from https://zenodo.org/account/settings/github/
+# Example:
+#   identifiers:
+#     - type: doi
+#       value: "10.5281/zenodo.XXXXXXX"
+#       description: "Zenodo archive of v0.5.2"
 keywords:
   - OSINT
   - digital forensics
@@ -32,3 +41,5 @@ keywords:
   - sigstore
   - evidence governance
   - design science research
+  - data governance
+  - lawful intelligence

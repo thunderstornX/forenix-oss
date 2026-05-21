@@ -74,22 +74,28 @@ seed did not run; re-run `bun run db:seed` and refresh.
 
 ## 4. Verify the audit chain
 
-The audit chain is the central security claim. Verify it offline
-without trusting the platform's own UI:
+The audit chain is the central security claim. Two ways to check
+it without trusting the platform's UI:
 
 ```bash
-# Export the audit log to a JSON file
-bun run scripts/dump-audit-log.ts > /tmp/audit.json
+# Option A: run the bundled verifier (recomputes every row's hash
+# from the previous row's hash + the row content)
+bun run scripts/verify-audit-chain.ts
 
-# Verify with the platform's verifier
-bun --eval 'const log = JSON.parse(await Bun.file("/tmp/audit.json").text()); const { verifyChainStandalone } = await import("./src/lib/audit-chain.ts"); console.log(verifyChainStandalone(log));'
+# Option B: export the chain as JSON, verify it offline with any
+# language / tool you trust more than this codebase
+bun run scripts/dump-audit-log.ts > /tmp/audit.json
 ```
 
-The 12-line offline verifier in
-[`docs/07-SECURITY.md`](../07-SECURITY.md) section 4 is also
-runnable; it re-implements the SHA-256 forward-chain check in pure
-Python so you can verify without trusting the JavaScript
-implementation.
+The bundled verifier imports `computeAuditHash` and `GENESIS_HASH`
+from `src/lib/audit-chain.ts`. That module is intentionally pure
+(no Prisma, no `server-only` marker) so the same primitive the
+platform writes with is the primitive the script verifies with.
+
+For full independence from the project's TypeScript code,
+[`docs/07-SECURITY.md`](../07-SECURITY.md) section 4 reimplements
+the SHA-256 forward chain in twelve lines of Python that you can
+run against the JSON dump.
 
 ---
 

@@ -24,7 +24,7 @@ oriented and treats admissibility as out of scope. The
 information-law literature on data governance (Bygrave 2014;
 Scassa 2018, 2020) treats OSINT pipelines as one application
 domain among many and does not develop framework-level
-prescriptions for them. The Berkeley Protocol (2022) supplies
+prescriptions for them. The Berkeley Protocol (2020) supplies
 investigative-procedure guidance for human-rights contexts but
 does not engage with the divergence in evidence rules between
 Canadian, EU, and US jurisdictions, and is silent on the

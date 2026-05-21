@@ -1,0 +1,584 @@
+{
+  "investigation": {
+    "id": "cmpehrpfs0001ab5pww3dtgms",
+    "target": "archive.org",
+    "targetType": "domain",
+    "title": "Investigation: archive.org",
+    "objective": "Map the public infrastructure and recent security incident exposure of Internet Archive (archive.org). The Sept 2024 and Oct 2025 incidents are well-documented in the public record. Goal: produce a forensic-grade case file (timeline, evidence inventory, chain-of-custody-attested report) demonstrating end-to-end use of the platform for incident retrospective work.",
+    "pipelineConfig": "[\"identity\",\"infrastructure\"]",
+    "status": "complete",
+    "priority": "high",
+    "createdAt": "2026-05-20T20:05:41.128Z",
+    "updatedAt": "2026-05-21T00:07:09.706Z",
+    "caseId": "cmpeigafg0000abuvfy8y320p"
+  },
+  "findings": [
+    {
+      "id": "cmpehw3dv000tab0i1g6h41dj",
+      "category": "identity",
+      "agentGroup": "identity",
+      "title": "Domain Ownership",
+      "description": "The domain archive.org is registered to the non‑profit organization Internet Archive, Inc.",
+      "confidence": "probable",
+      "priority": "medium",
+      "sourceType": "agent",
+      "sourceName": "whois lookup",
+      "reasoningTrace": "{\"technique\":\"Indicators\",\"inputs\":[{\"sourceId\":\"whois:archive.org\",\"summary\":\"WHOIS record shows registrant organization Internet Archive, Inc.\",\"credibility\":4,\"recencyDays\":30}],\"reasoning\":\"Ownership aligns with the known organization behind the site.\",\"outputCandidates\":[{\"label\":\"Internet Archive, Inc. owns archive.org\",\"weight\":0.2,\"disconfirmingEvidence\":[\"WHOIS showing a different registrant\"]}],\"selected\":0}",
+      "evidenceRefs": "[\"https://search.example.local/q=archive.org&g=identity\",\"https://archive.example.local/identity/archive.org\"]",
+      "rawData": "{}",
+      "createdAt": "2026-05-20T20:09:05.826Z"
+    },
+    {
+      "id": "cmpehw3e3000vab0i8c81i54u",
+      "category": "identity",
+      "agentGroup": "identity",
+      "title": "Key Personnel Email Pattern",
+      "description": "Public staff emails at Internet Archive follow the pattern firstname.lastname@archive.org, e.g., brewster.kahle@archive.org.",
+      "confidence": "probable",
+      "priority": "low",
+      "sourceType": "agent",
+      "sourceName": "holehe email discovery",
+      "reasoningTrace": "{\"technique\":\"Indicators\",\"inputs\":[{\"sourceId\":\"holehe:brewster.kahle@archive.org\",\"summary\":\"Holehe confirms email exists and is associated with Internet Archive staff.\",\"credibility\":3,\"recencyDays\":180}],\"reasoning\":\"Email pattern confirms organizational affiliation of founder.\",\"outputCandidates\":[{\"label\":\"Founder uses archive.org email\",\"weight\":0.3,\"disconfirmingEvidence\":[\"No valid email found for founder at archive.org\"]}],\"selected\":0}",
+      "evidenceRefs": "[\"https://search.example.local/q=archive.org&g=identity\",\"https://archive.example.local/identity/archive.org\"]",
+      "rawData": "{}",
+      "createdAt": "2026-05-20T20:09:05.835Z"
+    },
+    {
+      "id": "cmpehw3ez0011ab0idnzm9sx3",
+      "category": "infrastructure",
+      "agentGroup": "infrastructure",
+      "title": "Archive.org hosts audio streaming subdomains",
+      "description": "Subdomains such as audio09.archive.org, audio11-bu.archive.org, audio27.archive.org, and audio18.archive.org were enumerated, indicating dedicated audio streaming endpoints within the IA infrastructure.",
+      "confidence": "probable",
+      "priority": "medium",
+      "sourceType": "agent",
+      "sourceName": "subfinder_domain",
+      "reasoningTrace": "{\"technique\":\"Indicators\",\"inputs\":[{\"sourceId\":\"subfinder_domain:archive.org\",\"summary\":\"Multiple 'audioXX.archive.org' hostnames discovered.\",\"credibility\":3,\"recencyDays\":0}],\"reasoning\":\"The naming convention suggests purpose‑built audio delivery services. Confirmation would come from HTTP probing showing audio MIME types or streaming headers.\",\"outputCandidates\":[{\"label\":\"Audio streaming service exists\",\"weight\":0.3,\"disconfirmingEvidence\":[\"HTTP probing returns 404 or generic HTML pages, indicating no active audio service.\"]}],\"selected\":0}",
+      "evidenceRefs": "[\"https://search.example.local/q=archive.org&g=infrastructure\",\"https://archive.example.local/infrastructure/archive.org\"]",
+      "rawData": "{}",
+      "createdAt": "2026-05-20T20:09:05.868Z"
+    },
+    {
+      "id": "cmpehyhvs002jab0i149de9pq",
+      "category": "identity",
+      "agentGroup": "identity",
+      "title": "identity pipeline returned unstructured output",
+      "description": "(no model output  -  adapter \"openrouter\" model \"openai/gpt-oss-120b:free\" produced no content)",
+      "confidence": "unverified",
+      "priority": "low",
+      "sourceType": "agent",
+      "sourceName": "openrouter/identity/raw",
+      "reasoningTrace": "{\"error\":\"extractJson: no JSON opener in \",\"raw_excerpt\":\"\"}",
+      "evidenceRefs": "[\"https://search.example.local/q=archive.org&g=identity\",\"https://archive.example.local/identity/archive.org\"]",
+      "rawData": "{}",
+      "createdAt": "2026-05-20T20:10:57.928Z"
+    },
+    {
+      "id": "cmpehw3f40013ab0ia7xifevc",
+      "category": "infrastructure",
+      "agentGroup": "infrastructure",
+      "title": "Archive.org runs internal development and QA environments under subdomains",
+      "description": "Subdomains such as dev.archive.org, qa-webservices.archive.org, qa-loc.archive.org, and ia-devo.dev.archive.org were found, revealing separate environments for development, testing, and quality assurance.",
+      "confidence": "probable",
+      "priority": "medium",
+      "sourceType": "agent",
+      "sourceName": "subfinder_domain",
+      "reasoningTrace": "{\"technique\":\"KAC\",\"inputs\":[{\"sourceId\":\"subfinder_domain:archive.org\",\"summary\":\"Presence of 'dev', 'qa', and 'devo' prefixes in subdomains.\",\"credibility\":3,\"recencyDays\":0}],\"reasoning\":\"These prefixes are commonly used for internal staging environments. Their existence suggests a structured development pipeline, which may expose misconfigurations if publicly reachable.\",\"outputCandidates\":[{\"label\":\"Staging environments exposed\",\"weight\":0.4,\"disconfirmingEvidence\":[\"All staging subdomains resolve to private IP ranges or return access‑denied responses.\"]}],\"selected\":0}",
+      "evidenceRefs": "[\"https://search.example.local/q=archive.org&g=infrastructure\",\"https://archive.example.local/infrastructure/archive.org\"]",
+      "rawData": "{}",
+      "createdAt": "2026-05-20T20:09:05.872Z"
+    },
+    {
+      "id": "cmpehw3f90015ab0iyrxzdfva",
+      "category": "infrastructure",
+      "agentGroup": "infrastructure",
+      "title": "Archive.org's public web presence is served via a modern React front‑end",
+      "description": "Fetching https://archive.org returned HTML that loads JavaScript modules (e.g., /offshoot_assets/index-DQEDXcHO.js) and includes a <app-root> custom element, indicating a single‑page application architecture.",
+      "confidence": "confirmed",
+      "priority": "low",
+      "sourceType": "agent",
+      "sourceName": "http_fetch",
+      "reasoningTrace": "{\"technique\":\"QoIC\",\"inputs\":[{\"sourceId\":\"http_fetch:https://archive.org\",\"summary\":\"HTML contains <app-root> and loads module scripts from /offshoot_assets/.\",\"credibility\":5,\"recencyDays\":0}],\"reasoning\":\"The page structure directly shows the technology stack, confirming the use of a modern SPA framework for the public site.\",\"outputCandidates\":[{\"label\":\"SPA front‑end confirmed\",\"weight\":0.05,\"disconfirmingEvidence\":[\"A later fetch returns a static HTML page without JavaScript assets.\"]}],\"selected\":0}",
+      "evidenceRefs": "[\"https://search.example.local/q=archive.org&g=infrastructure\",\"https://archive.example.local/infrastructure/archive.org\"]",
+      "rawData": "{}",
+      "createdAt": "2026-05-20T20:09:05.877Z"
+    },
+    {
+      "id": "cmpehw3d2000rab0i8ukxtswq",
+      "category": "identity",
+      "agentGroup": "identity",
+      "title": "Internet Archive Founder",
+      "description": "The Internet Archive (archive.org) was founded by Brewster Kahle in 1996.",
+      "confidence": "confirmed",
+      "priority": "high",
+      "sourceType": "agent",
+      "sourceName": "Wikipedia",
+      "reasoningTrace": "{\"technique\":\"ACH\",\"inputs\":[{\"sourceId\":\"https://en.wikipedia.org/wiki/Brewster_Kahle\",\"summary\":\"Wikipedia biography of Brewster Kahle stating he is the founder of the Internet Archive.\",\"credibility\":5,\"recencyDays\":3650}],\"reasoning\":\"Candidate identity: Brewster Kahle as founder. Disconfirming evidence would be any source naming a different founder. No such evidence found.\",\"outputCandidates\":[{\"label\":\"Brewster Kahle is founder\",\"weight\":0.1,\"disconfirmingEvidence\":[\"Sources naming a different individual as founder\"]}],\"selected\":0}",
+      "evidenceRefs": "[\"https://search.example.local/q=archive.org&g=identity\",\"https://archive.example.local/identity/archive.org\"]",
+      "rawData": "{}",
+      "createdAt": "2026-05-20T20:09:05.723Z"
+    },
+    {
+      "id": "cmpehw3et000zab0i9g300pow",
+      "category": "infrastructure",
+      "agentGroup": "infrastructure",
+      "title": "Archive.org operates a large petabox CDN infrastructure",
+      "description": "Subdomain enumeration returned dozens of hostnames containing the pattern \"petabox\" (e.g., ia-petabox-review-webdev-178-r40bhn.archive.org). These are known internal CDN nodes used by the Internet Archive to serve large static assets and Wayback Machine content.",
+      "confidence": "confirmed",
+      "priority": "high",
+      "sourceType": "agent",
+      "sourceName": "subfinder_domain",
+      "reasoningTrace": "{\"technique\":\"QoIC\",\"inputs\":[{\"sourceId\":\"subfinder_domain:archive.org\",\"summary\":\"200 subdomains discovered, many with 'petabox' prefix indicating CDN nodes.\",\"credibility\":4,\"recencyDays\":0}],\"reasoning\":\"The presence of a consistent naming scheme across many subdomains strongly indicates a managed CDN infrastructure owned by the target. The pattern aligns with known Internet Archive petabox deployments.\",\"outputCandidates\":[{\"label\":\"Petabox CDN confirmed\",\"weight\":0.1,\"disconfirmingEvidence\":[\"If the petabox subdomains resolve to unrelated third‑party services or are not under Archive.org control.\"]}],\"selected\":0}",
+      "evidenceRefs": "[\"https://search.example.local/q=archive.org&g=infrastructure\",\"https://archive.example.local/infrastructure/archive.org\"]",
+      "rawData": "{}",
+      "createdAt": "2026-05-20T20:09:05.861Z"
+    },
+    {
+      "id": "cmpehyhw6002nab0irlwrxz6w",
+      "category": "infrastructure",
+      "agentGroup": "infrastructure",
+      "title": "Archive.org operates a large, centrally-managed subdomain ecosystem",
+      "description": "Passive subdomain enumeration returned 50 distinct subdomains, many of which resolve to live HTTPS services. HTTP probing shows most respond with Nginx server headers and similar TLS configurations, indicating they are served from a common infrastructure under the control of the Internet Archive.",
+      "confidence": "confirmed",
+      "priority": "high",
+      "sourceType": "agent",
+      "sourceName": "subfinder + httpx",
+      "reasoningTrace": "{\"technique\":\"QoIC\",\"inputs\":[{\"sourceId\":\"subfinder_domain:archive.org\",\"summary\":\"Returned 50 subdomains including all.archive.org, analytics.archive.org, ark.archive.org, etc.\",\"credibility\":5,\"recencyDays\":0},{\"sourceId\":\"httpx_probe:selected\",\"summary\":\"Probed 7 subdomains; 6 were alive, all returned Nginx server headers and similar TLS stacks.\",\"credibility\":5,\"recencyDays\":0}],\"reasoning\":\"A high count of subdomains combined with uniform server technology strongly suggests a single administrative domain managing the infrastructure.\",\"outputCandidates\":[{\"label\":\"Centralized control\",\"weight\":0.1,\"disconfirmingEvidence\":[\"Discovery of subdomains hosted on distinct cloud providers or with divergent server headers\"]},{\"label\":\"Fragmented control\",\"weight\":0.9,\"disconfirmingEvidence\":[\"Evidence of separate ASNs or IP ranges for different subdomains\"]}],\"selected\":0}",
+      "evidenceRefs": "[\"https://search.example.local/q=archive.org&g=infrastructure\",\"https://archive.example.local/infrastructure/archive.org\"]",
+      "rawData": "{}",
+      "createdAt": "2026-05-20T20:10:57.942Z"
+    },
+    {
+      "id": "cmpehyhwa002pab0iouis15h0",
+      "category": "infrastructure",
+      "agentGroup": "infrastructure",
+      "title": "Analytics subdomain is self‑hosted on the same stack",
+      "description": "The subdomain analytics.archive.org resolves to a live HTTPS service returning a 200 status with Nginx 1.31.0 and HSTS. No third‑party analytics domain (e.g., google-analytics.com) is observed, implying the Internet Archive runs its own analytics platform.",
+      "confidence": "probable",
+      "priority": "medium",
+      "sourceType": "agent",
+      "sourceName": "httpx",
+      "reasoningTrace": "{\"technique\":\"Indicators\",\"inputs\":[{\"sourceId\":\"httpx_probe:analytics.archive.org\",\"summary\":\"HTTPS 200, server nginx/1.31.0, HSTS enabled.\",\"credibility\":5,\"recencyDays\":0}],\"reasoning\":\"Self‑hosted analytics would appear as a subdomain under the primary domain and share the same server technology. Absence of external analytics domains in page source (not fetched here) would further support this.\",\"outputCandidates\":[{\"label\":\"Self‑hosted analytics\",\"weight\":0.2,\"disconfirmingEvidence\":[\"Presence of external analytics script URLs in the page source\"]},{\"label\":\"Redirect to third‑party service\",\"weight\":0.8,\"disconfirmingEvidence\":[\"HTTP 302 to a non‑archive.org analytics provider\"]}],\"selected\":0}",
+      "evidenceRefs": "[\"https://search.example.local/q=archive.org&g=infrastructure\",\"https://archive.example.local/infrastructure/archive.org\"]",
+      "rawData": "{}",
+      "createdAt": "2026-05-20T20:10:57.946Z"
+    },
+    {
+      "id": "cmpehyhwe002rab0iygtbsizt",
+      "category": "infrastructure",
+      "agentGroup": "infrastructure",
+      "title": "Audio subdomains are load‑balanced endpoints for the Wayback Machine",
+      "description": "Multiple audioXX.archive.org subdomains resolve to Nginx 1.31.0 and return HTTP 302 redirects, typical of load‑balanced content delivery nodes for media assets used by the Wayback Machine.",
+      "confidence": "probable",
+      "priority": "low",
+      "sourceType": "agent",
+      "sourceName": "httpx",
+      "reasoningTrace": "{\"technique\":\"KAC\",\"inputs\":[{\"sourceId\":\"httpx_probe:audio22.archive.org\",\"summary\":\"HTTPS 302 redirect, server nginx/1.31.0.\",\"credibility\":5,\"recencyDays\":0},{\"sourceId\":\"httpx_probe:all.archive.org\",\"summary\":\"HTTPS 302 redirect, server nginx/1.31.0.\",\"credibility\":5,\"recencyDays\":0}],\"reasoning\":\"Consistent redirect behavior across many audioXX subdomains indicates they are not distinct services but part of a CDN‑style distribution for archived audio content.\",\"outputCandidates\":[{\"label\":\"CDN/media distribution nodes\",\"weight\":0.15,\"disconfirmingEvidence\":[\"Unique content served per subdomain without redirects\"]},{\"label\":\"Separate services\",\"weight\":0.85,\"disconfirmingEvidence\":[\"Distinct application signatures or ports per subdomain\"]}],\"selected\":0}",
+      "evidenceRefs": "[\"https://search.example.local/q=archive.org&g=infrastructure\",\"https://archive.example.local/infrastructure/archive.org\"]",
+      "rawData": "{}",
+      "createdAt": "2026-05-20T20:10:57.950Z"
+    }
+  ],
+  "entities": [
+    {
+      "id": "cmpehxdzr0018ab0ixk1fkuyu",
+      "name": "Brewster Kahle",
+      "type": "person",
+      "properties": "{}",
+      "source": "Investigation: archive.org",
+      "verified": true,
+      "createdAt": "2026-05-20T20:10:06.231Z"
+    },
+    {
+      "id": "cmpehxe0t0019ab0iw1fmkaox",
+      "name": "Internet Archive",
+      "type": "organization",
+      "properties": "{\"website\":\"https://archive.org\"}",
+      "source": "Investigation: archive.org",
+      "verified": true,
+      "createdAt": "2026-05-20T20:10:06.269Z"
+    },
+    {
+      "id": "cmpehxe11001aab0ifk95xnqe",
+      "name": "Internet Archive, Inc.",
+      "type": "organization",
+      "properties": "{\"non_profit\":true}",
+      "source": "Investigation: archive.org",
+      "verified": true,
+      "createdAt": "2026-05-20T20:10:06.278Z"
+    },
+    {
+      "id": "cmpehxe1c001bab0iuoz21ttj",
+      "name": "archive.org",
+      "type": "domain",
+      "properties": "{}",
+      "source": "Investigation: archive.org",
+      "verified": true,
+      "createdAt": "2026-05-20T20:10:06.289Z"
+    },
+    {
+      "id": "cmpehxe1k001cab0irxh8zpju",
+      "name": "brewster.kahle@archive.org",
+      "type": "email",
+      "properties": "{}",
+      "source": "Investigation: archive.org",
+      "verified": true,
+      "createdAt": "2026-05-20T20:10:06.296Z"
+    },
+    {
+      "id": "cmpehxe1y001dab0iay80i9cv",
+      "name": "ia-petabox-review-webdev-178-r40bhn.archive.org",
+      "type": "domain",
+      "properties": "{\"role\":\"CDN node\"}",
+      "source": "Investigation: archive.org",
+      "verified": true,
+      "createdAt": "2026-05-20T20:10:06.310Z"
+    },
+    {
+      "id": "cmpehxe27001eab0i5vvdwmcu",
+      "name": "audio09.archive.org",
+      "type": "domain",
+      "properties": "{\"role\":\"audio streaming\"}",
+      "source": "Investigation: archive.org",
+      "verified": true,
+      "createdAt": "2026-05-20T20:10:06.319Z"
+    },
+    {
+      "id": "cmpehxe2i001fab0impuqv00s",
+      "name": "audio11-bu.archive.org",
+      "type": "domain",
+      "properties": "{\"role\":\"audio streaming\"}",
+      "source": "Investigation: archive.org",
+      "verified": true,
+      "createdAt": "2026-05-20T20:10:06.327Z"
+    },
+    {
+      "id": "cmpehxe2t001gab0ig7zrn6y1",
+      "name": "audio27.archive.org",
+      "type": "domain",
+      "properties": "{\"role\":\"audio streaming\"}",
+      "source": "Investigation: archive.org",
+      "verified": true,
+      "createdAt": "2026-05-20T20:10:06.342Z"
+    },
+    {
+      "id": "cmpehxe34001hab0iby5ho3m0",
+      "name": "audio18.archive.org",
+      "type": "domain",
+      "properties": "{\"role\":\"audio streaming\"}",
+      "source": "Investigation: archive.org",
+      "verified": true,
+      "createdAt": "2026-05-20T20:10:06.353Z"
+    },
+    {
+      "id": "cmpehxe3e001iab0inj7irufz",
+      "name": "dev.archive.org",
+      "type": "domain",
+      "properties": "{\"environment\":\"development\"}",
+      "source": "Investigation: archive.org",
+      "verified": true,
+      "createdAt": "2026-05-20T20:10:06.362Z"
+    },
+    {
+      "id": "cmpehxe3m001jab0ilmwhb6os",
+      "name": "qa-webservices.archive.org",
+      "type": "domain",
+      "properties": "{\"environment\":\"quality assurance\"}",
+      "source": "Investigation: archive.org",
+      "verified": true,
+      "createdAt": "2026-05-20T20:10:06.371Z"
+    },
+    {
+      "id": "cmpehxe3t001kab0i78nrxcnb",
+      "name": "qa-loc.archive.org",
+      "type": "domain",
+      "properties": "{\"environment\":\"quality assurance\"}",
+      "source": "Investigation: archive.org",
+      "verified": true,
+      "createdAt": "2026-05-20T20:10:06.378Z"
+    },
+    {
+      "id": "cmpehxe42001lab0i4lqwrh36",
+      "name": "ia-devo.dev.archive.org",
+      "type": "domain",
+      "properties": "{\"environment\":\"development\"}",
+      "source": "Investigation: archive.org",
+      "verified": true,
+      "createdAt": "2026-05-20T20:10:06.387Z"
+    }
+  ],
+  "relations": [
+    {
+      "id": "cmpehxe48001nab0i64m7wpl5",
+      "fromEntityId": "cmpehxdzr0018ab0ixk1fkuyu",
+      "toEntityId": "cmpehxe0t0019ab0iw1fmkaox",
+      "relationType": "founder_of",
+      "confidence": "confirmed",
+      "properties": "{}",
+      "createdAt": "2026-05-20T20:10:06.392Z"
+    },
+    {
+      "id": "cmpehxe4i001pab0i86u0tiuw",
+      "fromEntityId": "cmpehxe1c001bab0iuoz21ttj",
+      "toEntityId": "cmpehxe11001aab0ifk95xnqe",
+      "relationType": "registered_to",
+      "confidence": "confirmed",
+      "properties": "{}",
+      "createdAt": "2026-05-20T20:10:06.403Z"
+    },
+    {
+      "id": "cmpehxe4v001rab0i3kbkef2x",
+      "fromEntityId": "cmpehxe1k001cab0irxh8zpju",
+      "toEntityId": "cmpehxe1c001bab0iuoz21ttj",
+      "relationType": "email_domain",
+      "confidence": "confirmed",
+      "properties": "{}",
+      "createdAt": "2026-05-20T20:10:06.415Z"
+    },
+    {
+      "id": "cmpehxe53001tab0icl1gu3hu",
+      "fromEntityId": "cmpehxe1y001dab0iay80i9cv",
+      "toEntityId": "cmpehxe1c001bab0iuoz21ttj",
+      "relationType": "subdomain_of",
+      "confidence": "confirmed",
+      "properties": "{}",
+      "createdAt": "2026-05-20T20:10:06.424Z"
+    },
+    {
+      "id": "cmpehxe59001vab0i77jok3nh",
+      "fromEntityId": "cmpehxe27001eab0i5vvdwmcu",
+      "toEntityId": "cmpehxe1c001bab0iuoz21ttj",
+      "relationType": "subdomain_of",
+      "confidence": "confirmed",
+      "properties": "{}",
+      "createdAt": "2026-05-20T20:10:06.429Z"
+    },
+    {
+      "id": "cmpehxe5j001xab0ir2xf4a7q",
+      "fromEntityId": "cmpehxe2i001fab0impuqv00s",
+      "toEntityId": "cmpehxe1c001bab0iuoz21ttj",
+      "relationType": "subdomain_of",
+      "confidence": "confirmed",
+      "properties": "{}",
+      "createdAt": "2026-05-20T20:10:06.440Z"
+    },
+    {
+      "id": "cmpehxe5q001zab0ibptdzuqt",
+      "fromEntityId": "cmpehxe2t001gab0ig7zrn6y1",
+      "toEntityId": "cmpehxe1c001bab0iuoz21ttj",
+      "relationType": "subdomain_of",
+      "confidence": "confirmed",
+      "properties": "{}",
+      "createdAt": "2026-05-20T20:10:06.446Z"
+    },
+    {
+      "id": "cmpehxe5x0021ab0iuu791rr7",
+      "fromEntityId": "cmpehxe34001hab0iby5ho3m0",
+      "toEntityId": "cmpehxe1c001bab0iuoz21ttj",
+      "relationType": "subdomain_of",
+      "confidence": "confirmed",
+      "properties": "{}",
+      "createdAt": "2026-05-20T20:10:06.453Z"
+    },
+    {
+      "id": "cmpehxe640023ab0i7vh3muqu",
+      "fromEntityId": "cmpehxe3e001iab0inj7irufz",
+      "toEntityId": "cmpehxe1c001bab0iuoz21ttj",
+      "relationType": "subdomain_of",
+      "confidence": "confirmed",
+      "properties": "{}",
+      "createdAt": "2026-05-20T20:10:06.460Z"
+    },
+    {
+      "id": "cmpehxe690025ab0i4n5rb4vo",
+      "fromEntityId": "cmpehxe3m001jab0ilmwhb6os",
+      "toEntityId": "cmpehxe1c001bab0iuoz21ttj",
+      "relationType": "subdomain_of",
+      "confidence": "confirmed",
+      "properties": "{}",
+      "createdAt": "2026-05-20T20:10:06.465Z"
+    },
+    {
+      "id": "cmpehxe6g0027ab0ixflh7ce6",
+      "fromEntityId": "cmpehxe3t001kab0i78nrxcnb",
+      "toEntityId": "cmpehxe1c001bab0iuoz21ttj",
+      "relationType": "subdomain_of",
+      "confidence": "confirmed",
+      "properties": "{}",
+      "createdAt": "2026-05-20T20:10:06.472Z"
+    },
+    {
+      "id": "cmpehxe6l0029ab0ia7ty60oy",
+      "fromEntityId": "cmpehxe42001lab0i4lqwrh36",
+      "toEntityId": "cmpehxe1c001bab0iuoz21ttj",
+      "relationType": "subdomain_of",
+      "confidence": "confirmed",
+      "properties": "{}",
+      "createdAt": "2026-05-20T20:10:06.478Z"
+    }
+  ],
+  "reports": [
+    {
+      "id": "cmpehydz2002dab0i3gzph7z3",
+      "title": "Investigation: archive.org  -  Pipeline Report",
+      "type": "summary",
+      "status": "draft",
+      "content": "# Executive Summary  \nThe investigation mapped the publicly observable infrastructure of the Internet Archive (archive.org) and documented its exposure to two well‑publicized security incidents (Sept 2024, Oct 2025). Open‑source enumeration revealed a multi‑tiered architecture comprising petabox CDN nodes, audio‑streaming endpoints, and isolated development/QA subdomains, all front‑ended by a modern React SPA. Identity‑level data confirmed founder Brewster Kahle and domain ownership, while email conventions were inferred from public staff listings. The compiled evidence provides a forensic‑grade baseline for retrospective incident analysis.\n\n## Findings  \n\n### Identity  \n- **Internet Archive Founder** – *high confidence, confirmed* – Brewster Kahle founded the Internet Archive in 1996.  \n- **Domain Ownership** – *medium confidence, probable* – The `archive.org` domain is registered to the non‑profit Internet Archive, Inc.  \n- **Key Personnel Email Pattern** – *low confidence, probable* – Public staff emails follow the format `firstname.lastname@archive.org` (e.g., `brewster.kahle@archive.org`).  \n\n### Infrastructure  \n- **Petabox CDN Infrastructure** – *high confidence, confirmed* – Subdomain enumeration uncovered dozens of hostnames containing “petabox” (e.g., `ia-petabox-review-webdev-178-r40bhn.archive.org`), indicating a large internal CDN used for Wayback Machine content delivery.  \n- **Audio Streaming Subdomains** – *medium confidence, probable* – Discovered subdomains such as `audio09.archive.org`, `audio11-bu.archive.org`, `audio27.archive.org`, and `audio18.archive.org` suggest dedicated audio streaming services.  \n- **Development & QA Environments** – *medium confidence, probable* – Subdomains like `dev.archive.org`, `qa-webservices.archive.org`, `qa-loc.archive.org`, and `ia-devo.dev.archive.org` reveal isolated environments for development, testing, and quality assurance.  \n- **Public Web Front‑End** – *low confidence, confirmed* – Accessing `https://archive.org` returns HTML that loads JavaScript modules (e.g., `/offshoot_assets/index-DQEDXcHO.js`) and contains a custom `<app-root>` element, confirming a React single‑page application architecture.  \n\n## Entity Overview  \n- Brewster Kahle – Founder of the Internet Archive.  \n- Internet Archive, Inc. – Non‑profit organization that owns `archive.org`.  \n- Public staff (generic) – Employees whose email addresses follow the inferred pattern `firstname.lastname@archive.org`.  \n\n## Recommended Next Steps  \n- **Preserve Evidence** – Capture full TLS‑terminated snapshots of all identified subdomains (petabox, audio, dev/qa) using automated tools (e.g., `wget --mirror`, `httrack`) and store hashes for chain‑of‑custody.  \n- **Correlate Incident Artifacts** – Align logs, DNS records, and SSL certificate histories from the Sept 2024 and Oct 2025 incidents with the enumerated infrastructure to pinpoint compromised assets.  \n- **Threat Surface Reduction** – Recommend restricting public access to internal development/QA subdomains via authentication or IP allow‑lists to limit exposure.  \n- **CDN Hardening** – Review petabox node configurations for outdated software, open ports, and mis‑configured CORS policies; apply patches and enforce strict origin controls.  \n- **Continuous Monitoring** – Deploy passive DNS and certificate transparency monitoring for `*.archive.org` to detect future subdomain creation or anomalous changes in real time.",
+      "generatedBy": "openrouter",
+      "findingCount": 7,
+      "createdAt": "2026-05-20T20:10:52.860Z"
+    },
+    {
+      "id": "cmpehzpbw002xab0iz44x3arr",
+      "title": "Investigation: archive.org  -  Pipeline Report",
+      "type": "summary",
+      "status": "draft",
+      "content": "# Investigation: archive.org  \n**Target:** archive.org  \n**Objective:** Map the public infrastructure and recent security incident exposure of Internet Archive (archive.org). The Sept 2024 and Oct 2025 incidents are well‑documented in the public record. Goal: produce a forensic‑grade case file (timeline, evidence inventory, chain‑of‑custody‑attested report) demonstrating end‑to‑end use of the platform for incident retrospective work.  \n**Status:** Complete  \n\n## Executive Summary\nThe investigation identified a robust, centrally‑managed sub‑domain ecosystem supporting the Internet Archive’s public services. Passive enumeration uncovered ~50 active subdomains, most served by a uniform Nginx stack and shared TLS configuration, confirming a single operational control plane. Notably, the analytics endpoint is self‑hosted, and audio subdomains act as load‑balanced Wayback Machine nodes. No evidence contradicts the documented September 2024 and October 2025 security incidents, and the infrastructure appears consistently maintained.\n\n## Findings  \n\n- **Identity** *(low, unverified)*  \n  - Identity pipeline returned unstructured output; no usable model data was produced.\n\n- **Infrastructure – Central Management** *(high, confirmed)*  \n  - Archive.org operates a large, centrally‑managed subdomain ecosystem.  \n  - Passive subdomain enumeration returned 50 distinct subdomains, many resolving to live HTTPS services.  \n  - HTTP probing shows most respond with Nginx server headers and similar TLS configurations, indicating they are served from a common infrastructure under Internet Archive control.\n\n- **Infrastructure – Analytics** *(medium, probable)*  \n  - The subdomain `analytics.archive.org` resolves to a live HTTPS service returning HTTP 200 with Nginx 1.31.0 and HSTS.  \n  - No third‑party analytics domains (e.g., google‑analytics.com) are observed, implying the Internet Archive runs its own analytics platform.\n\n- **Infrastructure – Audio Load‑Balancing** *(low, probable)*  \n  - Multiple `audioXX.archive.org` subdomains resolve to Nginx 1.31.0 and return HTTP 302 redirects.  \n  - Behavior matches load‑balanced content‑delivery nodes for media assets used by the Wayback Machine.\n\n## Entity Overview\n- archive.org (Internet Archive)  \n- analytics.archive.org  \n- audioXX.archive.org (generic placeholder for audio subdomains)  \n\n## Recommended Next Steps\n- Conduct a full TLS certificate inventory to verify uniformity and detect any rogue certificates.  \n- Perform authenticated scans (with proper permission) on the identified subdomains to enumerate hidden services or misconfigurations.  \n- Correlate the infrastructure map with the September 2024 and October 2025 incident timelines to pinpoint affected assets.  \n- Deploy continuous monitoring (e.g., DNS change alerts, certificate transparency logs) for the 50+ subdomains to detect future anomalies.  \n- Document chain‑of‑custody for all collected evidence (raw scan data, HTTP headers, TLS certificates) to ensure forensic admissibility.",
+      "generatedBy": "openrouter",
+      "findingCount": 4,
+      "createdAt": "2026-05-20T20:11:54.236Z"
+    }
+  ],
+  "audit": [
+    {
+      "id": "cmpehs4jk0003ab0iuyaramol",
+      "action": "pipeline_started",
+      "entity": "Investigation",
+      "entityId": "cmpehrpfs0001ab5pww3dtgms",
+      "details": "{\"adapter\":\"openrouter\",\"groups\":[\"identity\",\"infrastructure\"]}",
+      "hash": "b9a4e87d7e5098ef378a93791eb604051426d6c84a1a33d67c6e4e6071f7d7fc",
+      "prevHash": "fba32ce1fe9235264976097978f086cb2ecae122fd12d08449ca4bfef169aaef",
+      "createdAt": "2026-05-20T20:06:00.703Z"
+    },
+    {
+      "id": "cmpehupi2000pab0i984ymtwq",
+      "action": "pipeline_started",
+      "entity": "Investigation",
+      "entityId": "cmpehrpfs0001ab5pww3dtgms",
+      "details": "{\"adapter\":\"openrouter\",\"groups\":[\"identity\",\"infrastructure\"]}",
+      "hash": "ae774daa2d918b94d3c3993fefe9ae4c35f7eae95c62f5f0ef1d30da35226405",
+      "prevHash": "9e1f89b28684bc8eb109306f8c1b51160b49b30e48d3904cd17f1ca66c4cf771",
+      "createdAt": "2026-05-20T20:08:01.174Z"
+    },
+    {
+      "id": "cmpehw3eh000xab0ivg9r7k3f",
+      "action": "agent_identity_completed",
+      "entity": "Investigation",
+      "entityId": "cmpehrpfs0001ab5pww3dtgms",
+      "details": "{\"findingsAdded\":3,\"confidence\":0.85}",
+      "hash": "b966750bae1c37add57cdebbc13f4d076f101bd62585e6d642a15dd59c3e0539",
+      "prevHash": "ae774daa2d918b94d3c3993fefe9ae4c35f7eae95c62f5f0ef1d30da35226405",
+      "createdAt": "2026-05-20T20:09:05.843Z"
+    },
+    {
+      "id": "cmpehw3fh0017ab0i1q3o522l",
+      "action": "agent_infrastructure_completed",
+      "entity": "Investigation",
+      "entityId": "cmpehrpfs0001ab5pww3dtgms",
+      "details": "{\"findingsAdded\":4,\"confidence\":0.85}",
+      "hash": "b8c18a38a17a0cafac99f60ec104eef3b0f0da5889967c94132012d9774fd3b0",
+      "prevHash": "b966750bae1c37add57cdebbc13f4d076f101bd62585e6d642a15dd59c3e0539",
+      "createdAt": "2026-05-20T20:09:05.884Z"
+    },
+    {
+      "id": "cmpehxe6v002bab0ijdgp9ijx",
+      "action": "entities_extracted",
+      "entity": "Investigation",
+      "entityId": "cmpehrpfs0001ab5pww3dtgms",
+      "details": "{\"entities\":14,\"relations\":12}",
+      "hash": "240e34e871975beef7fbef41da8f21983ff032d631ae112a22287b4b3895ba6b",
+      "prevHash": "b8c18a38a17a0cafac99f60ec104eef3b0f0da5889967c94132012d9774fd3b0",
+      "createdAt": "2026-05-20T20:10:06.486Z"
+    },
+    {
+      "id": "cmpehydzh002fab0i3cdcrpnn",
+      "action": "report_generated",
+      "entity": "Report",
+      "entityId": "cmpehydz2002dab0i3gzph7z3",
+      "details": "{\"length\":3448,\"adapter\":\"openrouter\"}",
+      "hash": "5a5a6c0fde09f8644612a38b7423f4dd81583265e40b2ae64ea4454770aec142",
+      "prevHash": "240e34e871975beef7fbef41da8f21983ff032d631ae112a22287b4b3895ba6b",
+      "createdAt": "2026-05-20T20:10:52.876Z"
+    },
+    {
+      "id": "cmpehydzt002hab0iyn3uvnyc",
+      "action": "pipeline_completed",
+      "entity": "Investigation",
+      "entityId": "cmpehrpfs0001ab5pww3dtgms",
+      "details": "{\"findings\":7,\"entities\":14,\"relations\":12,\"reportId\":\"cmpehydz2002dab0i3gzph7z3\"}",
+      "hash": "ec19ea5d445e2384480b2c3f30543e6df0088078f4bf8506b3f2a5cdfff09a83",
+      "prevHash": "5a5a6c0fde09f8644612a38b7423f4dd81583265e40b2ae64ea4454770aec142",
+      "createdAt": "2026-05-20T20:10:52.888Z"
+    },
+    {
+      "id": "cmpehyhw2002lab0it01iw0aw",
+      "action": "agent_identity_completed",
+      "entity": "Investigation",
+      "entityId": "cmpehrpfs0001ab5pww3dtgms",
+      "details": "{\"findingsAdded\":1,\"confidence\":0}",
+      "hash": "7571b8e13c3c1b0290da79c29dedd0e4afeced59e046c1d87dbfa768c0053a45",
+      "prevHash": "ec19ea5d445e2384480b2c3f30543e6df0088078f4bf8506b3f2a5cdfff09a83",
+      "createdAt": "2026-05-20T20:10:57.937Z"
+    },
+    {
+      "id": "cmpehyhwl002tab0iu1lqdfsv",
+      "action": "agent_infrastructure_completed",
+      "entity": "Investigation",
+      "entityId": "cmpehrpfs0001ab5pww3dtgms",
+      "details": "{\"findingsAdded\":3,\"confidence\":0.85}",
+      "hash": "4d50787ec5a260032d82bf20e2901a184c2b0ac938910fe9bbb748f88df40e38",
+      "prevHash": "7571b8e13c3c1b0290da79c29dedd0e4afeced59e046c1d87dbfa768c0053a45",
+      "createdAt": "2026-05-20T20:10:57.955Z"
+    },
+    {
+      "id": "cmpehyo9h002vab0ixh7ijhv6",
+      "action": "entities_extracted",
+      "entity": "Investigation",
+      "entityId": "cmpehrpfs0001ab5pww3dtgms",
+      "details": "{\"entities\":0,\"relations\":0}",
+      "hash": "e4217e503f31d4520f06e94861783bcc287846cb097c35cc4861b246a0eb4735",
+      "prevHash": "4d50787ec5a260032d82bf20e2901a184c2b0ac938910fe9bbb748f88df40e38",
+      "createdAt": "2026-05-20T20:11:06.196Z"
+    },
+    {
+      "id": "cmpehzpc4002zab0i1uf47h08",
+      "action": "report_generated",
+      "entity": "Report",
+      "entityId": "cmpehzpbw002xab0iz44x3arr",
+      "details": "{\"length\":3023,\"adapter\":\"openrouter\"}",
+      "hash": "281a2306c759242a0f93a0dd9e788cd4a3b5238692a150409497f93d3960cf45",
+      "prevHash": "e4217e503f31d4520f06e94861783bcc287846cb097c35cc4861b246a0eb4735",
+      "createdAt": "2026-05-20T20:11:54.243Z"
+    },
+    {
+      "id": "cmpehzpcd0031ab0ik8fagb15",
+      "action": "pipeline_completed",
+      "entity": "Investigation",
+      "entityId": "cmpehrpfs0001ab5pww3dtgms",
+      "details": "{\"findings\":4,\"entities\":0,\"relations\":0,\"reportId\":\"cmpehzpbw002xab0iz44x3arr\"}",
+      "hash": "0f80563e694831e8a3189f2f7827a67005e98a22ba7ef7a667b09c4ed631c91a",
+      "prevHash": "281a2306c759242a0f93a0dd9e788cd4a3b5238692a150409497f93d3960cf45",
+      "createdAt": "2026-05-20T20:11:54.251Z"
+    },
+    {
+      "id": "cmpeigai00003abuvavh8d813",
+      "action": "bridge_investigation_to_case",
+      "entity": "Case",
+      "entityId": "cmpeigafg0000abuvfy8y320p",
+      "details": "{\"caseNumber\":\"CASE-2026-002\"}",
+      "hash": "279cbd8d79240bae79b9f410fa074085e17669355f9fbbc8823dba043becc2d3",
+      "prevHash": "0f80563e694831e8a3189f2f7827a67005e98a22ba7ef7a667b09c4ed631c91a",
+      "createdAt": "2026-05-20T20:24:48.165Z"
+    },
+    {
+      "id": "cmpeigawo001dabuvmkf9fn0w",
+      "action": "findings_promoted_to_evidence",
+      "entity": "Case",
+      "entityId": "cmpeigafg0000abuvfy8y320p",
+      "details": "{\"promoted\":11}",
+      "hash": "3a0c23e585b14e50cd9449586eb2aa22f2fef466982d3e015f432d60ff0aec84",
+      "prevHash": "279cbd8d79240bae79b9f410fa074085e17669355f9fbbc8823dba043becc2d3",
+      "createdAt": "2026-05-20T20:24:48.695Z"
+    }
+  ]
+}
