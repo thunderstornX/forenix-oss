@@ -46,7 +46,7 @@
 <!-- Cryptographic posture -->
 <p align="center">
   <a href="docs/07-SECURITY.md"><img alt="SHA-256 chained" src="https://img.shields.io/badge/audit_log-SHA--256_chained-2f8754?style=flat"></a>
-  <a href="docs/07-SECURITY.md#attestation"><img alt="Attestation: chain head witnessed" src="https://img.shields.io/badge/attestation-chain_head_witnessed-c97a2f?style=flat"></a>
+  <a href="https://rekor.sigstore.dev/api/v1/log/entries/108e9186e8c5677a75cb2125549804a3cbd198d634aec6f56b34b499ba08c69e9cb527dd56cc38f1"><img alt="Audit chain attested on Sigstore Rekor" src="https://img.shields.io/badge/attested-Sigstore_Rekor-c97a2f?style=flat&logo=sigstore&logoColor=white"></a>
   <a href="docs/07-SECURITY.md"><img alt="Offline verifiable" src="https://img.shields.io/badge/verify-offline%2012_lines_of_python-2f8754?style=flat"></a>
   <a href="SECURITY.md"><img alt="Security policy" src="https://img.shields.io/badge/security-policy-2f8754?style=flat"></a>
   <a href="https://doi.org/10.5281/zenodo.20329059"><img alt="DOI" src="https://zenodo.org/badge/DOI/10.5281/zenodo.20329059.svg"></a>

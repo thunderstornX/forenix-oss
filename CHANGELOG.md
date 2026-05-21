@@ -8,6 +8,73 @@ and the project adheres to [Semantic Versioning](https://semver.org/).
 
 (no changes yet)
 
+## [0.5.4] - 2026-05-21
+
+Closes the three known issues carried forward from v0.5.3:
+a Sigstore Rekor publishing bug, an intermittent BigInt
+serialisation crash, and a missing-git-repo for the seeded
+forensic case.
+
+### Fixed
+
+- **Sigstore Rekor publishing now works against the public log.**
+  Switched the rekor backend from Ed25519+SHA-512 to ECDSA P-256
+  +SHA-256, which is the most-deployed combination across the
+  Sigstore ecosystem (cosign, sigstore-python, sigstore-js all
+  default to it). The Ed25519 path passed local sign/verify
+  round-trip but Rekor's hashedrekord verifier consistently
+  rejected our submissions; the ECDSA path "just works". Files:
+  `src/lib/attestation/backends/rekor.ts`, `rekor-codec.ts`,
+  `rekor.test.ts`. Key file path moved from
+  `rekor-ed25519.{pub,key}.pem` to `rekor-ecdsa-p256.{pub,key}.pem`
+  so any old key on disk is ignored cleanly.
+- **BigInt serialisation in the promote-finding endpoint.**
+  `src/app/api/findings/[id]/promote/route.ts` previously
+  returned the newly-created Evidence row directly via
+  `Response.json`, which crashed `JSON.stringify` on the BigInt
+  fields `size` and `byteCount` and surfaced as
+  `[rbac] unhandled error TypeError: Do not know how to
+  serialize a BigInt` in production logs. Now uses the new
+  `jsonOk` helper.
+
+### Added
+
+- **`src/lib/safe-json.ts` + tests.** Generic BigInt-safe JSON
+  response helper. `stringifyBigIntSafe` coerces `BigInt` to a
+  decimal string at the serialisation boundary so numeric
+  precision is preserved on the wire. `jsonOk(body, init?)` is a
+  drop-in for `Response.json`. Six tests in
+  `safe-json.test.ts`.
+- **`scripts/backfill-case-repo.ts`.** One-off backfill for any
+  Case whose `case-repos/<id>/` directory is missing (typically:
+  cases seeded before the git engine was wired up). Walks the
+  Evidence rows, writes each as a file in the repo, commits, and
+  updates the `main` branch's `headHash` to the real git oid.
+- **First operational Sigstore Rekor attestation** of the
+  production audit chain head: log index 1595455804, UUID
+  `108e9186e8c5677a75cb2125549804a3cbd198d634aec6f56b34b499ba08c69e9cb527dd56cc38f1`.
+  Independently verifiable at
+  https://rekor.sigstore.dev/api/v1/log/entries/108e9186e8c5677a75cb2125549804a3cbd198d634aec6f56b34b499ba08c69e9cb527dd56cc38f1
+- **README Sigstore Rekor badge** restored to "attested" and
+  linked directly to the live Rekor entry above. The wording is
+  now backed by an operational, externally-verifiable artefact
+  rather than just an implementation claim.
+
+### Operations on demo.forenix.tech
+
+- Backfilled `CASE-2025-007` (the seeded "Operation Sandstone"
+  case) with a real Git repository. Three evidence rows
+  committed; branch `main` headHash updated to `c642a2e4...`.
+  All three cases on the droplet (CASE-2025-007, CASE-2026-002,
+  CASE-2026-003) now have real repos under
+  `/opt/forenix/case-repos/<id>/`.
+- First production Rekor attestation written (above). Both
+  attestation backends — `local` (HMAC) and `rekor` (Sigstore
+  public log) — are now operationally validated against the
+  production chain head.
+
+Tests: 100/100 green. Typecheck clean.
+
 ## [0.5.3] - 2026-05-21
 
 Operational truthfulness pass. A claim check of the v0.5.2 docs
