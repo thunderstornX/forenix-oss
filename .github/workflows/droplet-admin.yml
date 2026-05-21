@@ -1,0 +1,75 @@
+name: Droplet admin (one-off)
+
+# Runs an allow-listed admin script on the demo.forenix.tech droplet
+# via the same SSH path the deploy workflow uses. Triggered manually
+# from the Actions UI or `gh workflow run`, with the script name +
+# optional args supplied as inputs.
+#
+# Allow-listed scripts (anything not on the list is rejected):
+#   saas-create-org           Bootstrap an organisation. Ships in the
+#                             private overlay; landed on the droplet
+#                             by the deploy workflow's rsync step.
+#                             Args: --name "<name>" [--slug <slug>]
+#                                   [--attach-all-users]
+#   saas-backfill-orgids      Backfill orgId on Investigation / Case.
+#                             Args: --from-team | --all-to <slug>
+#
+# Required secrets: identical set used by deploy-droplet.yml
+# (DROPLET_HOST / DROPLET_USER / DROPLET_SSH_KEY / DROPLET_DEPLOY_PATH).
+
+on:
+  workflow_dispatch:
+    inputs:
+      script:
+        description: "Script (allow-listed)"
+        required: true
+        type: choice
+        options:
+          - saas-create-org
+          - saas-backfill-orgids
+      args:
+        description: "Args (whitespace-separated, single line)"
+        required: false
+        default: ""
+        type: string
+
+concurrency:
+  group: droplet-admin
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Configure SSH agent
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.DROPLET_SSH_KEY }}
+
+      - name: Trust the droplet's host key
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H "${{ secrets.DROPLET_HOST }}" >> ~/.ssh/known_hosts 2>/dev/null
+
+      - name: Run script on the droplet
+        env:
+          SCRIPT: ${{ inputs.script }}
+          ARGS: ${{ inputs.args }}
+          DEPLOY_PATH: ${{ secrets.DROPLET_DEPLOY_PATH }}
+        run: |
+          # Validate the script name against the allow-list so a
+          # malformed dispatch can't run an arbitrary command.
+          case "$SCRIPT" in
+            saas-create-org|saas-backfill-orgids) ;;
+            *) echo "::error::script not on allow-list: $SCRIPT"; exit 1 ;;
+          esac
+
+          echo "── running scripts/${SCRIPT}.ts ${ARGS} ──"
+          # The remote shell needs $PATH augmented for bun (same as
+          # the deploy script). We single-quote the outer shell and
+          # pass ARGS unquoted on purpose — they're operator-supplied
+          # and intended as separate CLI tokens.
+          ssh "${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_HOST }}" \
+            "bash -lc 'export PATH=\$HOME/.bun/bin:\$PATH && cd ${DEPLOY_PATH} && bun run scripts/${SCRIPT}.ts ${ARGS}'"
