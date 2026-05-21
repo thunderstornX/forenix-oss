@@ -40,7 +40,7 @@
   <img alt="Prisma 6" src="https://img.shields.io/badge/Prisma-6-2d3748?style=flat&logo=prisma&logoColor=white">
   <img alt="Tailwind 4" src="https://img.shields.io/badge/Tailwind-4-38bdf8?style=flat&logo=tailwindcss&logoColor=white">
   <img alt="next-auth v5" src="https://img.shields.io/badge/next--auth-v5-7c3aed?style=flat&logo=nextdotjs&logoColor=white">
-  <img alt="Tests" src="https://img.shields.io/badge/tests-94_passing-2f8754?style=flat">
+  <img alt="Tests" src="https://img.shields.io/badge/tests-100_passing-2f8754?style=flat">
 </p>
 
 <!-- Cryptographic posture -->

@@ -218,8 +218,8 @@ A working citation form for prose use:
 
 ```
 Bhutto, A. M. (2026). forenix-oss: an open-source platform for
-lawful OSINT and forensic case management (Version 0.5.2)
-[Computer software]. https://doi.org/10.5281/zenodo.20329060
+lawful OSINT and forensic case management (Version 0.5.4)
+[Computer software]. https://doi.org/10.5281/zenodo.20334211
 ```
 
 ---
