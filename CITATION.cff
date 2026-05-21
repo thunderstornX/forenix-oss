@@ -1,0 +1,34 @@
+cff-version: 1.2.0
+message: "If you use forenix-oss in academic work, please cite it as below."
+type: software
+title: "forenix-oss: an open-source platform for lawful OSINT and forensic case management"
+abstract: >-
+  forenix-oss is an open-source, MIT-licensed platform that
+  operationalises the question of how OSINT pipelines can be
+  structured to produce trustworthy, legally admissible evidence
+  while safeguarding fundamental rights. It ships a SHA-256
+  forward-chained audit log, three independent attestation
+  backends (local HMAC, GitHub-issue witness, Sigstore Rekor), a
+  structured-analytic-technique scaffold grounded in the
+  Coulthart and Heuer-Pherson literature, a real Git repository
+  per forensic case, and a free-adapter substrate spanning six
+  large language model backends.
+authors:
+  - given-names: "Ali Murtaza"
+    family-names: "Bhutto"
+    orcid: "https://orcid.org/0009-0007-2787-943X"
+repository-code: "https://github.com/thunderstornX/forenix-oss"
+url: "https://forenix.tech"
+license: MIT
+version: "0.5.1"
+date-released: "2026-05-21"
+keywords:
+  - OSINT
+  - digital forensics
+  - chain of custody
+  - structured analytic techniques
+  - audit log
+  - transparency log
+  - sigstore
+  - evidence governance
+  - design science research

@@ -198,15 +198,17 @@ artefact second.
 ## 7. Citing forenix-oss
 
 If you use forenix-oss in academic work, please cite the
-repository at its current release tag and note the commit SHA your
-analysis ran against. A formal `CITATION.cff` will be added once
-the first peer-reviewed paper builds on this codebase.
+repository at its current release tag and note the commit SHA
+your analysis ran against. A machine-readable
+[`CITATION.cff`](CITATION.cff) is provided at the repository
+root for Zotero, Mendeley, and other reference managers that
+consume the Citation File Format.
 
-A working citation form, in the meantime:
+A working citation form for prose use:
 
 ```
 Bhutto, A. M. (2026). forenix-oss: an open-source platform for
-lawful OSINT and forensic case management (Version 0.5.0)
+lawful OSINT and forensic case management (Version 0.5.1)
 [Computer software]. https://github.com/thunderstornX/forenix-oss
 ```
 
@@ -217,7 +219,10 @@ lawful OSINT and forensic case management (Version 0.5.0)
 - [`docs/10-ANALYTIC_FRAMEWORK.md`](docs/10-ANALYTIC_FRAMEWORK.md)  -  the SAT
   scaffolding and the Director-Worker execution model
 - [`docs/research/research-questions.md`](docs/research/research-questions.md)  -  the four open questions, each with literature gap framing
-- [`docs/research/bibliography.md`](docs/research/bibliography.md)  -  the working bibliography
+- [`docs/research/case-studies.md`](docs/research/case-studies.md)  -  methodology and measured outputs from the two case studies run against the deployed instance, with the rendered admissible PDFs committed alongside
+- [`docs/research/ethics.md`](docs/research/ethics.md)  -  intended use, operator responsibility, and the rights-protective design choices the platform encodes by default
+- [`docs/research/REPLICATION.md`](docs/research/REPLICATION.md)  -  a research-targeted quick-start that gets a reviewer from `git clone` to a working local instance with seeded data in approximately ten minutes
+- [`docs/research/bibliography.md`](docs/research/bibliography.md) / [`bibliography.bib`](docs/research/bibliography.bib)  -  the working bibliography in markdown and BibTeX
 - [`docs/07-SECURITY.md`](docs/07-SECURITY.md)  -  the audit-chain construction and threat model
 - [`docs/06-ARCHITECTURE.md`](docs/06-ARCHITECTURE.md)  -  the ADR
   set; every design decision the artefact encodes lives here
