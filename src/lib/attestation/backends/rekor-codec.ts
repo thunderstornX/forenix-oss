@@ -10,20 +10,20 @@
  *     "kind": "hashedrekord",
  *     "spec": {
  *       "signature": {
- *         "content":   <base64 of Ed25519(sig over the SHA-512 hash bytes)>,
+ *         "content":   <base64 of ECDSA-P256/SHA-256 signature, DER-encoded>,
  *         "publicKey": { "content": <base64 of PEM SPKI public key> }
  *       },
  *       "data": {
- *         "hash": { "algorithm": "sha512", "value": <hex of payload sha512> }
+ *         "hash": { "algorithm": "sha256", "value": <hex of payload sha256> }
  *       }
  *     }
  *   }
  *
- * **SHA-512 is required** for Ed25519 keys: Rekor's hashedrekord
- * verifier enforces an algorithm matching the signing key's curve,
- * and Ed25519 mandates SHA-512 per RFC 8032. Earlier versions of
- * this codec used SHA-256 and Rekor rejected entries with
- * `unsupported hash algorithm: "SHA-256" not in [SHA-512]`.
+ * **ECDSA P-256 + SHA-256** is the combination Rekor's hashedrekord
+ * verifier handles most reliably. We previously tried Ed25519 +
+ * SHA-512 and Rekor's verifier rejected our submissions despite
+ * local sign/verify round-tripping correctly; the ECDSA path "just
+ * works". See `rekor.ts` for the operational notes.
  *
  * The "payload" we hash is a canonical encoding of the audit-chain
  * head:
@@ -63,13 +63,13 @@ export interface HashedRekord {
       publicKey: { content: string };
     };
     data: {
-      hash: { algorithm: "sha512"; value: string };
+      hash: { algorithm: "sha256"; value: string };
     };
   };
 }
 
 export function buildHashedRekord(args: {
-  payloadSha512Hex: string;
+  payloadSha256Hex: string;
   signatureBase64: string;
   publicKeyPemBase64: string;
 }): HashedRekord {
@@ -82,7 +82,7 @@ export function buildHashedRekord(args: {
         publicKey: { content: args.publicKeyPemBase64 },
       },
       data: {
-        hash: { algorithm: "sha512", value: args.payloadSha512Hex },
+        hash: { algorithm: "sha256", value: args.payloadSha256Hex },
       },
     },
   };
@@ -94,7 +94,7 @@ export function buildHashedRekord(args: {
  * different versions return — we only require the fields we use.
  */
 export function extractFromEntry(body: unknown): {
-  payloadSha512Hex: string;
+  payloadSha256Hex: string;
   signatureBase64: string;
   publicKeyPemBase64: string;
 } | null {
@@ -116,7 +116,7 @@ export function extractFromEntry(body: unknown): {
     return null;
   }
   return {
-    payloadSha512Hex: hashValue,
+    payloadSha256Hex: hashValue,
     signatureBase64: sigContent,
     publicKeyPemBase64: pkContent,
   };

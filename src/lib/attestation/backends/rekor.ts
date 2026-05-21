@@ -15,26 +15,27 @@
  *     verified independently of us OR the maintainer.
  *   - Trust assumption shrinks to: Sigstore Foundation didn't
  *     conspire with the maintainer to forge a backdated entry.
- *     (Even then, the inclusion-proof checkpoints are cosigned by
- *     multiple parties — see The Update Framework.)
  *
  * Implementation notes:
- *   - Ed25519 keypair generated lazily on first `attest()` and
+ *   - ECDSA P-256 keypair generated lazily on first `attest()` and
  *     persisted to disk under `REKOR_KEY_DIR` (defaults to
- *     `.attestation-keys/` next to the project root). Subsequent
- *     attests reuse the same keypair so future verifications
- *     against historical entries can confirm the public key.
+ *     `.attestation-keys/` next to the project root). ECDSA P-256
+ *     with SHA-256 is the most-deployed combination across the
+ *     Sigstore ecosystem (cosign + sigstore-python + sigstore-js
+ *     all default to it), so Rekor's hashedrekord verifier path
+ *     for this combination is battle-tested. We previously tried
+ *     Ed25519 + SHA-512 and Rekor's verifier rejected our
+ *     submissions despite local sign/verify round-tripping
+ *     correctly; the ECDSA path "just works".
  *   - Signed payload is the same canonical string as the [[local]]
  *     HMAC backend uses — `"{entries}|{headId}|{headHash}|{iso}"` —
  *     so a future "audit me across all backends" tool reconstructs
- *     it once. For Rekor's `hashedrekord` Ed25519 path we hash the
- *     canonical payload with SHA-512 (required by Rekor for Ed25519
- *     keys; see RFC 8032) and sign the hash bytes.
+ *     it once.
  *   - No external deps beyond `fetch` + `node:crypto`. Node ships
- *     Ed25519 natively.
+ *     ECDSA P-256 natively.
  */
 
-import { createHash, generateKeyPairSync, sign, verify } from "node:crypto";
+import { createHash, createPrivateKey, createPublicKey, generateKeyPairSync, sign, verify } from "node:crypto";
 import { mkdirSync, readFileSync, writeFileSync, existsSync } from "node:fs";
 import { join, resolve } from "node:path";
 
@@ -69,17 +70,19 @@ interface KeyPair {
 
 function ensureKeypair(): KeyPair {
   const dir = keyDir();
-  const pubPath = join(dir, "rekor-ed25519.pub.pem");
-  const privPath = join(dir, "rekor-ed25519.key.pem");
+  const pubPath = join(dir, "rekor-ecdsa-p256.pub.pem");
+  const privPath = join(dir, "rekor-ecdsa-p256.key.pem");
   if (existsSync(pubPath) && existsSync(privPath)) {
     return {
       publicPem: readFileSync(pubPath, "utf-8"),
       privatePem: readFileSync(privPath, "utf-8"),
     };
   }
-  // Lazy-generate. Ed25519 keys are tiny (~120 bytes PEM each).
+  // Lazy-generate ECDSA P-256 keypair (~250 bytes PEM each).
   mkdirSync(dir, { recursive: true });
-  const { publicKey, privateKey } = generateKeyPairSync("ed25519");
+  const { publicKey, privateKey } = generateKeyPairSync("ec", {
+    namedCurve: "prime256v1",
+  });
   const publicPem = publicKey.export({ type: "spki", format: "pem" }) as string;
   const privatePem = privateKey.export({ type: "pkcs8", format: "pem" }) as string;
   // 0600 on the private key — same posture as the .env file.
@@ -95,20 +98,25 @@ function b64(bytes: Buffer | string): string {
 export const rekorBackend: AttestationBackend = {
   name: "rekor",
   description:
-    "Posts an Ed25519-signed hashedrekord entry to Sigstore Rekor — public, append-only, independently verifiable.",
+    "Posts an ECDSA-P256-signed hashedrekord entry to Sigstore Rekor — public, append-only, independently verifiable.",
 
   async attest(head: AttestationHead): Promise<AttestationResult> {
     try {
       const kp = ensureKeypair();
       const payload = canonicalPayload(head);
-      // Rekor's hashedrekord Ed25519 path requires SHA-512 (RFC 8032).
-      // We hash the canonical payload to 64 bytes and sign those bytes.
-      const payloadHashBytes = createHash("sha512").update(payload).digest();
-      const payloadHashHex = payloadHashBytes.toString("hex");
-      const signature = sign(null, payloadHashBytes, kp.privatePem);
+
+      // SHA-256 of the canonical payload, both as the data.hash.value
+      // field on the entry and as the message ECDSA signs over.
+      const payloadHashHex = createHash("sha256").update(payload).digest("hex");
+
+      // sign("sha256", buffer, key) hashes the buffer with SHA-256
+      // internally and signs the digest with ECDSA. The output is
+      // DER-encoded (r, s). Rekor's hashedrekord verifier expects
+      // exactly this shape for an ECDSA P-256 + SHA-256 entry.
+      const signature = sign("sha256", Buffer.from(payload, "utf-8"), createPrivateKey(kp.privatePem));
 
       const entry = buildHashedRekord({
-        payloadSha512Hex: payloadHashHex,
+        payloadSha256Hex: payloadHashHex,
         signatureBase64: b64(signature),
         publicKeyPemBase64: b64(kp.publicPem),
       });
@@ -155,7 +163,7 @@ export const rekorBackend: AttestationBackend = {
           integratedTime: envelope.integratedTime,
           // Keep our local copy of the signature material so the
           // verify path doesn't depend on re-decoding the body.
-          payloadSha512: payloadHashHex,
+          payloadSha256: payloadHashHex,
           publicKeyPem: kp.publicPem,
           signatureBase64: b64(signature),
           rekorBaseUrl: rekorBaseUrl(),
@@ -205,13 +213,12 @@ export const rekorBackend: AttestationBackend = {
         return { ok: false, details: "rekor body did not decode to a hashedrekord" };
       }
 
-      // 1. The hash inside the rekor entry must match the SHA-512 of
+      // 1. The hash inside the rekor entry must match the SHA-256 of
       //    the head we're being asked to verify.
-      const expectedHashBytes = createHash("sha512")
+      const expectedHashHex = createHash("sha256")
         .update(canonicalPayload(head))
-        .digest();
-      const expectedHashHex = expectedHashBytes.toString("hex");
-      if (extracted.payloadSha512Hex !== expectedHashHex) {
+        .digest("hex");
+      if (extracted.payloadSha256Hex !== expectedHashHex) {
         return {
           ok: false,
           details: "rekor entry pins a different head — chain may have been rewritten",
@@ -219,13 +226,19 @@ export const rekorBackend: AttestationBackend = {
       }
 
       // 2. The signature inside the entry must verify against the
-      //    public key inside the same entry, over the SHA-512 hash
-      //    bytes (matching the attest path's signing convention).
+      //    public key inside the same entry, over the canonical
+      //    payload bytes (sign/verify both hash internally with
+      //    SHA-256 via the algorithm parameter).
       const pubPem = Buffer.from(extracted.publicKeyPemBase64, "base64").toString(
         "utf-8",
       );
       const sigBytes = Buffer.from(extracted.signatureBase64, "base64");
-      const verified = verify(null, expectedHashBytes, pubPem, sigBytes);
+      const verified = verify(
+        "sha256",
+        Buffer.from(canonicalPayload(head), "utf-8"),
+        createPublicKey(pubPem),
+        sigBytes,
+      );
       if (!verified) {
         return {
           ok: false,
