@@ -27,8 +27,9 @@
  *   - Signed payload is the same canonical string as the [[local]]
  *     HMAC backend uses — `"{entries}|{headId}|{headHash}|{iso}"` —
  *     so a future "audit me across all backends" tool reconstructs
- *     it once. The signed bytes are then hashed with SHA-256 and
- *     packaged as a `hashedrekord` entry.
+ *     it once. For Rekor's `hashedrekord` Ed25519 path we hash the
+ *     canonical payload with SHA-512 (required by Rekor for Ed25519
+ *     keys; see RFC 8032) and sign the hash bytes.
  *   - No external deps beyond `fetch` + `node:crypto`. Node ships
  *     Ed25519 natively.
  */
@@ -100,11 +101,14 @@ export const rekorBackend: AttestationBackend = {
     try {
       const kp = ensureKeypair();
       const payload = canonicalPayload(head);
-      const payloadHash = createHash("sha256").update(payload).digest("hex");
-      const signature = sign(null, Buffer.from(payload, "utf-8"), kp.privatePem);
+      // Rekor's hashedrekord Ed25519 path requires SHA-512 (RFC 8032).
+      // We hash the canonical payload to 64 bytes and sign those bytes.
+      const payloadHashBytes = createHash("sha512").update(payload).digest();
+      const payloadHashHex = payloadHashBytes.toString("hex");
+      const signature = sign(null, payloadHashBytes, kp.privatePem);
 
       const entry = buildHashedRekord({
-        payloadSha256Hex: payloadHash,
+        payloadSha512Hex: payloadHashHex,
         signatureBase64: b64(signature),
         publicKeyPemBase64: b64(kp.publicPem),
       });
@@ -151,7 +155,7 @@ export const rekorBackend: AttestationBackend = {
           integratedTime: envelope.integratedTime,
           // Keep our local copy of the signature material so the
           // verify path doesn't depend on re-decoding the body.
-          payloadSha256: payloadHash,
+          payloadSha512: payloadHashHex,
           publicKeyPem: kp.publicPem,
           signatureBase64: b64(signature),
           rekorBaseUrl: rekorBaseUrl(),
@@ -201,12 +205,13 @@ export const rekorBackend: AttestationBackend = {
         return { ok: false, details: "rekor body did not decode to a hashedrekord" };
       }
 
-      // 1. The hash inside the rekor entry must match the SHA-256 of
+      // 1. The hash inside the rekor entry must match the SHA-512 of
       //    the head we're being asked to verify.
-      const expectedHash = createHash("sha256")
+      const expectedHashBytes = createHash("sha512")
         .update(canonicalPayload(head))
-        .digest("hex");
-      if (extracted.payloadSha256Hex !== expectedHash) {
+        .digest();
+      const expectedHashHex = expectedHashBytes.toString("hex");
+      if (extracted.payloadSha512Hex !== expectedHashHex) {
         return {
           ok: false,
           details: "rekor entry pins a different head — chain may have been rewritten",
@@ -214,19 +219,13 @@ export const rekorBackend: AttestationBackend = {
       }
 
       // 2. The signature inside the entry must verify against the
-      //    public key inside the same entry, over the canonical
-      //    payload. This proves the entry hasn't been mangled in
-      //    transit and that whoever posted it owned the private key.
+      //    public key inside the same entry, over the SHA-512 hash
+      //    bytes (matching the attest path's signing convention).
       const pubPem = Buffer.from(extracted.publicKeyPemBase64, "base64").toString(
         "utf-8",
       );
       const sigBytes = Buffer.from(extracted.signatureBase64, "base64");
-      const verified = verify(
-        null,
-        Buffer.from(canonicalPayload(head), "utf-8"),
-        pubPem,
-        sigBytes,
-      );
+      const verified = verify(null, expectedHashBytes, pubPem, sigBytes);
       if (!verified) {
         return {
           ok: false,

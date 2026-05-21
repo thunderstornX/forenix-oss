@@ -27,6 +27,8 @@ import type {
 } from "@/lib/ai/types";
 import { appendAudit } from "@/lib/audit";
 import { prisma } from "@/lib/db";
+import { checkRateLimit } from "@/lib/rate-limit";
+import { httpErrorResponse, requireSession, teamScopeWhere } from "@/lib/rbac";
 
 const Body = z.object({
   agentGroups: z
@@ -69,8 +71,31 @@ export async function POST(
   request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
+  let actor;
+  try {
+    actor = await requireSession();
+  } catch (err) {
+    return httpErrorResponse(err);
+  }
+
+  // Per-actor rate limit on the LLM-driven path. Pipeline runs cost
+  // real money on hosted adapters; uncapped abuse from a compromised
+  // account is the cleanest path to a runaway bill.
+  const rl = checkRateLimit(`pipeline:${actor.userId}`, 10, 60 * 60 * 1000);
+  if (!rl.ok) {
+    return Response.json(
+      { error: "rate_limited", retryAfter: rl.retryAfterSec },
+      { status: 429, headers: { "Retry-After": String(rl.retryAfterSec) } },
+    );
+  }
+
   const { id } = await params;
-  const inv = await prisma.investigation.findUnique({ where: { id } });
+  // Scope-checked lookup: only investigations the actor can see are
+  // runnable. Returns 404 (not 403) on foreign-org rows so existence
+  // doesn't leak across tenants.
+  const inv = await prisma.investigation.findFirst({
+    where: { id, ...teamScopeWhere(actor) },
+  });
   if (!inv) {
     return Response.json({ error: "investigation_not_found" }, { status: 404 });
   }

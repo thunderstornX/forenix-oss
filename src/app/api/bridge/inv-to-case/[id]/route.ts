@@ -68,6 +68,12 @@ export async function POST(
       caseNumber,
       status: "open",
       progress: 5,
+      // Propagate tenant scope from the source investigation so the
+      // new case is visible to (and only to) the same actors. Without
+      // this, every bridged case landed at orgId=null / teamId=null
+      // and silently fell out of the multi-tenant scope filter.
+      orgId: inv.orgId,
+      teamId: inv.teamId,
       branches: {
         create: {
           name: "main",

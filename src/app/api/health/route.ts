@@ -1,12 +1,11 @@
 import { activeAdapterName } from "@/lib/ai/adapter";
-
-const VERSION = "0.1.0";
+import pkg from "../../../../package.json";
 
 export async function GET() {
   return Response.json({
     status: "ok",
     adapter: activeAdapterName(),
-    version: VERSION,
+    version: pkg.version,
     saasMode: process.env.SAAS_MODE === "true",
   });
 }

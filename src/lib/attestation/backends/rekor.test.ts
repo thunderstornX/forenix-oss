@@ -43,27 +43,27 @@ describe("attestation/backends/rekor codec", () => {
 
   it("buildHashedRekord emits the v0.0.1 envelope shape rekor expects", () => {
     const entry = buildHashedRekord({
-      payloadSha256Hex: "f".repeat(64),
+      payloadSha512Hex: "f".repeat(128),
       signatureBase64: "c2lnLWJ5dGVz",
       publicKeyPemBase64: "cGstYnl0ZXM=",
     });
     expect(entry.apiVersion).toBe("0.0.1");
     expect(entry.kind).toBe("hashedrekord");
-    expect(entry.spec.data.hash.algorithm).toBe("sha256");
-    expect(entry.spec.data.hash.value).toBe("f".repeat(64));
+    expect(entry.spec.data.hash.algorithm).toBe("sha512");
+    expect(entry.spec.data.hash.value).toBe("f".repeat(128));
     expect(entry.spec.signature.content).toBe("c2lnLWJ5dGVz");
     expect(entry.spec.signature.publicKey.content).toBe("cGstYnl0ZXM=");
   });
 
   it("extractFromEntry round-trips a body shaped like Rekor's response", () => {
     const entry = buildHashedRekord({
-      payloadSha256Hex: "1".repeat(64),
+      payloadSha512Hex: "1".repeat(128),
       signatureBase64: "sig",
       publicKeyPemBase64: "pk",
     });
     const got = extractFromEntry(entry);
     expect(got).not.toBeNull();
-    expect(got!.payloadSha256Hex).toBe("1".repeat(64));
+    expect(got!.payloadSha512Hex).toBe("1".repeat(128));
     expect(got!.signatureBase64).toBe("sig");
     expect(got!.publicKeyPemBase64).toBe("pk");
   });

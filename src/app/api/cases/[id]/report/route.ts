@@ -13,7 +13,7 @@ import {
   renderCaseReportHtml,
 } from "@/lib/case-report";
 import { prisma } from "@/lib/db";
-import { httpErrorResponse, requireSession } from "@/lib/rbac";
+import { httpErrorResponse, requireSession, teamScopeWhere } from "@/lib/rbac";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -46,6 +46,17 @@ export async function GET(
         },
         { status: 503 },
       );
+    }
+
+    // Scope check: only render the report if the actor can see the
+    // underlying case. We return 404 (not 403) for foreign-org cases
+    // so existence isn't leaked across tenants.
+    const allowed = await prisma.case.findFirst({
+      where: { id, ...teamScopeWhere(actor) },
+      select: { id: true },
+    });
+    if (!allowed) {
+      return Response.json({ error: "case_not_found" }, { status: 404 });
     }
 
     // Verify chain + build the data shape.
