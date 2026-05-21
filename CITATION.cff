@@ -33,7 +33,9 @@ identifiers:
   - type: doi
     value: "10.5281/zenodo.20330571"
     description: "Zenodo archive of v0.5.3"
-  # v0.5.4 DOI to be added once Zenodo mints it.
+  - type: doi
+    value: "10.5281/zenodo.20334211"
+    description: "Zenodo archive of v0.5.4"
 keywords:
   - OSINT
   - digital forensics
