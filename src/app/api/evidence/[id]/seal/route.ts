@@ -9,7 +9,11 @@ import {
   gitEngineEnabled,
   writeEvidenceFile,
 } from "@/lib/git-engine";
-import { httpErrorResponse, requireSession } from "@/lib/rbac";
+import {
+  httpErrorResponse,
+  requireEvidenceInScope,
+  requireSession,
+} from "@/lib/rbac";
 
 export async function POST(
   _request: Request,
@@ -18,6 +22,10 @@ export async function POST(
   try {
     const actor = await requireSession();
     const { id } = await params;
+    // Scope check: 404 if the evidence belongs to a case outside
+    // the actor's team/org. We then re-fetch full row for the
+    // seal logic that needs every field.
+    await requireEvidenceInScope(actor, id);
     const ev = await prisma.evidence.findUnique({ where: { id } });
     if (!ev) return Response.json({ error: "not_found" }, { status: 404 });
     if (ev.status === "sealed") {

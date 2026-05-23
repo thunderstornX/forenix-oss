@@ -18,7 +18,11 @@ import { Readable } from "node:stream";
 import { appendAudit } from "@/lib/audit";
 import { prisma } from "@/lib/db";
 import { evidenceStorageEnabled, storeBytes } from "@/lib/evidence-store";
-import { httpErrorResponse, requireSession } from "@/lib/rbac";
+import {
+  httpErrorResponse,
+  requireCaseInScope,
+  requireSession,
+} from "@/lib/rbac";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -51,12 +55,10 @@ export async function POST(request: Request) {
     if (!(file instanceof File)) {
       return Response.json({ error: "missing_file" }, { status: 400 });
     }
-    // Validate the case exists + actor is in scope.
-    const theCase = await prisma.case.findUnique({
-      where: { id: caseId },
-      select: { id: true, teamId: true },
-    });
-    if (!theCase) return Response.json({ error: "case_not_found" }, { status: 404 });
+    // Validate the case exists + actor is in scope. requireCaseInScope
+    // returns 404 if the case belongs to another team/org, which is
+    // the right disclosure rule for a write endpoint too.
+    await requireCaseInScope(actor, caseId);
 
     // Stream the upload into the store.
     const webStream = file.stream() as unknown as ReadableStream<Uint8Array>;

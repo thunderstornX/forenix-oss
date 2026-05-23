@@ -9,12 +9,15 @@ import { Readable } from "node:stream";
 import { ReadableStream as WebReadableStream } from "node:stream/web";
 
 import { appendAudit } from "@/lib/audit";
-import { prisma } from "@/lib/db";
 import {
   evidenceStorageEnabled,
   readEvidence,
 } from "@/lib/evidence-store";
-import { httpErrorResponse, requireSession } from "@/lib/rbac";
+import {
+  httpErrorResponse,
+  requireEvidenceInScope,
+  requireSession,
+} from "@/lib/rbac";
 
 export const runtime = "nodejs";
 
@@ -33,18 +36,11 @@ export async function GET(
       );
     }
 
-    const ev = await prisma.evidence.findUnique({
-      where: { id },
-      select: {
-        id: true,
-        caseId: true,
-        name: true,
-        mimeType: true,
-        objectKey: true,
-        byteCount: true,
-      },
-    });
-    if (!ev || !ev.objectKey) {
+    // Scope-checked lookup. Returns 404 if the evidence's parent case
+    // is not visible to the actor — same disclosure rule as direct
+    // case access.
+    const ev = await requireEvidenceInScope(actor, id);
+    if (!ev.objectKey) {
       return Response.json({ error: "not_found" }, { status: 404 });
     }
 

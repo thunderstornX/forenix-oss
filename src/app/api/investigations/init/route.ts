@@ -76,6 +76,24 @@ export async function POST(request: Request) {
     const actor = await requireSession();
     const body = Body.parse(await request.json());
 
+    // If a teamId came in, it must be one of the actor's own teams.
+    // Otherwise default to the actor's first team (if any) so the row
+    // lands inside the right tenant. orgId always comes from the
+    // actor, never the body. Admin without an org can pin to any team.
+    let teamId: string | null = null;
+    if (body.teamId) {
+      const isAdminOperator = actor.role === "admin" && !actor.orgId;
+      if (!isAdminOperator && !actor.teamIds.includes(body.teamId)) {
+        return Response.json(
+          { error: "team_out_of_scope", details: "You are not a member of that team." },
+          { status: 403 },
+        );
+      }
+      teamId = body.teamId;
+    } else {
+      teamId = actor.teamIds[0] ?? null;
+    }
+
     const groups = defaultAgentGroups(body.targetType);
     const title  = body.title  ?? autoTitle(body.target);
 
@@ -89,7 +107,8 @@ export async function POST(request: Request) {
         status:        "draft",
         pipelineConfig: JSON.stringify(groups),
         createdBy:     actor.name ?? actor.email ?? "operator",
-        teamId:        body.teamId ?? null,
+        teamId,
+        orgId:         actor.orgId,
       },
       select: {
         id: true,

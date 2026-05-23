@@ -6,12 +6,15 @@
  * promise. Appends an audit row with the result.
  */
 import { appendAudit } from "@/lib/audit";
-import { prisma } from "@/lib/db";
 import {
   evidenceStorageEnabled,
   verifyEvidence,
 } from "@/lib/evidence-store";
-import { httpErrorResponse, requireSession } from "@/lib/rbac";
+import {
+  httpErrorResponse,
+  requireEvidenceInScope,
+  requireSession,
+} from "@/lib/rbac";
 
 export const runtime = "nodejs";
 
@@ -35,18 +38,7 @@ export async function POST(
       );
     }
 
-    const ev = await prisma.evidence.findUnique({
-      where: { id },
-      select: {
-        id: true,
-        caseId: true,
-        name: true,
-        hash: true,
-        objectKey: true,
-        status: true,
-      },
-    });
-    if (!ev) return Response.json({ error: "not_found" }, { status: 404 });
+    const ev = await requireEvidenceInScope(actor, id);
     if (!ev.objectKey) {
       return Response.json(
         {

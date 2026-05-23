@@ -197,12 +197,13 @@ model Investigation {
   orgId   String?
   org     Organization? @relation(fields: [orgId], references: [id], onDelete: SetNull)
 
-  findings    Finding[]
-  entities    EntityRelation[]
-  monitors    Monitor[]
-  auditLogs   AuditLog[]
-  reports     Report[]
-  schedules   PipelineSchedule[]
+  findings      Finding[]
+  entities      EntityRelation[]
+  monitors      Monitor[]
+  auditLogs     AuditLog[]
+  reports       Report[]
+  schedules     PipelineSchedule[]
+  verifications Verification[]
 
   @@index([orgId])
 }
@@ -326,6 +327,10 @@ model Verification {
   createdBy       String   @default("analyst")
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+
+  // Phase 9.5b chunk 4: declare the relation so multi-tenant scope
+  // queries can filter Verification through the parent Investigation.
+  investigation Investigation? @relation(fields: [investigationId], references: [id], onDelete: SetNull)
 }
 
 // SOURCE: argus

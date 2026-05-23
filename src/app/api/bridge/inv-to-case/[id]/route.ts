@@ -22,6 +22,11 @@ import {
   gitEngineEnabled,
   writeEvidenceFile,
 } from "@/lib/git-engine";
+import {
+  httpErrorResponse,
+  requireInvestigationInScope,
+  requireSession,
+} from "@/lib/rbac";
 
 const Body = z.object({
   caseTitle: z.string().min(3).max(200).optional(),
@@ -32,18 +37,25 @@ export async function POST(
   request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  const { id } = await params;
-  const inv = await prisma.investigation.findUnique({
-    where: { id },
-    include: { findings: true },
-  });
-  if (!inv) {
-    return Response.json({ error: "investigation_not_found" }, { status: 404 });
-  }
-  if (inv.caseId) {
-    const existing = await prisma.case.findUnique({ where: { id: inv.caseId } });
-    return Response.json({ data: { case: existing, alreadyLinked: true } });
-  }
+  try {
+    const actor = await requireSession();
+    const { id } = await params;
+    // Scope check before any work: bridging an investigation creates
+    // a Case linked to the actor's tenant. We can't allow bridging
+    // someone else's investigation.
+    await requireInvestigationInScope(actor, id);
+
+    const inv = await prisma.investigation.findUnique({
+      where: { id },
+      include: { findings: true },
+    });
+    if (!inv) {
+      return Response.json({ error: "investigation_not_found" }, { status: 404 });
+    }
+    if (inv.caseId) {
+      const existing = await prisma.case.findUnique({ where: { id: inv.caseId } });
+      return Response.json({ data: { case: existing, alreadyLinked: true } });
+    }
 
   let parsed: z.infer<typeof Body>;
   try {
@@ -234,4 +246,7 @@ export async function POST(
     },
     { status: 201 },
   );
+  } catch (err) {
+    return httpErrorResponse(err);
+  }
 }

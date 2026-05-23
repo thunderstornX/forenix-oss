@@ -8,6 +8,77 @@ and the project adheres to [Semantic Versioning](https://semver.org/).
 
 (no changes yet)
 
+## [0.5.5] - 2026-05-24
+
+Multi-tenant correctness sweep (carried-forward Tier A2 + A4).
+Closes the team-isolation gaps left after the v0.5.3 partial
+scope work. Every API route that reads, writes, or lists
+tenant-bearing data now goes through a scope check; a new
+cross-team bridge isolation test exercises the helpers against
+a real SQLite fixture so regressions are caught at test time.
+
+### Security
+
+- **Closed eleven cross-tenant data-exposure paths.** Routes
+  that previously returned (or wrote) data without checking the
+  actor's team or org now go through new scope helpers and
+  return 404 on out-of-scope access. Affected routes:
+  `cases/[id]` GET, `investigations/[id]` GET,
+  `evidence/[id]/{download,seal,verify-bytes}`,
+  `evidence/upload`, `findings/[id]/{promote,verify}`,
+  `bridge/inv-to-case/[id]`, `reports`, `reports/[id]`. The
+  404 (not 403) disclosure choice prevents existence-leaks
+  across tenants.
+- **List-route scope sweep.** `entities`, `verifications`,
+  `reviews`, and `network` now filter through the parent
+  Case / Investigation that carries `teamId` and `orgId`.
+- **`investigations/init` body-supplied teamId is validated**
+  against the actor's team memberships; out-of-scope teamIds
+  return 403. The actor's `orgId` is now propagated onto
+  every new investigation (was previously left NULL).
+
+### Added
+
+- **`src/lib/rbac.ts` scope helpers**: `requireCaseInScope`,
+  `requireInvestigationInScope`, `requireEvidenceInScope`,
+  `requireFindingInScope`, `requireReportInScope`. Each
+  returns the row when the actor can see it and throws
+  `HttpError(404)` otherwise. Designed to be a one-liner
+  retrofit for any route that takes a tenant-bearing path
+  parameter.
+- **`src/lib/rbac.test.ts`**: 14-test cross-team bridge
+  isolation suite. Spins up a fresh SQLite DB in `/tmp`,
+  pushes the live Prisma schema, seeds two orgs / teams /
+  users / cases / investigations / evidence / findings /
+  reports, then verifies the scope matrix end-to-end. Covers
+  `teamScopeWhere` directly plus all five resource-level
+  scope helpers across operator, org-admin, and per-team
+  analyst roles.
+- **`test/setup.ts` + `bunfig.toml`** preload that
+  neutralises the `server-only` marker so tests can import
+  `rbac.ts` / `db.ts` without the Client Component throw.
+
+### Schema
+
+- `Verification.investigation` relation declared (and matching
+  `Investigation.verifications` back-relation). The scalar
+  `investigationId` FK column already existed; this only adds
+  the Prisma-side relation so scope filters can `where: {
+  investigation: scope }`. No SQL migration required;
+  `prisma generate` only.
+
+### Fixed
+
+- **Stale doc references** to v0.4.0 across the repo, picked
+  up from the three post-v0.5.4 docs commits (`6d2e320`,
+  `b86d86c`, `75d6737`). The version badge now reads from
+  `package.json` so future bumps do not need a docs sweep.
+
+### Notes
+
+- 114/114 tests passing (was 100; +14 from the bridge test).
+- Typecheck clean, lint clean, build green.
+
 ## [0.5.4] - 2026-05-21
 
 Closes the three known issues carried forward from v0.5.3:

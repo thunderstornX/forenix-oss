@@ -17,7 +17,11 @@ import {
   gitEngineEnabled,
   writeEvidenceFile,
 } from "@/lib/git-engine";
-import { httpErrorResponse, requireSession } from "@/lib/rbac";
+import {
+  httpErrorResponse,
+  requireFindingInScope,
+  requireSession,
+} from "@/lib/rbac";
 import { jsonOk } from "@/lib/safe-json";
 
 export async function POST(
@@ -27,6 +31,9 @@ export async function POST(
   try {
     const actor = await requireSession();
     const { id } = await params;
+    // Scope check first; returns 404 if the finding's investigation is
+    // outside the actor's team/org.
+    await requireFindingInScope(actor, id);
     const finding = await prisma.finding.findUnique({
       where: { id },
       include: { investigation: { select: { id: true, caseId: true, title: true } } },

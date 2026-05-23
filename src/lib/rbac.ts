@@ -103,6 +103,80 @@ export function teamScopeWhere(actor: ActorContext) {
   return orgClause ?? teamClause ?? {};
 }
 
+/** Tenant-aware lookup: returns the Case if the actor can see it, or
+ *  throws 404. We return 404 (not 403) on out-of-scope so the route
+ *  doesn't disclose the existence of cases the actor can't access. */
+export async function requireCaseInScope(actor: ActorContext, caseId: string) {
+  const c = await prisma.case.findFirst({
+    where: { id: caseId, ...teamScopeWhere(actor) },
+    select: { id: true, teamId: true, orgId: true },
+  });
+  if (!c) throw new HttpError(404, "case_not_found");
+  return c;
+}
+
+/** Tenant-aware lookup: returns the Investigation if the actor can see it,
+ *  else throws 404. Same disclosure rule as requireCaseInScope. */
+export async function requireInvestigationInScope(
+  actor: ActorContext,
+  investigationId: string,
+) {
+  const inv = await prisma.investigation.findFirst({
+    where: { id: investigationId, ...teamScopeWhere(actor) },
+    select: { id: true, teamId: true, orgId: true, caseId: true },
+  });
+  if (!inv) throw new HttpError(404, "investigation_not_found");
+  return inv;
+}
+
+/** Evidence inherits scope from its parent Case. Returns the requested
+ *  Evidence row (with the fields most read-paths need) or throws 404 if
+ *  the parent case is not in scope. */
+export async function requireEvidenceInScope(
+  actor: ActorContext,
+  evidenceId: string,
+) {
+  const ev = await prisma.evidence.findFirst({
+    where: { id: evidenceId, case: teamScopeWhere(actor) },
+    select: {
+      id: true, caseId: true, name: true, mimeType: true, objectKey: true,
+      byteCount: true, hash: true, hashAlgo: true, status: true,
+      type: true, description: true, tags: true, metadata: true,
+    },
+  });
+  if (!ev) throw new HttpError(404, "evidence_not_found");
+  return ev;
+}
+
+/** Finding inherits scope from its parent Investigation. */
+export async function requireFindingInScope(
+  actor: ActorContext,
+  findingId: string,
+) {
+  const f = await prisma.finding.findFirst({
+    where: { id: findingId, investigation: teamScopeWhere(actor) },
+  });
+  if (!f) throw new HttpError(404, "finding_not_found");
+  return f;
+}
+
+/** Report attaches to either a Case or an Investigation (or both). The
+ *  actor sees it if they can see EITHER parent. */
+export async function requireReportInScope(
+  actor: ActorContext,
+  reportId: string,
+) {
+  const scope = teamScopeWhere(actor);
+  const r = await prisma.report.findFirst({
+    where: {
+      id: reportId,
+      OR: [{ case: scope }, { investigation: scope }],
+    },
+  });
+  if (!r) throw new HttpError(404, "report_not_found");
+  return r;
+}
+
 /** Turn any HttpError into a Response.json. */
 export function httpErrorResponse(err: unknown) {
   if (err instanceof HttpError) {
