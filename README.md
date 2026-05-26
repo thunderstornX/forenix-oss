@@ -360,9 +360,23 @@ testing layers (`typecheck` / `lint` / `bun test` / smoke check /
 manual), and the release cadence.
 
 The single hard rule for premium code is:
-[`src/lib/saas/`](src/lib/saas/) does not exist in this repo — it
+[`src/lib/saas/`](src/lib/saas/) does not exist in this repo  -  it
 lives in the private overlay (`forenix-saas`) and is layered on at
 deploy time. OSS code paths must keep working without it.
+
+Two-schema rule: every change to `prisma/schema.prisma` (SQLite,
+used by dev + tests + CI) must be mirrored to
+`prisma/schema.postgres.prisma` (used by the droplet deploy). CI
+runs a structural diff between the two and fails the build if the
+model declarations drift. The drift this guards against will only
+surface late, at the droplet's `tsc` step, otherwise.
+
+The test runner uses `bunfig.toml` + `test/setup.ts` to neutralise
+the `server-only` marker package. That lets server-only modules
+(`rbac.ts`, `db.ts`, `audit.ts`) be imported from tests without
+the Client Component throw. Touch those files if you ever see a
+test fail with "This module cannot be imported from a Client
+Component module."
 
 ---
 

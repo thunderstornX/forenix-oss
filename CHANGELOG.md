@@ -8,6 +8,54 @@ and the project adheres to [Semantic Versioning](https://semver.org/).
 
 (no changes yet)
 
+## [0.5.7] - 2026-05-26
+
+Closes the v0.5 line. Adds a CI safety net that would have caught
+the v0.5.6 Deploy SaaS failure before it hit the droplet, an
+investigated-and-documented Turbopack warning, and a contributing
+note covering the test preload + two-schema rule.
+
+### Added
+
+- **CI schema-parity step**: `ci.yml` now strips comments + blank
+  lines from the `model` blocks of `schema.prisma` and
+  `schema.postgres.prisma`, then diffs them. The build fails with
+  a clear message if the SQLite dev schema and the Postgres
+  deploy schema drift. Catches the exact class of bug that broke
+  Deploy SaaS on v0.5.6 (the `Verification.investigation`
+  relation was added to the SQLite schema only; the droplet
+  build failed at tsc time because the generated Postgres client
+  did not know about it).
+- **Contributing section notes** in the README: the two-schema
+  rule and the role of `bunfig.toml` + `test/setup.ts` (server-only
+  neutralisation for the test runner).
+
+### Fixed
+
+- **Postgres `Verification.investigation` relation** (commit
+  `1e1e868`, also in this release): mirrors the SQLite-side
+  addition from v0.5.5. The droplet Deploy SaaS build now passes
+  in 2m26s (was failing at tsc).
+
+### Investigated, documented as known-benign
+
+- **Turbopack "Encountered unexpected file in NFT list" warning**
+  on `src/lib/evidence-store.ts`. Tried inline `turbopackIgnore`
+  hints and an env-var indirection; neither silences it. The
+  warning is informational, the build completes, and the route
+  works in production. Comment in the source file points future
+  contributors at the working theory so nobody else burns time
+  on it.
+
+### Notes
+
+- 119/119 tests passing. Typecheck, lint, build clean.
+- This release also serves as the close marker for the v0.5 line.
+  The multi-tenant correctness sweep that began in v0.5.1
+  (schema), continued through v0.5.5 (helpers + bridge test) and
+  v0.5.6 (route sweep + demo visitor isolation), and ends here
+  (CI safety net), is now structurally complete.
+
 ## [0.5.6] - 2026-05-26
 
 Completes the multi-tenant correctness sweep from v0.5.5. Every

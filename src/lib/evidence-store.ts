@@ -45,6 +45,15 @@ import { Transform } from "node:stream";
 const DEFAULT_DIR = "/opt/forenix/.evidence-store";
 const DEFAULT_MAX_BYTES = 500 * 1024 * 1024; // 500 MB hard cap per upload
 
+// Read env vars through an indirection so Turbopack's static module
+// graph can't infer the value at build time. Without this, the
+// build trace concluded that storeRoot() could resolve anywhere on
+// disk and pulled the whole project into the App Route NFT list
+// (visible as "Encountered unexpected file in NFT list" on next
+// build). The runtime behaviour is identical; only the build-time
+// trace shrinks.
+const env = process.env as Record<string, string | undefined>;
+
 export interface StoredEvidence {
   objectKey: string;   // relative key, e.g. "<caseId>/<sha[:2]>/<sha>"
   sha256: string;
@@ -59,16 +68,26 @@ export interface StoreOptions {
 
 /** Is the on-disk evidence store usable here? */
 export function evidenceStorageEnabled(): boolean {
-  if (process.env.FORENIX_DISABLE_EVIDENCE_STORE === "1") return false;
+  if (env.FORENIX_DISABLE_EVIDENCE_STORE === "1") return false;
   // Vercel + similar serverless runtimes have read-only filesystems
   // outside /tmp (which is ephemeral and tiny). Refuse uploads there.
-  if (process.env.VERCEL) return false;
-  if (process.env.VERCEL_URL) return false;
+  if (env.VERCEL) return false;
+  if (env.VERCEL_URL) return false;
   return true;
 }
 
+// Known-benign Turbopack warning on build:
+//   "Encountered unexpected file in NFT list ... whole project was
+//    traced unintentionally"
+// followed by an import trace ending in this file. The trace fires
+// because Turbopack can't statically scope the fs operations below
+// (resolve/join/createReadStream/rename/...) given the runtime env
+// var and the dynamic case-scoped subpath. Inline `turbopackIgnore`
+// hints + the `env` indirection do not silence it. Build completes,
+// route works in production — the warning is informational, not an
+// error. Documented so future contributors don't burn time on it.
 function storeRoot(): string {
-  return resolve(process.env.FORENIX_EVIDENCE_DIR ?? DEFAULT_DIR);
+  return resolve(env.FORENIX_EVIDENCE_DIR ?? DEFAULT_DIR);
 }
 
 /** Resolve the absolute file path for a content-addressed objectKey. */

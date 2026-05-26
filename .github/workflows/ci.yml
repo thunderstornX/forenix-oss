@@ -57,12 +57,41 @@ jobs:
       - name: Prisma validate (postgres deploy schema)
         # The Postgres-flavoured schema reads env("DATABASE_URL"); the
         # job-level value is a sqlite path. Override with a dummy
-        # postgres URL just for this step — we don't connect anywhere,
+        # postgres URL just for this step. We don't connect anywhere,
         # we only validate that the schema parses against a Postgres
         # provider.
         env:
           DATABASE_URL: "postgresql://ci:ci@localhost:5432/ci?sslmode=disable"
         run: bunx prisma validate --schema=prisma/schema.postgres.prisma
+
+      - name: Prisma schema parity (SQLite vs Postgres)
+        # Both schemas ship in the repo (SQLite for dev/tests, Postgres
+        # for the droplet deploy). If model declarations drift between
+        # them the local + CI typecheck still passes (it runs against
+        # SQLite), but the droplet Deploy SaaS workflow fails late at
+        # tsc time. This step strips comments + blank lines from the
+        # `model` blocks of each file and diffs them. Provider-specific
+        # bits (datasource, generator, native type annotations) live
+        # outside the model blocks, so they don't trip the diff.
+        run: |
+          strip() {
+            awk '
+              /^model / { in_model = 1 }
+              in_model {
+                sub(/[ \t]*\/\/.*$/, "")
+                if (NF == 0) next
+                print
+                if ($1 == "}") in_model = 0
+              }
+            ' "$1"
+          }
+          if ! diff -u <(strip prisma/schema.prisma) <(strip prisma/schema.postgres.prisma); then
+            echo ""
+            echo "ERROR: Prisma model declarations diverge between schema.prisma"
+            echo "(SQLite dev/tests) and schema.postgres.prisma (droplet deploy)."
+            echo "Mirror the change to both schemas before merging."
+            exit 1
+          fi
 
       - name: Typecheck
         run: bun run typecheck
