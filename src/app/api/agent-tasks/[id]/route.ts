@@ -1,3 +1,14 @@
+/**
+ * PATCH /api/agent-tasks/[id]
+ *
+ * Cancel a running agent task or queue a rerun.
+ *
+ * Multi-tenant scope: AgentTask hangs off Agent (deployment-global),
+ * not off Case or Investigation. The current schema therefore cannot
+ * enforce per-tenant ownership. Any signed-in investigator can
+ * cancel any task. A schema split between global agent registry and
+ * per-tenant agent execution is tracked as v0.6+ work.
+ */
 import { z } from "zod";
 
 import { appendAudit } from "@/lib/audit";

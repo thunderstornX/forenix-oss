@@ -19,7 +19,11 @@ import {
   gitEngineEnabled,
   mergeBranches,
 } from "@/lib/git-engine";
-import { httpErrorResponse, requireSession } from "@/lib/rbac";
+import {
+  httpErrorResponse,
+  requireCaseInScope,
+  requireSession,
+} from "@/lib/rbac";
 
 export async function POST(
   _request: Request,
@@ -37,6 +41,9 @@ export async function POST(
       },
     });
     if (!mr) return Response.json({ error: "not_found" }, { status: 404 });
+    // MergeRequest inherits scope via its parent Case. Reject the
+    // merge if that case is outside the actor's team / org.
+    await requireCaseInScope(actor, mr.caseId);
     if (!gitEngineEnabled()) {
       return Response.json(
         {

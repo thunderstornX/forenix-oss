@@ -315,6 +315,98 @@ describe("requireFindingInScope: scope inherits via Investigation", () => {
   });
 });
 
+describe("Monitor scope via Investigation (v0.5.6 sweep)", () => {
+  let monitorA: string;
+  let monitorB: string;
+  beforeAll(async () => {
+    monitorA = (await prisma.monitor.create({
+      data: { investigationId: fx.investigationA, target: "a.example", targetType: "domain" },
+    })).id;
+    monitorB = (await prisma.monitor.create({
+      data: { investigationId: fx.investigationB, target: "b.example", targetType: "domain" },
+    })).id;
+  });
+
+  it("Team A analyst sees only Monitor A in the list", async () => {
+    const a = actor({ userId: fx.userAnalystA, role: "analyst", orgId: fx.orgA, teamIds: [fx.teamA] });
+    const rows = await prisma.monitor.findMany({
+      where: { investigation: teamScopeWhere(a) },
+      select: { id: true },
+    });
+    const ids = rows.map((r) => r.id);
+    expect(ids).toContain(monitorA);
+    expect(ids).not.toContain(monitorB);
+  });
+
+  it("Team A analyst cannot fetch Monitor B by id", async () => {
+    const a = actor({ userId: fx.userAnalystA, role: "analyst", orgId: fx.orgA, teamIds: [fx.teamA] });
+    const m = await prisma.monitor.findFirst({
+      where: { id: monitorB, investigation: teamScopeWhere(a) },
+    });
+    expect(m).toBeNull();
+  });
+});
+
+describe("Verification scope via Investigation (v0.5.6 sweep)", () => {
+  let verA: string;
+  let verB: string;
+  beforeAll(async () => {
+    verA = (await prisma.verification.create({
+      data: { investigationId: fx.investigationA, claim: "claim A", claimType: "text" },
+    })).id;
+    verB = (await prisma.verification.create({
+      data: { investigationId: fx.investigationB, claim: "claim B", claimType: "text" },
+    })).id;
+  });
+
+  it("Team A analyst cannot patch Verification B", async () => {
+    const a = actor({ userId: fx.userAnalystA, role: "analyst", orgId: fx.orgA, teamIds: [fx.teamA] });
+    const v = await prisma.verification.findFirst({
+      where: { id: verB, investigation: teamScopeWhere(a) },
+    });
+    expect(v).toBeNull();
+  });
+
+  it("Team A analyst can patch Verification A", async () => {
+    const a = actor({ userId: fx.userAnalystA, role: "analyst", orgId: fx.orgA, teamIds: [fx.teamA] });
+    const v = await prisma.verification.findFirst({
+      where: { id: verA, investigation: teamScopeWhere(a) },
+    });
+    expect(v?.id).toBe(verA);
+  });
+});
+
+describe("AuditLog scope via parent Case OR Investigation (v0.5.6 sweep)", () => {
+  let auditA: string;
+  let auditB: string;
+  beforeAll(async () => {
+    auditA = (await prisma.auditLog.create({
+      data: {
+        action: "test", entity: "Case", entityId: fx.caseA,
+        caseId: fx.caseA, hash: "ah", prevHash: "0",
+      },
+    })).id;
+    auditB = (await prisma.auditLog.create({
+      data: {
+        action: "test", entity: "Investigation", entityId: fx.investigationB,
+        investigationId: fx.investigationB, hash: "bh", prevHash: "0",
+      },
+    })).id;
+  });
+
+  it("Team A analyst sees the case-A audit row but not the inv-B audit row", async () => {
+    const a = actor({ userId: fx.userAnalystA, role: "analyst", orgId: fx.orgA, teamIds: [fx.teamA] });
+    const scope = teamScopeWhere(a);
+    const rows = await prisma.auditLog.findMany({
+      where: { OR: [{ case: scope }, { investigation: scope }] },
+      select: { id: true },
+    });
+    const ids = rows.map((r) => r.id);
+    expect(ids).toContain(auditA);
+    expect(ids).not.toContain(auditB);
+  });
+});
+
 describe("requireReportInScope: scope inherits via Case OR Investigation", () => {
   it("Team A analyst reads Report A (caseId), 404 on Report B (investigationId)", async () => {
     const a = actor({ userId: fx.userAnalystA, role: "analyst", orgId: fx.orgA, teamIds: [fx.teamA] });

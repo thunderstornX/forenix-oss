@@ -8,6 +8,57 @@ and the project adheres to [Semantic Versioning](https://semver.org/).
 
 (no changes yet)
 
+## [0.5.6] - 2026-05-26
+
+Completes the multi-tenant correctness sweep from v0.5.5. Every
+remaining auth-only route that touches tenant data now goes
+through a scope check; the demo visitor can no longer accidentally
+inherit a real tenant's scope; documentation and roadmap catch up
+with the work that actually shipped.
+
+### Security
+
+- **Scope checks on the remaining nine routes** that v0.5.5 left
+  as auth-only. Each now returns 404 (not 403) on out-of-scope
+  access so existence is not disclosed across tenants:
+  - `audit` GET — filters AuditLog through parent case/investigation
+  - `monitors` GET, POST, PATCH, DELETE, run — scoped via parent
+    Investigation; POST validates body `investigationId` is in scope
+  - `reviews/[id]/merge` — scoped via parent Case
+  - `verifications/[id]` PATCH — scoped via parent Investigation
+- **Demo visitor isolation (Tier A3).** When any Organization
+  exists on the deployment, `/api/demo/try` auto-provisions a
+  dedicated `demo` org + team and pins the visitor to it, so
+  visitor reads can never bleed into real tenants. OSS / Vercel
+  concept deployments with no orgs configured still get the
+  existing "join every team" behaviour for browsing seeded data.
+- **Documented exemptions.** `attestation` (deployment-global
+  audit-chain witnesses) and `agent-tasks/[id]` (Agent registry
+  is global; per-tenant execution is v0.6+ schema work) carry
+  explicit comments explaining why they remain unscoped.
+
+### Added
+
+- **`docs/FEATURES.md` section 18** — full multi-tenant model:
+  scope matrix, helper inventory, intentional global exemptions,
+  demo-visitor isolation behaviour.
+- **Five new bridge test cases** in `src/lib/rbac.test.ts`:
+  Monitor list / by-id scope, Verification write scope, AuditLog
+  list scope via parent Case OR Investigation. Now 19 tests
+  total.
+
+### Fixed
+
+- **README roadmap drift.** Phase 9.5 (Multi-tenant org isolation)
+  was still marked open even though it shipped across v0.5.1
+  through v0.5.6. Flipped to checked with the actual version
+  range.
+
+### Notes
+
+- 119/119 tests passing (was 114; +5 from the v0.5.6 sweep).
+- Typecheck clean, lint clean, build green.
+
 ## [0.5.5] - 2026-05-24
 
 Multi-tenant correctness sweep (carried-forward Tier A2 + A4).

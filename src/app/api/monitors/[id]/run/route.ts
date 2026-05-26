@@ -12,7 +12,13 @@
  */
 import { prisma } from "@/lib/db";
 import { runMonitorTick } from "@/lib/monitor-scheduler/scheduler";
-import { httpErrorResponse, requireRole, requireSession } from "@/lib/rbac";
+import {
+  HttpError,
+  httpErrorResponse,
+  requireRole,
+  requireSession,
+  teamScopeWhere,
+} from "@/lib/rbac";
 
 export async function POST(
   _request: Request,
@@ -23,10 +29,12 @@ export async function POST(
     requireRole(actor, "investigator");
     const { id } = await ctx.params;
 
-    const cur = await prisma.monitor.findUnique({ where: { id } });
-    if (!cur) {
-      return Response.json({ error: "monitor_not_found" }, { status: 404 });
-    }
+    // Scope-checked lookup: 404 if the monitor's parent investigation
+    // is not in the actor's team/org.
+    const cur = await prisma.monitor.findFirst({
+      where: { id, investigation: teamScopeWhere(actor) },
+    });
+    if (!cur) throw new HttpError(404, "monitor_not_found");
 
     // Push the row to the head of the queue and let the standard
     // scheduler pick it up  -  keeps a single code path for "what it

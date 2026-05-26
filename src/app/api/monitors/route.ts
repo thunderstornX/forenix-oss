@@ -11,7 +11,13 @@ import { z } from "zod";
 import { appendAudit } from "@/lib/audit";
 import { prisma } from "@/lib/db";
 import { parseCadence } from "@/lib/monitor-scheduler/cadence";
-import { httpErrorResponse, requireRole, requireSession } from "@/lib/rbac";
+import {
+  httpErrorResponse,
+  requireInvestigationInScope,
+  requireRole,
+  requireSession,
+  teamScopeWhere,
+} from "@/lib/rbac";
 
 const Body = z.object({
   investigationId: z.string().min(1).optional(),
@@ -24,8 +30,12 @@ const Body = z.object({
 
 export async function GET() {
   try {
-    await requireSession();
+    const actor = await requireSession();
+    const scope = teamScopeWhere(actor);
     const rows = await prisma.monitor.findMany({
+      // Monitor scope inherits via parent Investigation. Orphan monitors
+      // (investigationId null) only surface to the operator.
+      where: { investigation: scope },
       orderBy: { updatedAt: "desc" },
       include: {
         investigation: { select: { id: true, title: true, target: true } },
@@ -44,6 +54,13 @@ export async function POST(request: Request) {
     const actor = await requireSession();
     requireRole(actor, "investigator");
     const body = Body.parse(await request.json());
+
+    // If the body pins an investigationId, that investigation must be
+    // in the actor's tenant scope. Without this guard, an investigator
+    // in Team A could schedule a monitor against Team B's investigation.
+    if (body.investigationId) {
+      await requireInvestigationInScope(actor, body.investigationId);
+    }
 
     // Validate the cadence up-front  -  the scheduler refuses to
     // create a row it can't compute a nextRunAt for.

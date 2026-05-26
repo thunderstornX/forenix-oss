@@ -4,6 +4,11 @@
  * GET   — list recent attestations (any signed-in user; read-only).
  * POST  — kick off a new attestation (admin-only). Optional `backend`
  *         in the body overrides the env default for this run only.
+ *
+ * Multi-tenant scope: attestations pin the deployment-wide audit
+ * chain head, so they are intentionally deployment-global rather
+ * than per-tenant. A future SaaS that runs one audit chain per org
+ * would need a per-org Attestation table; tracked as v0.6+ work.
  */
 import { z } from "zod";
 

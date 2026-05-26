@@ -1,17 +1,28 @@
 import { prisma } from "@/lib/db";
 import { paginateSlice, readPageParams } from "@/lib/pagination";
-import { httpErrorResponse, requireSession } from "@/lib/rbac";
+import { httpErrorResponse, requireSession, teamScopeWhere } from "@/lib/rbac";
 
 export async function GET(request: Request) {
   try {
-    await requireSession();
+    const actor = await requireSession();
     const url = new URL(request.url);
     const page = readPageParams(url, { defaultLimit: 200, max: 1000 });
     const investigationId = url.searchParams.get("investigationId");
     const caseId = url.searchParams.get("caseId");
+    const scope = teamScopeWhere(actor);
+
+    // AuditLog attaches to either a Case or an Investigation (or neither
+    // for system-wide events). We surface a row only if the parent the
+    // actor asked about is in scope, OR (no filter supplied) if either
+    // parent is in scope. System rows (both FKs null) are operator-only.
+    const isOperator = actor.role === "admin" && !actor.orgId;
+    const baseScope = isOperator
+      ? {}
+      : { OR: [{ case: scope }, { investigation: scope }] };
 
     const rows = await prisma.auditLog.findMany({
       where: {
+        ...baseScope,
         ...(investigationId ? { investigationId } : {}),
         ...(caseId ? { caseId } : {}),
       },

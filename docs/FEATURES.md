@@ -388,20 +388,72 @@ Two live runs against the seeded `INV-2025-020` produced:
 
 ---
 
+## 18. Multi-tenant orgs (Phase 9.5)
+
+Two-level isolation: an **Organization** owns one or more **Teams**,
+and every tenant-bearing row (`Investigation`, `Case`, and Evidence
+/ Finding / Report / Monitor / Verification / AuditLog via their
+parent) carries `orgId` + `teamId` columns.
+
+The scope semantics live in `src/lib/rbac.ts`:
+
+| actor.role | actor.orgId | what they see                                          |
+|------------|-------------|--------------------------------------------------------|
+| admin      | null        | everything (operator / OSS single-tenant)              |
+| admin      | set         | everything within their org                            |
+| non-admin  | null        | team-null rows OR rows in their teams (OSS legacy)     |
+| non-admin  | set         | AND of the org clause and the team clause             |
+
+Resource-level scope helpers (`requireCaseInScope`,
+`requireInvestigationInScope`, `requireEvidenceInScope`,
+`requireFindingInScope`, `requireReportInScope`) return the row when
+the actor can see it and **throw `HttpError(404)`** otherwise. The
+404 (rather than 403) choice is deliberate: it prevents existence
+disclosure across tenants. Every tenant-touching API route uses
+either the scope helper directly or filters its Prisma `where` clause
+through `teamScopeWhere(actor)`.
+
+The bridge test at `src/lib/rbac.test.ts` proves the matrix
+end-to-end against a real SQLite fixture: two orgs, two teams, two
+analysts, two admins, plus the operator account. Every helper is
+probed for "can see own", "404 on other tenant", and
+"operator sees everything". If a future change drops a scope filter
+or adds a new tenant-bearing model without wiring it in, this test
+should catch it.
+
+**What is intentionally global, not per-tenant:**
+
+- `Agent` (the agent registry) and `AgentTask` (per-execution
+  rows) are deployment-global. A future split between global agent
+  registry and per-tenant execution is tracked as v0.6+ work.
+- `Attestation` rows pin the deployment-wide audit chain head,
+  not a per-org chain. A SaaS that runs one chain per org would
+  need a per-org Attestation table.
+- Settings (`/api/settings`) returns the deployment-level adapter
+  config; per-org adapter pinning is a SaaS premium feature.
+
+The demo visitor (`/api/demo/try`, gated by `DEMO_VISITOR_ENABLED`)
+auto-joins a dedicated `demo` org + team when any organisations exist
+on the deployment, so it can never accidentally inherit a real
+tenant's scope. On OSS deployments with no orgs configured, the
+visitor falls back to "join every team" for browsing seeded data.
+
+---
+
 ## What's intentionally not shipped yet
 
-- **Real file-byte storage for Evidence.** Today every Evidence row
-  carries metadata + a content hash; the bytes themselves are not
-  stored in the database. This is the right shape for an MVP and
-  forces the chain-of-custody discussion before the storage one.
-- **Multi-tenant organisation isolation.** Schema is single-tenant
-  for now; the `SAAS_MODE` flag will gate org-scoped queries when
-  premium ships.
-- **Background scheduler.** Monitors carry cadence + next-run
-  timestamps but nothing wakes them. A cron / Temporal worker is a
-  bolt-on, not a rewrite.
-- **PDF export of reports.** Markdown renders today; PDF is a
-  premium-tier feature behind `SAAS_MODE=true`.
-- **Real-time UI updates.** TanStack Query refetches on focus; no
-  websocket push yet. Sufficient for an analyst workflow at the
-  current scale.
+- **Real file-byte storage for Evidence on Vercel.** The droplet
+  surface has on-disk content-addressed storage; the Vercel surface
+  gracefully degrades to "self-host required" for uploads. R2/S3
+  backend is tracked as v0.6+ work.
+- **Background scheduler running in-process.** Monitors carry
+  cadence + next-run timestamps and are fired by a Vercel Cron tick
+  on the concept demo; a long-running scheduler process for the
+  droplet is tracked as v0.6+ work.
+- **PDF export of reports on Vercel.** Markdown renders everywhere;
+  PDF requires a writable filesystem (droplet only).
+- **WebSocket live updates.** Server-sent events (Phase 9.3)
+  already push the event stream; the ws upgrade is a power-user
+  improvement, not a correctness gap.
+- **Per-org adapter pinning, SSO, MFA, Stripe billing.** Phase 9.6
+  premium tier, in the private SaaS overlay.

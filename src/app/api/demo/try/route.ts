@@ -112,19 +112,52 @@ export async function GET(request: Request) {
     );
   }
 
-  // Add the demo user to every existing team as a member. Without
-  // this they're a global viewer with no team memberships, which
-  // means every list endpoint (investigations, cases, evidence,
-  // monitors, ...) filters them out and the dashboard reads 0/0/0
-  // even though the seed populated data. We don't need to worry
-  // about over-permissive access — DEMO_VISITOR_ENABLED is set
-  // only on the Vercel concept surface where all data is seeded
-  // and meant to be poked.
-  const teams = await prisma.team.findMany({ select: { id: true } });
-  for (const t of teams) {
+  // Multi-tenant safety. Two cases:
+  //
+  //  (a) No orgs exist on the deployment → OSS / Vercel concept
+  //      mode. Every team's data is seeded demo data, so add the
+  //      visitor to every team so the dashboard isn't empty. Same
+  //      behaviour as before.
+  //  (b) At least one org exists → SaaS-style deployment. Real
+  //      tenant data is at risk if the visitor joins existing
+  //      teams. Restrict to a dedicated demo-org / demo-team so the
+  //      visitor only ever sees data explicitly seeded under it.
+  //
+  // This closes the Tier A3 "demo visitor scope" gap without
+  // breaking the existing Vercel concept surface that currently
+  // has zero orgs configured.
+  const orgCount = await prisma.organization.count();
+  if (orgCount === 0) {
+    const teams = await prisma.team.findMany({ select: { id: true } });
+    for (const t of teams) {
+      await prisma.teamMember.upsert({
+        where: { teamId_userId: { teamId: t.id, userId: user.id } },
+        create: { teamId: t.id, userId: user.id, role: "member" },
+        update: {},
+      });
+    }
+  } else {
+    const demoOrg = await prisma.organization.upsert({
+      where: { slug: "demo" },
+      create: { name: "Demo Org", slug: "demo" },
+      update: {},
+      select: { id: true },
+    });
+    const demoTeam = await prisma.team.upsert({
+      where: { slug: "demo" },
+      create: { name: "Demo Team", slug: "demo", orgId: demoOrg.id },
+      update: { orgId: demoOrg.id },
+      select: { id: true },
+    });
+    // Pin the visitor's primary org so teamScopeWhere() applies the
+    // demo-org filter on every read.
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { orgId: demoOrg.id },
+    });
     await prisma.teamMember.upsert({
-      where: { teamId_userId: { teamId: t.id, userId: user.id } },
-      create: { teamId: t.id, userId: user.id, role: "member" },
+      where: { teamId_userId: { teamId: demoTeam.id, userId: user.id } },
+      create: { teamId: demoTeam.id, userId: user.id, role: "member" },
       update: {},
     });
   }

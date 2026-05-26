@@ -374,7 +374,7 @@ deploy time. OSS code paths must keep working without it.
 - [x] Phase 9.3  -  Scheduled monitors + scheduled attestations + SSE live updates
 - [x] Phase 9.4a  -  Public "try the demo" visitor path on the Vercel concept
 - [x] Phase 9.4b  -  Admin waitlist triage UI on DO (approve / decline / live updates)
-- [ ] Phase 9.5  -  Multi-tenant org isolation (private overlay)
+- [x] Phase 9.5  -  Multi-tenant org isolation (v0.5.1 - v0.5.6: schema, JWT orgId, scope helpers, route sweep, bridge test)
 - [ ] Phase 9.6  -  Billing, SSO, advanced OSINT adapters (private overlay)
 
 ---

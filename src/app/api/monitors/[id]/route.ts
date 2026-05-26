@@ -13,7 +13,24 @@ import { z } from "zod";
 import { appendAudit } from "@/lib/audit";
 import { prisma } from "@/lib/db";
 import { computeNextRun, parseCadence } from "@/lib/monitor-scheduler/cadence";
-import { httpErrorResponse, requireRole, requireSession } from "@/lib/rbac";
+import {
+  HttpError,
+  httpErrorResponse,
+  requireRole,
+  requireSession,
+  teamScopeWhere,
+} from "@/lib/rbac";
+import type { ActorContext } from "@/lib/rbac";
+
+/** Monitor inherits scope via its parent Investigation. Returns the
+ *  full Monitor row or throws 404. */
+async function requireMonitorInScope(actor: ActorContext, id: string) {
+  const m = await prisma.monitor.findFirst({
+    where: { id, investigation: teamScopeWhere(actor) },
+  });
+  if (!m) throw new HttpError(404, "monitor_not_found");
+  return m;
+}
 
 const PatchBody = z.object({
   status: z.enum(["active", "paused"]).optional(),
@@ -32,10 +49,7 @@ export async function PATCH(
     const { id } = await ctx.params;
     const body = PatchBody.parse(await request.json());
 
-    const cur = await prisma.monitor.findUnique({ where: { id } });
-    if (!cur) {
-      return Response.json({ error: "monitor_not_found" }, { status: 404 });
-    }
+    const cur = await requireMonitorInScope(actor, id);
 
     let nextCadence = cur.cadence;
     if (body.cadence) {
@@ -114,10 +128,7 @@ export async function DELETE(
     requireRole(actor, "investigator");
     const { id } = await ctx.params;
 
-    const row = await prisma.monitor.findUnique({ where: { id } });
-    if (!row) {
-      return Response.json({ error: "monitor_not_found" }, { status: 404 });
-    }
+    const row = await requireMonitorInScope(actor, id);
 
     await prisma.monitor.delete({ where: { id } });
     await appendAudit({

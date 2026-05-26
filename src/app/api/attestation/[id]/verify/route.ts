@@ -4,6 +4,11 @@
  * Re-fetches the witness (HMAC recompute / GitHub comment GET / ...)
  * and confirms it still pins the original head. Read-only — does
  * not mutate the stored Attestation row.
+ *
+ * Multi-tenant scope: deployment-global (same reasoning as the
+ * sibling list route). Any signed-in user can verify any attestation
+ * because the chain head being attested is a public deployment
+ * artefact.
  */
 import { httpErrorResponse, requireSession } from "@/lib/rbac";
 import { verifyAttestation } from "@/lib/attestation/service";
