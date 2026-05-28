@@ -6,7 +6,46 @@ and the project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
-(no changes yet)
+Operational rigidity pass — closes the structural gaps behind the
+v0.5.6 deploy incident and hardens the paid surface against data loss.
+
+### Added
+
+- **Automated droplet backups.** A nightly systemd timer
+  (`forenix-backup.timer`, 03:30 UTC, `Persistent=true`) runs
+  `/usr/local/sbin/forenix-backup.sh`: `pg_dump -Fc` of the Postgres
+  DB, a tar of the evidence store, and a copy of `.env`, rotated to
+  the newest 14 of each under `/var/backups/forenix/`. Installed
+  out-of-tree so the deploy `rsync --delete` cannot remove it. The
+  deploy script also fires it once right before every schema push, so
+  each deploy has an immediate restore point. Restore procedure in
+  RUNBOOK §15.
+- **Postgres-client typecheck in CI** (`postgres-typecheck` job).
+  Regenerates the Prisma client from the Postgres deploy schema and
+  typechecks against it — the *semantic* counterpart to the textual
+  schema-parity diff. Catches the v0.5.6 class (a relation/field in
+  one schema but not the Postgres client) on the PR, not late on the
+  droplet.
+- **Pre-flight typecheck in the deploy workflow.** The assembled tree
+  (OSS Core + private overlay) is typechecked against the Postgres
+  client on the runner *before* the rsync, so a broken build never
+  reaches the droplet.
+- **Deploy provenance.** `/api/health` now reports `commit` + `builtAt`,
+  read from a `.revision` file the deploy workflow stamps with the
+  exact OSS SHA — replacing the on-droplet `.git`, which froze at first
+  setup and reported a wrong SHA.
+
+### Changed
+
+- **Deploy is now gated on CI.** `deploy-droplet.yml` triggers via
+  `workflow_run` after CI succeeds on `main` (was: `push` to `main`,
+  racing CI in parallel). A red build no longer reaches the paid
+  surface. `workflow_dispatch` remains for ad-hoc redeploys.
+- **`prisma db push` in the deploy path no longer passes
+  `--accept-data-loss`.** A destructive schema change now aborts the
+  deploy (prod stays on the previous version) instead of silently
+  executing against customer data; an operator applies it deliberately
+  by hand after confirming the snapshot.
 
 ## [0.5.7] - 2026-05-26
 

@@ -114,3 +114,52 @@ jobs:
         env:
           # next build needs SOMETHING here even though we don't use it
           DATABASE_URL: "file:./dev.db"
+
+  postgres-typecheck:
+    name: typecheck · postgres client
+    # The `validate` job above generates and typechecks against the
+    # SQLite client. That's how v0.5.6 slipped through: a relation
+    # present in the SQLite schema but missing from the Postgres schema
+    # left the SQLite typecheck green, while the droplet (Postgres
+    # client) failed at tsc post-merge. This job regenerates the client
+    # from the Postgres deploy schema and typechecks again, so that
+    # whole class fails the PR here instead of late on the droplet. It
+    # complements the textual schema-parity diff above (which only
+    # catches model-block drift); this is the semantic check.
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    env:
+      # Typecheck only — no connection is made. A dummy Postgres URL is
+      # enough for `prisma generate` to emit the Postgres-flavoured client.
+      DATABASE_URL: "postgresql://ci:ci@localhost:5432/ci?sslmode=disable"
+      AUTH_SECRET:     "ci-only-secret-not-used-anywhere"
+      NEXTAUTH_SECRET: "ci-only-secret-not-used-anywhere"
+      AI_ADAPTER: "mock"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.3.6"
+
+      - name: Cache bun + node modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.bun/install/cache
+            node_modules
+          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-
+
+      - name: Install
+        run: bun install --frozen-lockfile
+
+      - name: Generate Postgres Prisma client
+        run: bunx prisma generate --schema=prisma/schema.postgres.prisma
+
+      - name: Typecheck against the Postgres client
+        run: bun run typecheck

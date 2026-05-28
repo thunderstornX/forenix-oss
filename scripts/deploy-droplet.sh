@@ -42,11 +42,29 @@ bun install --frozen-lockfile
 echo "── prisma generate ──"
 bunx prisma generate --schema=prisma/schema.postgres.prisma
 
+echo "── pre-push DB snapshot ──"
+# Capture a fresh dump right before any schema change touches the live
+# DB — an immediate restore point that doesn't wait for the nightly
+# timer. Reuses the same backup script the systemd timer runs; needs a
+# sudoers line on the droplet:
+#   forenix ALL=(root) NOPASSWD: /usr/local/sbin/forenix-backup.sh
+if [ -x /usr/local/sbin/forenix-backup.sh ]; then
+  sudo -n /usr/local/sbin/forenix-backup.sh \
+    || echo "::warning:: pre-push snapshot skipped (nightly backup still covers you)"
+else
+  echo "::warning:: /usr/local/sbin/forenix-backup.sh not installed — skipping pre-push snapshot"
+fi
+
 echo "── prisma db push (postgres) ──"
-# --accept-data-loss matches the existing db:push:pg script. Schema
-# changes that would drop data still abort the deploy; the operator
-# investigates and reruns by hand.
-bunx prisma db push --schema=prisma/schema.postgres.prisma --accept-data-loss
+# NB: --accept-data-loss is intentionally NOT passed in the auto-deploy
+# path. Without it, a destructive schema change (dropping a column or
+# table) ABORTS the deploy instead of silently running against
+# customer data. The build has already succeeded and the service is
+# still on the previous version, so prod stays up. To apply a
+# deliberate destructive migration, an operator confirms the snapshot
+# above, then runs it by hand:
+#   bunx prisma db push --schema=prisma/schema.postgres.prisma --accept-data-loss
+bunx prisma db push --schema=prisma/schema.postgres.prisma
 
 echo "── next build ──"
 bun run build
@@ -56,5 +74,12 @@ echo "── systemctl restart forenix.service ──"
 #   forenix ALL=(root) NOPASSWD: /bin/systemctl restart forenix.service
 sudo /bin/systemctl restart forenix.service
 
-SHA="$(git -C "${PWD_HERE}" rev-parse --short HEAD 2>/dev/null || echo unknown)"
-echo "✓ deploy complete (build sha ${SHA})"
+# Report the deployed revision from the .revision file the workflow
+# stamped into the rsynced tree — NOT from the on-droplet .git, which
+# is a vestigial, deploy-excluded repo whose HEAD froze at first setup
+# and would report a wrong SHA.
+if [ -f "${PWD_HERE}/.revision" ]; then
+  echo "✓ deploy complete ($(cat "${PWD_HERE}/.revision"))"
+else
+  echo "✓ deploy complete (no .revision stamped)"
+fi

@@ -69,3 +69,8 @@ server.log
 # The actual src/lib/saas tree lives in the private repo; the deploy
 # pipeline rsyncs it into place. Never commit the symlink.
 src/lib/saas
+
+# Deploy-stamped provenance ({commit, builtAt}), written by the Deploy
+# workflow into the deploy root and read by /api/health. Per-deploy,
+# never committed.
+/.revision
