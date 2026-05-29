@@ -204,18 +204,27 @@ export async function chatAnalyzePipeline(
   target: string,
   agentGroup: AgentGroup,
   searchResults: SearchResult[],
+  // Evaluation hooks (RQ2 harness). Undefined => unchanged product
+  // behaviour. `systemPrompt` swaps the SAT-grounded prompt for a
+  // baseline; `disableTools` isolates pure reasoning (no OSINT
+  // subprocesses, no vault/DB) for a clean prompt-vs-prompt comparison.
+  opts?: { systemPrompt?: string; disableTools?: boolean },
 ): Promise<PipelineAnalysis> {
   // Lazy-import to dodge the heavy node:child_process surface
   // unless we actually run tools.
   const { availableToolsForGroup } = await import("@/lib/tools/registry");
   const { chatWithTools } = await import("./tool-loop");
-  const { injectVaultKeys } = await import("@/lib/vault");
 
-  // Decrypt admin-set API keys into process.env so the registry's
-  // isToolAvailable() check sees them. Cheap  -  30 s in-memory cache.
-  try { await injectVaultKeys(); } catch { /* vault not yet ready */ }
+  // The eval harness disables tools (to isolate reasoning) and so also
+  // skips the vault, which needs the DB a plain script won't have.
+  if (!opts?.disableTools) {
+    const { injectVaultKeys } = await import("@/lib/vault");
+    // Decrypt admin-set API keys into process.env so the registry's
+    // isToolAvailable() check sees them. Cheap - 30 s in-memory cache.
+    try { await injectVaultKeys(); } catch { /* vault not yet ready */ }
+  }
 
-  const tools = availableToolsForGroup(agentGroup);
+  const tools = opts?.disableTools ? [] : availableToolsForGroup(agentGroup);
   const userMsg = [
     `Target: ${target}`,
     `Agent group: ${agentGroup}`,
@@ -233,7 +242,7 @@ export async function chatAnalyzePipeline(
   // SAT-grounded system prompt per agent group  -  replaces the
   // bland SYSTEM_PIPELINE and forces a structured SatTrace.
   const { satPromptFor } = await import("./sat-prompts");
-  const system = satPromptFor(agentGroup);
+  const system = opts?.systemPrompt ?? satPromptFor(agentGroup);
 
   let raw: string;
   if (tools.length > 0) {

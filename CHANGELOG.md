@@ -6,7 +6,19 @@ and the project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
-(no changes yet)
+### Added
+
+- **RQ2 evaluation harness** (`scripts/eval/`). Operationalises
+  RESEARCH.md's RQ2 — does SAT-grounding measurably improve OSINT
+  reasoning vs. an ungrounded baseline? Runs the product pipeline on a
+  system-under-test model under two conditions (baseline vs SAT prompt,
+  tools held constant), scores findings with a different judge model
+  (recall / hallucination / correct-rate / calibration), and writes a
+  report. Public-entity cases only. Methodology + the pilot's
+  design lesson in `docs/research/rq2-evaluation.md`.
+- **`chatAnalyzePipeline` eval hooks** — optional `systemPrompt` +
+  `disableTools` (default-undefined; no change to product behaviour) so
+  the harness can swap prompts and isolate reasoning.
 
 ## [0.6.0] - 2026-05-29
 
