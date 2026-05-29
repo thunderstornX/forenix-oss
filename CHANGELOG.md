@@ -20,6 +20,21 @@ and the project adheres to [Semantic Versioning](https://semver.org/).
   `disableTools` (default-undefined; no change to product behaviour) so
   the harness can swap prompts and isolate reasoning.
 
+### Changed
+
+- **SAT grounding is now opt-in (`FORENIX_SAT_MODE=true`), not the
+  default.** Following the RQ2 evaluation (SAT scaffold degraded
+  extraction and induced false balance on low-ambiguity tasks), the
+  default analyst prompt does plain extraction with an explicit
+  source-quality judgement; the `SatTrace` is retained as the optional
+  auditability layer for contested findings. SAT `COMMON_RULES` also
+  patched so a low-credibility or contradicted source is dismissed,
+  not treated as a competing hypothesis. Rationale in `DECISIONS.md`.
+- **Repositioned the headline claim** to lead with the verifiable
+  tamper-evident, audit-ready chain of custody rather than
+  "court-admissible" (a legal determination the tooling does not by
+  itself confer). Wording only; the engine is unchanged.
+
 ## [0.6.0] - 2026-05-29
 
 Operational rigidity pass — closes the structural gaps behind the

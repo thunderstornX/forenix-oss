@@ -5,8 +5,8 @@ title: "forenix-oss: an open-source platform for lawful OSINT and forensic case 
 abstract: >-
   forenix-oss is an open-source, MIT-licensed platform that
   operationalises the question of how OSINT pipelines can be
-  structured to produce trustworthy, legally admissible evidence
-  while safeguarding fundamental rights. It ships a SHA-256
+  structured to produce trustworthy, tamper-evident, audit-ready
+  evidence for evidentiary use while safeguarding fundamental rights. It ships a SHA-256
   forward-chained audit log, three independent attestation
   backends (local HMAC, GitHub-issue witness, Sigstore Rekor), a
   structured-analytic-technique scaffold grounded in the

@@ -241,8 +241,15 @@ export async function chatAnalyzePipeline(
 
   // SAT-grounded system prompt per agent group  -  replaces the
   // bland SYSTEM_PIPELINE and forces a structured SatTrace.
-  const { satPromptFor } = await import("./sat-prompts");
-  const system = opts?.systemPrompt ?? satPromptFor(agentGroup);
+  // SAT scaffolding is opt-in via FORENIX_SAT_MODE=true after the RQ2
+  // finding that it degraded extraction and induced false balance on
+  // low-ambiguity tasks. The default is a plain analyst prompt with a
+  // source-quality judgement; the SatTrace stays as the optional
+  // auditability layer. The eval harness sets the flag to compare
+  // SAT vs baseline.
+  const { satPromptFor, analystPromptFor } = await import("./sat-prompts");
+  const useSat = process.env.FORENIX_SAT_MODE === "true";
+  const system = opts?.systemPrompt ?? (useSat ? satPromptFor(agentGroup) : analystPromptFor(agentGroup));
 
   let raw: string;
   if (tools.length > 0) {

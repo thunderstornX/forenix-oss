@@ -3,7 +3,7 @@
 </p>
 
 <h1 align="center">forenix/oss</h1>
-<p align="center"><em>court-admissible OSINT, from the first finding.</em></p>
+<p align="center"><em>Evidence-grade OSINT with a cryptographic chain of custody.</em></p>
 
 <!-- Project status badges -->
 <p align="center">
@@ -61,7 +61,7 @@ forenix-oss collapses both halves into one app:
 
 - **A real Git repository per case**  -  every state change is a commit; reviewers can clone & `git log` the case independently.
 - **An LLM-orchestrated tool runner** with 20 OSINT tools wired (sherlock, maigret, subfinder, httpx, dnsx, amass, nuclei, exiftool, yt-dlp, tesseract, gowitness, crt.sh, WHOIS, Shodan, Hunter, HIBP, theHarvester, holehe, DuckDuckGo, generic HTTP fetch).
-- **Structured-Analytic-Technique (SAT) grounding**  -  every finding carries a Coulthart/Heuer trace (Key Assumptions Check, ACH matrix, indicators, credibility) the LLM is forced to populate.
+- **Optional SAT auditability trace**  -  findings can carry a Coulthart/Heuer reasoning record (technique, hypotheses considered, disconfirming evidence) for defensibility. Opt-in via `FORENIX_SAT_MODE`; it is not the default. See [`DECISIONS.md`](DECISIONS.md) for the evaluation behind that choice.
 - **A cryptographic audit chain** verifiable offline in 12 lines of Python.
 
 MIT-licensed. Self-host friendly.
@@ -380,7 +380,7 @@ Component module."
 
 - [x] Phase 1–8  -  Foundation through file-byte evidence + PDF export
 - [x] Phase 9.1  -  Content-addressed disk store + byte-level verify
-- [x] Phase 9.2  -  PDF export of admissible case reports
+- [x] Phase 9.2  -  PDF export of audit-ready case reports
 - [x] Phase 9.3  -  Scheduled monitors + scheduled attestations + SSE live updates
 - [x] Phase 9.4a  -  Public "try the demo" visitor path on the Vercel concept
 - [x] Phase 9.4b  -  Admin waitlist triage UI on DO (approve / decline / live updates)
