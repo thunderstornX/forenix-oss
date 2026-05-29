@@ -47,6 +47,19 @@ v0.5.6 deploy incident and hardens the paid surface against data loss.
   executing against customer data; an operator applies it deliberately
   by hand after confirming the snapshot.
 
+### Added
+
+- **SatTrace validation.** Structured `reasoningTrace` objects returned
+  by the model are now validated + normalised before storage
+  (`src/lib/ai/sat-trace.ts`): `technique` must be a known SAT (an
+  unknown one flags the trace), `weight` is clamped to 0..1,
+  `credibility` to 1..5, and `selected` into the candidate range. A
+  structurally-broken trace is stored as an explicit `_invalidSatTrace`
+  marker — which the Verification view now surfaces ("⚠ reasoning trace
+  failed validation") instead of silently rendering nothing. Free-text
+  legacy traces still pass through. Adds `sat-trace.test.ts`.
+- **README**: open-issues badge.
+
 ### Security
 
 - **OSINT subprocesses now run with a minimal environment.** The tool

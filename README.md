@@ -14,6 +14,7 @@
   <a href="https://github.com/thunderstornX/forenix-oss/commits/main"><img alt="Last commit" src="https://img.shields.io/github/last-commit/thunderstornX/forenix-oss?style=flat&color=c97a2f"></a>
   <a href="https://github.com/thunderstornX/forenix-oss/stargazers"><img alt="Stars" src="https://img.shields.io/github/stars/thunderstornX/forenix-oss?style=flat&color=c97a2f"></a>
   <a href="https://github.com/thunderstornX/forenix-oss/network/members"><img alt="Forks" src="https://img.shields.io/github/forks/thunderstornX/forenix-oss?style=flat&color=2f8754"></a>
+  <a href="https://github.com/thunderstornX/forenix-oss/issues"><img alt="Open issues" src="https://img.shields.io/github/issues/thunderstornX/forenix-oss?style=flat&color=c97a2f&label=issues"></a>
 </p>
 
 <!-- Live surfaces  -  one badge per deployment, vendor-neutral -->

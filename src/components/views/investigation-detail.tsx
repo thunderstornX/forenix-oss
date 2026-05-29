@@ -329,6 +329,18 @@ function SatTraceCard({ trace }: { trace: string }) {
   } catch {
     return null;
   }
+  // Trace the validator flagged as structurally invalid on write — show
+  // it rather than silently dropping the card, so the analyst knows the
+  // model's reasoning record didn't hold up.
+  const invalid = parsed as unknown as { _invalidSatTrace?: boolean; error?: string };
+  if (invalid?._invalidSatTrace) {
+    return (
+      <div className="mt-2 rounded border border-[var(--border)] bg-[var(--background-elev-2)] p-2 text-[11px] text-[var(--foreground-muted)]">
+        <span className="font-medium">⚠ reasoning trace failed validation</span>
+        {invalid.error ? ` — ${invalid.error.slice(0, 160)}` : ""}
+      </div>
+    );
+  }
   if (!parsed?.technique) return null;
   return (
     <div className="mt-2 rounded border border-[var(--accent)] bg-[var(--background-elev-2)] p-2.5 text-[11px]">
