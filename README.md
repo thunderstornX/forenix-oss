@@ -10,8 +10,6 @@
   <a href="https://github.com/thunderstornX/forenix-oss/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/thunderstornX/forenix-oss/actions/workflows/ci.yml/badge.svg"></a>
   <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-blue.svg?style=flat"></a>
   <a href="https://github.com/thunderstornX/forenix-oss/releases/latest"><img alt="Latest release" src="https://img.shields.io/github/v/release/thunderstornX/forenix-oss?color=c97a2f&label=release&style=flat"></a>
-  <a href="https://github.com/thunderstornX/forenix-oss/releases"><img alt="Release date" src="https://img.shields.io/github/release-date/thunderstornX/forenix-oss?color=c97a2f&style=flat&label=released"></a>
-  <a href="https://github.com/thunderstornX/forenix-oss/commits/main"><img alt="Last commit" src="https://img.shields.io/github/last-commit/thunderstornX/forenix-oss?style=flat&color=c97a2f"></a>
   <a href="https://github.com/thunderstornX/forenix-oss/stargazers"><img alt="Stars" src="https://img.shields.io/github/stars/thunderstornX/forenix-oss?style=flat&color=c97a2f"></a>
   <a href="https://github.com/thunderstornX/forenix-oss/network/members"><img alt="Forks" src="https://img.shields.io/github/forks/thunderstornX/forenix-oss?style=flat&color=2f8754"></a>
 </p>
@@ -25,7 +23,6 @@
 
 <!-- Repo health -->
 <p align="center">
-  <a href="https://github.com/thunderstornX/forenix-oss"><img alt="Top language" src="https://img.shields.io/github/languages/top/thunderstornX/forenix-oss?style=flat&color=3178c6"></a>
   <a href="https://github.com/thunderstornX/forenix-oss"><img alt="Code size" src="https://img.shields.io/github/languages/code-size/thunderstornX/forenix-oss?style=flat&color=4a5568"></a>
   <a href="https://github.com/thunderstornX/forenix-oss/graphs/contributors"><img alt="Contributors" src="https://img.shields.io/github/contributors/thunderstornX/forenix-oss?style=flat&color=4a5568"></a>
   <a href="https://github.com/thunderstornX/forenix-oss/issues"><img alt="Open issues" src="https://img.shields.io/github/issues/thunderstornX/forenix-oss?style=flat&color=4a5568"></a>
