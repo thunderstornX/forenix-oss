@@ -47,6 +47,25 @@ v0.5.6 deploy incident and hardens the paid surface against data loss.
   executing against customer data; an operator applies it deliberately
   by hand after confirming the snapshot.
 
+### Security
+
+- **OSINT subprocesses now run with a minimal environment.** The tool
+  runner (`spawnTool`) previously inherited the full app environment,
+  so every spawned CLI saw `OPENROUTER_API_KEY`, `AUTH_SECRET`,
+  `DATABASE_URL`, etc. It now passes only `PATH`/`HOME`/locale/`TMPDIR`
+  plus any key a tool explicitly opts into — no app secrets reach
+  third-party binaries.
+- **dnsx no longer shells out.** It built a `sh -c 'echo … | dnsx …'`
+  pipe with the (validated) domain interpolated in; replaced with a
+  direct spawn that feeds the domain over stdin (`spawnTool` gained an
+  `input` option). No shell, no interpolation, nothing to inject into
+  even if the validator were ever loosened.
+- **Positional-arg validators forbid a leading dash.** `sherlock`,
+  `maigret`, and `holehe` pass the LLM-supplied handle/address as a
+  positional argv; their validators now require an alphanumeric/`_`
+  first character so a `-`/`--flag`-shaped value can't be parsed as a
+  CLI option. Added `runner.test.ts` covering all of the above.
+
 ### Fixed
 
 - **Vercel preview deployments.** `vercel-build` moved to
