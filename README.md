@@ -282,7 +282,7 @@ For engineers, auditors, design partners, and the curious:
 - [Tool Stack  -  every tool wired](docs/11-TOOL_STACK.md)
 - [Honest Problem-Fit Evaluation](docs/12-PROBLEM_FIT.md)
 - [Feature Catalogue](docs/FEATURES.md) (with screenshots)
-- [One-pager](docs/ONE_PAGER.md) | [Demo Script](docs/DEMO_SCRIPT.md)
+- [Demo Script](docs/DEMO_SCRIPT.md)
 - **[User Manual (PDF)](docs/USER_MANUAL.pdf)** | [markdown source](docs/USER_MANUAL.md)
 - **[How-To Guide (PDF)](docs/HOW_TO.pdf)** | [markdown source](docs/HOW_TO.md)
 - **[Research framing](RESEARCH.md)**  -  design-science methodology, open research questions, working bibliography under [`docs/research/`](docs/research/)
@@ -341,9 +341,8 @@ scripts/
 docs/
   banner.svg
   01-BRD.md ... 12-PROBLEM_FIT.md
-  FEATURES.md | ONE_PAGER.md | DEMO_SCRIPT.md | HOW_TO.md
+  FEATURES.md | DEMO_SCRIPT.md | HOW_TO.md
   manual_screenshots/   # current screenshot set
-  pitch/                # YC deck (pptx + pdf)
 ```
 
 ---
