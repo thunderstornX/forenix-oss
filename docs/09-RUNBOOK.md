@@ -565,3 +565,44 @@ the droplet itself. To close that:
   `forenix-backup.sh` then mirrors the DB + evidence off-site on every
   run. It deliberately excludes `env_*.bak` — never push the secrets
   off-site unencrypted.
+
+
+## 16. Service hardening (DigitalOcean)
+
+`forenix.service` runs with a systemd hardening drop-in so the OSINT
+tools it spawns inherit a locked-down context. The load-bearing
+directive is **`NoNewPrivileges`** — a spawned tool can never gain
+privileges (e.g. via a setuid binary or bug), and this propagates to
+every child process.
+
+### Install
+
+```bash
+ssh root@206.189.82.103
+mkdir -p /etc/systemd/system/forenix.service.d
+cat >/etc/systemd/system/forenix.service.d/hardening.conf <<'CONF'
+[Service]
+NoNewPrivileges=yes
+RestrictSUIDSGID=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictRealtime=yes
+LockPersonality=yes
+CONF
+systemctl daemon-reload && systemctl restart forenix.service
+systemctl show forenix.service -p NoNewPrivileges   # expect "yes"
+```
+
+### Deliberately NOT set (would break this deployment)
+
+- **`PrivateTmp`** — the evidence store stages bytes in a temp dir
+  under `$TMPDIR`, then `rename()`s into `/opt/forenix/.evidence-store`.
+  A private `/tmp` is a separate mount, so the rename would fail with
+  `EXDEV` (cross-device).
+- **`ProtectSystem=strict` / `MemoryMax` / address-space rlimits** —
+  the Go OSINT tools (subfinder, httpx, nuclei, dnsx, amass) reserve a
+  large *virtual* address space, so hard memory caps would OOM-kill
+  them on the 1.9 GB droplet. Runaway/leak risk is instead bounded by
+  the runner's wall-clock timeout + output cap + minimal env
+  (`src/lib/tools/runner.ts`).

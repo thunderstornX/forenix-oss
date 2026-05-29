@@ -17,7 +17,13 @@ set -euo pipefail
 prisma generate --schema=prisma/schema.postgres.prisma
 
 if [ "${VERCEL_ENV:-}" = "production" ]; then
-  prisma db push --schema=prisma/schema.postgres.prisma --accept-data-loss
+  # No --accept-data-loss (matches the DO deploy path): a destructive
+  # schema change aborts the production build — Vercel keeps serving
+  # the previous deployment — instead of silently dropping waitlist
+  # data on Neon. Apply a deliberate destructive migration by hand
+  # after backing up the DB:
+  #   prisma db push --schema=prisma/schema.postgres.prisma --accept-data-loss
+  prisma db push --schema=prisma/schema.postgres.prisma
   tsx scripts/seed-if-empty.ts
 else
   echo "── ${VERCEL_ENV:-non-production} build: skipping db push + seed (no provisioned DB) ──"
