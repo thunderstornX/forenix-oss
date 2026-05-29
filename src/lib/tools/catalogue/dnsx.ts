@@ -44,9 +44,14 @@ export const dnsxTool: Tool = {
     const argv = ["-silent", "-resp", "-no-color", "-j"];
     for (const r of want) argv.push(`-${r}`);
 
+    // dnsx reads targets from stdin. Feed the (regex-validated) domain
+    // in directly rather than via a `sh -c 'echo … | dnsx'` pipe —
+    // no shell, no string interpolation, nothing to inject into even
+    // if the validator above were ever loosened.
     const { exitCode, stdout, stderr } = await spawnTool({
-      cmd: "sh",
-      argv: ["-c", `echo "${domain}" | dnsx ${argv.join(" ")}`],
+      cmd: "dnsx",
+      argv,
+      input: `${domain}\n`,
       timeoutMs: 25_000,
       maxBytes: 100_000,
     });

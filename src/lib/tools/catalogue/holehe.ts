@@ -8,7 +8,10 @@
 import { spawnTool } from "../runner";
 import type { Tool } from "../types";
 
-const EMAIL_RE = /^[^\s@<>"]+@[^\s@<>"]+\.[^\s@<>"]+$/;
+// Must START with an alphanumeric or underscore: the address is passed
+// as a positional argv to holehe, so a leading "-" could otherwise be
+// parsed as a CLI flag. Real addresses never start with a dash.
+const EMAIL_RE = /^[A-Za-z0-9_][^\s@<>"]*@[^\s@<>"]+\.[^\s@<>"]+$/;
 
 export const holeheTool: Tool = {
   name: "holehe_email",

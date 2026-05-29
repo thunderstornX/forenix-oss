@@ -9,7 +9,10 @@
 import { spawnTool } from "../runner";
 import type { Tool } from "../types";
 
-const USERNAME_RE = /^[A-Za-z0-9_\-.]{2,40}$/;
+// Must START with an alphanumeric or underscore: the handle is passed
+// as a positional argv to maigret, so a leading "-" could otherwise be
+// parsed as a CLI flag. Real handles never start with a dash/dot.
+const USERNAME_RE = /^[A-Za-z0-9_][A-Za-z0-9_\-.]{1,39}$/;
 
 export const maigretTool: Tool = {
   name: "maigret_username",

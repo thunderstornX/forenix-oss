@@ -13,7 +13,7 @@
  * instead of spawning locally. Implementation is the same shape;
  * we just delegate the spawn.
  */
-import { spawn } from "node:child_process";
+import { spawn, type SpawnOptions } from "node:child_process";
 
 import type { Tool, ToolCall, ToolResult } from "./types";
 
@@ -67,21 +67,68 @@ function truncate(value: unknown, maxBytes: number): unknown {
   };
 }
 
+/**
+ * Build a minimal environment for an OSINT subprocess.
+ *
+ * The app's own process.env carries secrets — OPENROUTER_API_KEY,
+ * AUTH_SECRET, DATABASE_URL, the Anthropic key in the SaaS overlay, ...
+ * None of them belong in a third-party CLI's environment, where a
+ * crash dump, a verbose flag, or a malicious tool could surface them.
+ * So we pass only what the tools genuinely need: PATH to locate the
+ * binary, HOME so the Go tools (subfinder / nuclei) can read their
+ * ~/.config provider files, the locale so Unicode output isn't
+ * mangled, and TMPDIR — plus any keys the caller explicitly opts in
+ * via `env` (e.g. a single tool's API key).
+ */
+function minimalEnv(extra?: Record<string, string | undefined>): NodeJS.ProcessEnv {
+  const base: Record<string, string | undefined> = {
+    PATH: process.env.PATH,
+    HOME: process.env.HOME,
+    LANG: process.env.LANG ?? "C.UTF-8",
+    LC_ALL: process.env.LC_ALL,
+    TMPDIR: process.env.TMPDIR,
+    ...extra,
+  };
+  const out = {} as NodeJS.ProcessEnv;
+  for (const [k, v] of Object.entries(base)) {
+    if (typeof v === "string") out[k] = v;
+  }
+  return out;
+}
+
 /** Spawn a subprocess, collect stdout (capped), enforce timeout. */
 export async function spawnTool(args: {
   cmd: string;
   argv: string[];
   timeoutMs?: number;
   maxBytes?: number;
+  /** Written to the child's stdin, then closed. Lets tools that read
+   *  their target from stdin (dnsx, httpx) avoid a `sh -c` pipe — no
+   *  shell, no interpolation, nothing to inject into. */
+  input?: string;
+  /** Extra env vars to pass through (e.g. a single tool's API key).
+   *  The base env is otherwise minimal — see minimalEnv(). */
+  env?: Record<string, string | undefined>;
 }): Promise<{ exitCode: number; stdout: string; stderr: string }> {
   const timeoutMs = args.timeoutMs ?? DEFAULT_TIMEOUT_MS;
   const maxBytes = args.maxBytes ?? 1024 * 1024;
 
   return new Promise((resolve, reject) => {
-    const proc = spawn(args.cmd, args.argv, {
-      stdio: ["ignore", "pipe", "pipe"],
-      env: { ...process.env, PATH: process.env.PATH },
-    });
+    const spawnOpts: SpawnOptions = {
+      // stdin is always a pipe; we write `input` when given, then
+      // always close it so tools that read stdin see EOF, never hang.
+      stdio: ["pipe", "pipe", "pipe"],
+      env: minimalEnv(args.env),
+    };
+    const proc = spawn(args.cmd, args.argv, spawnOpts);
+    if (!proc.stdin || !proc.stdout || !proc.stderr) {
+      reject(new Error("failed to open subprocess pipes"));
+      return;
+    }
+    // The child may exit before draining stdin; swallow EPIPE.
+    proc.stdin.on("error", () => {});
+    if (args.input != null) proc.stdin.write(args.input);
+    proc.stdin.end();
     let stdout = "";
     let stderr = "";
     let killed = false;
