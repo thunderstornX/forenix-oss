@@ -17,7 +17,7 @@ premium-only code, and two auto-deploy pipelines.
         └────┬────┘         └────┬────┘         └─────────────┘
              ▼                   ▼
        forenix.tech       demo.forenix.tech
-       (concept, mocks)   (paid SaaS, DigitalOcean)
+       (concept, mocks)   (live demo, DigitalOcean)
 ```
 
 ---

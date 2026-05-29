@@ -34,6 +34,11 @@ and the project adheres to [Semantic Versioning](https://semver.org/).
   tamper-evident, audit-ready chain of custody rather than
   "court-admissible" (a legal determination the tooling does not by
   itself confer). Wording only; the engine is unchanged.
+- **Dropped the paid-SaaS framing.** The hosted instance
+  (demo.forenix.tech) is now described as a live demo and research
+  deployment, not a commercial product; the private overlay is an
+  optional feature layer for that demo. No code removed (multi-tenant
+  schema, overlay, `SAAS_MODE` all remain). Rationale in `DECISIONS.md`.
 
 ## [0.6.0] - 2026-05-29
 

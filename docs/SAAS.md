@@ -1,10 +1,16 @@
-# The paid SaaS — and why no premium code lives in this repo
+# The hosted demo, the overlay, and why no overlay code lives in this repo
 
-This document is the short answer to "where are the premium features
+> Status (2026-05): the hosted instance at demo.forenix.tech is a **live
+> demo and research deployment**, not a commercial product. A paid tier
+> is not currently pursued. The private overlay described below is an
+> optional feature layer for that hosted instance, kept out of the
+> public repo.
+
+This document is the short answer to "where are the extra features
 I read about?"
 
-**They are not in this repository.** Premium / SaaS-only code lives
-in a private overlay that powers the hosted product at
+**They are not in this repository.** Overlay-only code lives
+in a private overlay that powers the hosted demo at
 [demo.forenix.tech](https://demo.forenix.tech). The public
 `forenix-oss` repo on GitHub is the **OSS Core**: every analyst
 feature, every free adapter, the full audit chain, real Git per
@@ -21,17 +27,17 @@ Vercel concept surface see [`VERCEL_DEPLOY.md`](VERCEL_DEPLOY.md).
 | Lane | Live at | Audience | What it is |
 |---|---|---|---|
 | **OSS Core** (MIT) | this GitHub repo | self-hosters, evaluators, integrators | every analyst feature, every free adapter, audit chain, branch graph, verifier, real Git per case, full subprocess tool registry, scheduled monitors + attestations, SSE live updates |
-| **Concept + waitlist** | [forenix.tech](https://forenix.tech) | the public | marketing site + serverless concept demo (mock adapter, deterministic Git fallback). Where prospective customers read the pitch and **join the waitlist** |
-| **Paid SaaS** | [demo.forenix.tech](https://demo.forenix.tech) | **invite / register only** (waitlist approval) | OSS Core **+ a private SaaS overlay** that adds Claude adapter, multi-tenant orgs, billing, SSO, PDF export, advanced OSINT adapters |
+| **Concept demo** | [forenix.tech](https://forenix.tech) | the public | marketing site + serverless concept demo (mock adapter, deterministic Git fallback). Where visitors read the pitch and **request access to the live demo** |
+| **Live demo + research** | [demo.forenix.tech](https://demo.forenix.tech) | **invite-only** | OSS Core **+ a private overlay** that adds the Claude adapter, multi-tenant orgs, and advanced OSINT adapters for the hosted demo |
 
-The customer journey is **forenix.tech → waitlist → admin approves →
-demo.forenix.tech**.
+Access flow: **forenix.tech → request access → admin approves →
+demo.forenix.tech** (the live demo).
 
 ---
 
 ## 2. The overlay model
 
-The DigitalOcean droplet that runs the paid SaaS is built by
+The DigitalOcean droplet that runs the hosted demo is built by
 assembling two repositories at deploy time:
 
 ```
