@@ -50,3 +50,22 @@ default. The evaluation should be re-run on the production model (larger, with
 tools, on genuinely ambiguous targets such as contested identity attribution)
 before treating the negative result as general; the false-balance mechanism,
 however, is a design issue worth keeping fixed regardless.
+
+## 2026-05-30: Paid SaaS shelved; forenix is OSS plus a live demo
+
+**Decision.** The paid-SaaS commercial tier (billing, SSO, SOC 2,
+multi-tenant selling) is no longer pursued. forenix is positioned as an
+open-source platform and a research artifact, with one hosted instance
+(demo.forenix.tech) serving as a live demo and a research deployment.
+
+**Why.** No validated demand (no customer discovery, negligible waitlist), a
+conservative and crowded market for evidentiary tooling, and the commercial
+layer is the largest unbuilt piece with the least evidence of payoff. The
+achievable, bounded win is the research (RQ2) plus the open-source and
+portfolio value. A product is an open-ended commitment; a study is a finite
+deliverable.
+
+**Scope.** Documentation and framing only. No code removed. The multi-tenant
+schema, the private overlay, `SAAS_MODE`, and the hosted deployment all
+remain, repurposed for the demo and for ecologically-valid research runs. If
+real demand appears later, the plumbing is already in place.

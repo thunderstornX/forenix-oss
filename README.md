@@ -75,15 +75,15 @@ The same codebase ships in three shapes. Pick the one that matches what you want
 | Lane | Live at | Audience | What it is | Get started |
 |---|---|---|---|---|
 | **OSS Core** (MIT) | _you self-host_ | self-hosters, evaluators, integrators | every analyst feature, every adapter except Claude, real Git per case, full subprocess toolchain, scheduled monitors + attestations | [`docs/OSS_INSTALL.md`](docs/OSS_INSTALL.md) |
-| **Concept + waitlist** | [forenix.tech](https://forenix.tech) | the public | marketing site + serverless concept demo (mock adapter). Visitors read the pitch and **join the waitlist for the paid SaaS** | [`docs/VERCEL_DEPLOY.md`](docs/VERCEL_DEPLOY.md) |
-| **Paid SaaS** | [demo.forenix.tech](https://demo.forenix.tech) | **invite / register only** (waitlist approval required) | OSS Core **+ a private SaaS overlay** (Claude adapter, multi-tenant orgs, billing, SSO, PDF export, advanced OSINT adapters). Premium code does not live in this repository | [`docs/SAAS.md`](docs/SAAS.md) |
+| **Concept demo** | [forenix.tech](https://forenix.tech) | the public | marketing site + serverless concept demo (mock adapter). Visitors read the pitch and **request access to the live demo** | [`docs/VERCEL_DEPLOY.md`](docs/VERCEL_DEPLOY.md) |
+| **Live demo + research deployment** | [demo.forenix.tech](https://demo.forenix.tech) | **invite-only** | OSS Core **+ a private overlay** (Claude adapter, multi-tenant orgs, advanced OSINT adapters) used for the hosted demo and research runs. The overlay code does not live in this repository | [`docs/SAAS.md`](docs/SAAS.md) |
 
-The customer journey is **forenix.tech → waitlist → admin approves → demo.forenix.tech**.
+Access flow: **forenix.tech → request access → admin approves → demo.forenix.tech** (the live demo).
 
 OSS Core and the Vercel concept run from this repository directly.
-The paid SaaS is built by assembling this repository with a private
-overlay (`forenix-saas`) at deploy time; the overlay adds the premium
-features but never alters OSS behaviour. See
+The hosted demo is built by assembling this repository with a private
+overlay (`forenix-saas`) at deploy time; the overlay adds extra
+features for the demo but never alters OSS behaviour. See
 [`docs/SAAS.md`](docs/SAAS.md) for the full contract.
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/thunderstornX/forenix-oss)
@@ -92,8 +92,8 @@ features but never alters OSS behaviour. See
 
 | Surface | URL | What runs there |
 |---|---|---|
-| Concept + waitlist (Vercel) | [forenix.tech](https://forenix.tech) | Marketing + concept demo. Mock adapter, HTTP-API tools, deterministic Git fallback. Public. The waitlist on this surface is the entry point to the paid SaaS. |
-| Paid SaaS (DigitalOcean) | [demo.forenix.tech](https://demo.forenix.tech) | The actual product. Invite / register only. Full build, real LLM via OpenRouter, real OSINT toolchain, real Git per case, file-byte custody. |
+| Concept demo (Vercel) | [forenix.tech](https://forenix.tech) | Marketing + concept demo. Mock adapter, HTTP-API tools, deterministic Git fallback. Public. The form on this surface is how you request access to the live demo. |
+| Live demo + research (DigitalOcean) | [demo.forenix.tech](https://demo.forenix.tech) | The full build, used for demos and research runs. Invite-only. Real LLM via OpenRouter, real OSINT toolchain, real Git per case, file-byte custody. |
 
 ---
 
