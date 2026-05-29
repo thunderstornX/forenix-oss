@@ -58,7 +58,7 @@ jobs:
 
     steps:
       - name: Check out OSS Core
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           path: oss
           fetch-depth: 1
@@ -68,7 +68,7 @@ jobs:
           ref: ${{ github.event.workflow_run.head_sha || github.ref_name }}
 
       - name: Check out SaaS overlay (private)
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: thunderstornX/forenix-saas
           token: ${{ secrets.SAAS_REPO_TOKEN }}
@@ -120,7 +120,7 @@ jobs:
           echo "stamped: $(cat .revision)"
 
       - name: Configure SSH agent for the droplet
-        uses: webfactory/ssh-agent@v0.9.0
+        uses: webfactory/ssh-agent@v0.10.0
         with:
           ssh-private-key: ${{ secrets.DROPLET_SSH_KEY }}
 
