@@ -62,6 +62,17 @@ v0.5.6 deploy incident and hardens the paid surface against data loss.
 
 ### Security
 
+- **systemd service hardening (droplet).** `forenix.service` gained a
+  hardening drop-in — chiefly `NoNewPrivileges` (inherited by every
+  spawned OSINT subprocess, so a tool can never escalate privileges),
+  plus `RestrictSUIDSGID`, `ProtectKernel*`, `RestrictRealtime`,
+  `LockPersonality`. Documented in RUNBOOK §16, including the
+  directives deliberately *not* set (`PrivateTmp` / memory rlimits)
+  that would break the evidence-store rename or OOM-kill the Go tools.
+- **Vercel production `db push` drops `--accept-data-loss`** (matches
+  the DO deploy path): a destructive schema change now aborts the
+  production build — Vercel keeps serving the previous deployment —
+  instead of silently dropping waitlist data on Neon.
 - **OSINT subprocesses now run with a minimal environment.** The tool
   runner (`spawnTool`) previously inherited the full app environment,
   so every spawned CLI saw `OPENROUTER_API_KEY`, `AUTH_SECRET`,
