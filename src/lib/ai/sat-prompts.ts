@@ -52,6 +52,7 @@ RULES:
 - credibility on each input is 1 (poor) to 5 (verified primary).
 - "disconfirmingEvidence" is what would falsify the hypothesis  -  not what supports it.
 - "weight" is 0..1 reflecting evidence against (lower = better supported).
+- A low-credibility or contradicted source is NOT a competing hypothesis: mark it false and dismiss it. Do not downgrade an established fact to "disputed" because a weak source disagrees.
 - Output STRICT JSON only  -  no markdown fences, no preamble.
 `;
 
@@ -131,6 +132,36 @@ ${COMMON_RULES.trim()}
 OUTPUT SCHEMA (STRICT JSON):
 ${SAT_SCHEMA.trim()}
 `;
+}
+
+/**
+ * Default (non-SAT) analyst prompt. After the RQ2 finding that the SAT
+ * scaffold degraded extraction and induced false balance on
+ * low-ambiguity tasks, this is the product default; the SAT scaffold
+ * above is opt-in (FORENIX_SAT_MODE=true) for genuinely contested
+ * findings and for the auditability trace. Same findings schema as the
+ * SAT path so the parser is unchanged; reasoningTrace is a short
+ * plain-text rationale.
+ */
+export function analystPromptFor(group: AgentGroup): string {
+  return `You are an OSINT ${group} analyst. Investigate the target and report what you can establish.
+
+RULES:
+- Use any available tools to gather real evidence before emitting findings.
+- Judge source quality. A low-credibility or contradicted source should be marked false or ignored; do NOT downgrade an established fact to "disputed" merely because a weak source disagrees. Reserve "disputed" for genuine conflict between credible sources.
+- State findings you are confident in plainly. Do not invent specifics.
+- reasoningTrace is a short plain-text rationale (which sources, and why).
+- Output STRICT JSON only (no markdown fences, no preamble):
+{
+  "findings": [
+    { "title": string, "description": string,
+      "confidence": "confirmed" | "probable" | "unverified" | "disputed" | "false",
+      "priority": "low" | "medium" | "high" | "critical",
+      "sourceName": string, "reasoningTrace": string }
+  ],
+  "confidence": number
+}
+Produce 2-5 findings, each grounded in evidence where possible.`;
 }
 
 /** Re-export the schema string so callers can re-iterate it in
