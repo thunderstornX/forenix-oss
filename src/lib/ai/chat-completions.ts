@@ -21,6 +21,7 @@ import type {
   Priority,
   SearchResult,
 } from "./types";
+import { serialiseTrace } from "./sat-trace";
 
 export interface ChatBackend {
   /** Display name for logs. */
@@ -192,19 +193,11 @@ function clampPrio(p: unknown): Priority {
   return typeof p === "string" && (VALID_PRIO as ReadonlySet<string>).has(p) ? (p as Priority) : "medium";
 }
 
-/** Reasoning trace can come back as a SatTrace object (Phase C) or
- *  legacy free text. Either way we serialise to a string for the
- *  Finding.reasoningTrace database column; the Verification view
- *  parses JSON back. */
-function serialiseTrace(t: unknown): string {
-  if (t === null || t === undefined) return "";
-  if (typeof t === "string") return t.slice(0, 4000);
-  try {
-    return JSON.stringify(t).slice(0, 4000);
-  } catch {
-    return String(t).slice(0, 800);
-  }
-}
+// Reasoning-trace serialisation + SatTrace validation lives in
+// ./sat-trace: serialiseTrace() normalises a structured trace
+// (clamping weights/credibility/selected), passes free text through,
+// and flags a structurally-invalid trace with an _invalidSatTrace
+// marker rather than storing garbage. Imported above.
 
 export async function chatAnalyzePipeline(
   backend: ChatBackend,
