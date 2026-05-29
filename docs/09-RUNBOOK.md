@@ -15,8 +15,9 @@ Both should return immediately with `ok:true`. If verify is
 
 ## 2. Weekly checks (15 min)
 
-- Snapshot the database (Postgres: `pg_dump --format=c`; SQLite:
-  the `.backup` SQL command).
+- Snapshot the database. On the DO droplet this is **automated
+  nightly** (see §15); for other hosts run it manually (Postgres:
+  `pg_dump --format=c`; SQLite: the `.backup` SQL command).
 - Tail the dev log for `unhandledRejection` / `5xx` patterns.
 - Confirm the active `AI_ADAPTER` is what you expect.
 - Confirm sealed evidence count has not decreased: a decrease
@@ -313,9 +314,12 @@ tick.
 ## 13. Routine  -  SaaS auto-deploy (DigitalOcean)
 
 The paid SaaS at [demo.forenix.tech](https://demo.forenix.tech)
-auto-deploys on every push to `main` via the GitHub Actions
-workflow at `.github/workflows/deploy-droplet.yml`. The workflow
-checks out OSS Core + the private SaaS overlay
+auto-deploys **after the CI workflow passes on `main`** — a
+`workflow_run` gate, so a red build never reaches the droplet (this
+replaced the old race where deploy fired on `push` in parallel with
+CI). It runs via the GitHub Actions workflow at
+`.github/workflows/deploy-droplet.yml`. The workflow checks out the
+exact commit CI validated, plus the private SaaS overlay
 (github.com/thunderstornX/forenix-saas), assembles them, rsyncs
 onto the droplet, then runs `scripts/deploy-droplet.sh` to install,
 build, and restart the systemd service.
@@ -335,9 +339,15 @@ build, and restart the systemd service.
 **On the droplet:**
 
 ```bash
-# Sudoers entry — the deploy user needs to restart the service.
+# Sudoers — scope the deploy user to EXACTLY what the pipeline needs:
+# restart the service, and run the backup script (the pre-push
+# snapshot). Least privilege matters here: the deploy user's SSH key
+# is a GitHub Actions secret, so granting it blanket NOPASSWD: ALL
+# (or leaving it in the `sudo` group) means a leaked CI secret = full
+# root on the paid surface. Scope it down and remove any broad grant.
 sudo tee /etc/sudoers.d/forenix-deploy <<'SUDO'
 forenix ALL=(root) NOPASSWD: /bin/systemctl restart forenix.service
+forenix ALL=(root) NOPASSWD: /usr/local/sbin/forenix-backup.sh
 SUDO
 sudo chmod 0440 /etc/sudoers.d/forenix-deploy
 
@@ -450,3 +460,108 @@ down, the user's signup still succeeds locally on Vercel, and the
 row will be picked up by the next backfill run. The Vercel
 function logs `[waitlist sync] failed: …` on errors so you can
 spot a sustained outage.
+
+
+## 15. Backups & restore (DigitalOcean)
+
+Automated nightly on the droplet, independent of the deploy cycle.
+This is the recovery path for the paid surface — the DB *is* the
+product (chain-of-custody), so it gets backed up before anything else.
+
+### What runs
+
+- `/usr/local/sbin/forenix-backup.sh` — `pg_dump -Fc forenix_oss`
+  (custom format → selective `pg_restore`), a tar of the evidence
+  store (when non-empty), and a copy of `/opt/forenix/.env` (the
+  restore crown jewels). Rotated to the newest 14 of each under
+  `/var/backups/forenix/` (mode `700`, root-only).
+- `forenix-backup.timer` — fires daily at 03:30 UTC, `Persistent=true`
+  so a missed run (downtime) catches up on next boot.
+- `scripts/deploy-droplet.sh` runs the same script once right before
+  every `prisma db push`, so each deploy has an immediate pre-change
+  restore point.
+
+Installed out-of-tree (`/usr/local/sbin`, `/var/backups`) on purpose:
+the deploy `rsync --delete` on `/opt/forenix` cannot remove it.
+
+### Install (one-time)
+
+The script is version-controlled at `scripts/forenix-backup.sh`.
+
+```bash
+ssh root@206.189.82.103
+
+# 1. Install the script (source of truth: scripts/forenix-backup.sh).
+install -m 0755 /opt/forenix/scripts/forenix-backup.sh /usr/local/sbin/forenix-backup.sh
+
+# 2. systemd service + nightly timer.
+cat >/etc/systemd/system/forenix-backup.service <<'UNIT'
+[Unit]
+Description=forenix-oss backup (Postgres dump + evidence store + env)
+Wants=postgresql.service
+After=postgresql.service
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/forenix-backup.sh
+Nice=10
+IOSchedulingClass=idle
+UNIT
+
+cat >/etc/systemd/system/forenix-backup.timer <<'TIMER'
+[Unit]
+Description=Nightly forenix-oss backup
+[Timer]
+OnCalendar=*-*-* 03:30:00 UTC
+RandomizedDelaySec=300
+Persistent=true
+[Install]
+WantedBy=timers.target
+TIMER
+
+systemctl daemon-reload
+systemctl enable --now forenix-backup.timer
+systemctl start forenix-backup.service          # capture a baseline now
+```
+
+The deploy user's sudoers (§13) grants `NOPASSWD` on this exact script
+so `scripts/deploy-droplet.sh` can fire the pre-push snapshot.
+
+### Check it's healthy
+
+```bash
+ssh root@206.189.82.103 'systemctl list-timers forenix-backup.timer; ls -lh /var/backups/forenix/'
+# Newest dump should be < 24h old and restorable (31 = table count):
+ssh root@206.189.82.103 'pg_restore --list "$(ls -1t /var/backups/forenix/db_*.dump|head -1)" | grep -c "TABLE DATA"'
+```
+
+### Restore the database
+
+```bash
+ssh root@206.189.82.103
+DUMP=/var/backups/forenix/db_<stamp>.dump
+
+# Option A — restore into the live DB (drops + recreates objects):
+sudo systemctl stop forenix.service
+runuser -u postgres -- pg_restore --clean --if-exists -d forenix_oss "$DUMP"
+sudo systemctl start forenix.service
+
+# Option B — restore into a scratch DB to inspect first, then swap:
+runuser -u postgres -- createdb forenix_restore_check
+runuser -u postgres -- pg_restore -d forenix_restore_check "$DUMP"
+```
+
+Always confirm `GET /api/audit/verify` returns `ok:true` after a
+restore — the hash chain reports immediately if the restore was
+partial or out of order (see §3).
+
+### Off-site (the remaining gap)
+
+Local backups survive an app / DB / operator mistake but NOT loss of
+the droplet itself. To close that:
+
+- Enable **DigitalOcean automated droplet backups** in the DO console
+  (weekly whole-droplet image), and/or
+- Configure an `rclone` remote named `forenix-offsite` (DO Spaces / S3);
+  `forenix-backup.sh` then mirrors the DB + evidence off-site on every
+  run. It deliberately excludes `env_*.bak` — never push the secrets
+  off-site unencrypted.

@@ -25,11 +25,16 @@ name: Deploy SaaS (DigitalOcean)
 #
 #   forenix ALL=(root) NOPASSWD: /bin/systemctl restart forenix.service
 #
-# Manual trigger is supported via workflow_dispatch for ad-hoc
-# redeploys (after a manual fix on the droplet, etc.).
+# This workflow runs only AFTER the CI workflow completes successfully
+# on main — it no longer races CI on push the way it used to, so a red
+# build never reaches the droplet. workflow_dispatch stays available
+# for ad-hoc redeploys (a manual droplet fix, or shipping an
+# overlay-only change — see RUNBOOK §13).
 
 on:
-  push:
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
     branches: [main]
   workflow_dispatch:
 
@@ -44,6 +49,12 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    # The gate: deploy only when the triggering CI run succeeded (or on
+    # a manual dispatch). This is what stops a red build reaching the
+    # paid surface — previously deploy ran in parallel with CI.
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      github.event.workflow_run.conclusion == 'success'
 
     steps:
       - name: Check out OSS Core
@@ -51,6 +62,10 @@ jobs:
         with:
           path: oss
           fetch-depth: 1
+          # On a workflow_run trigger, build the exact commit CI just
+          # validated — not whatever main happens to point at now. On
+          # manual dispatch head_sha is empty, so fall back to the branch.
+          ref: ${{ github.event.workflow_run.head_sha || github.ref_name }}
 
       - name: Check out SaaS overlay (private)
         uses: actions/checkout@v4
@@ -72,6 +87,37 @@ jobs:
           rsync -av overlay/overlay/ oss/
           echo "── assembled tree ──"
           find oss/src/lib/saas -type f | head -20
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.3.6"
+
+      - name: Pre-flight typecheck (assembled tree · Postgres client)
+        # Typecheck the ASSEMBLED tree (OSS Core + private overlay)
+        # against the Postgres-flavoured Prisma client — the same client
+        # the droplet generates. This catches the v0.5.6 class (and any
+        # overlay↔OSS type break) HERE, on the runner, before the rsync
+        # touches the droplet. Typecheck only; no DB connection is made.
+        working-directory: oss
+        env:
+          DATABASE_URL: "postgresql://ci:ci@localhost:5432/ci?sslmode=disable"
+        run: |
+          bun install --frozen-lockfile
+          bunx prisma generate --schema=prisma/schema.postgres.prisma
+          bun run typecheck
+
+      - name: Stamp deploy revision
+        # Record the exact OSS commit + build time so the running
+        # service can report the truth via /api/health. rsync carries
+        # this file to the droplet (not excluded); the on-droplet .git
+        # is excluded and must never be trusted for "what's running".
+        working-directory: oss
+        run: |
+          SHA="$(git rev-parse HEAD)"
+          printf '{"commit":"%s","builtAt":"%s"}\n' \
+            "$SHA" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" > .revision
+          echo "stamped: $(cat .revision)"
 
       - name: Configure SSH agent for the droplet
         uses: webfactory/ssh-agent@v0.9.0
