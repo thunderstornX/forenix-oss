@@ -18,7 +18,6 @@ prisma/dev.db-journal
 # Docs that don't belong in a runtime image
 docs/screenshots
 docs/manual_screenshots
-docs/pitch
 docs/USER_MANUAL.pdf
 docs/USER_MANUAL.html
 docs/HOW_TO.pdf
