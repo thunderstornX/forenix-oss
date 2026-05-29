@@ -21,8 +21,8 @@ authors:
 repository-code: "https://github.com/thunderstornX/forenix-oss"
 url: "https://github.com/thunderstornX/forenix-oss"
 license: MIT
-version: "0.5.4"
-date-released: "2026-05-21"
+version: "0.6.0"
+date-released: "2026-05-29"
 identifiers:
   - type: doi
     value: "10.5281/zenodo.20329059"

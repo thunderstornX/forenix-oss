@@ -6,6 +6,10 @@ and the project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+(no changes yet)
+
+## [0.6.0] - 2026-05-29
+
 Operational rigidity pass — closes the structural gaps behind the
 v0.5.6 deploy incident and hardens the paid surface against data loss.
 
