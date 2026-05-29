@@ -47,6 +47,16 @@ v0.5.6 deploy incident and hardens the paid surface against data loss.
   executing against customer data; an operator applies it deliberately
   by hand after confirming the snapshot.
 
+### Fixed
+
+- **Vercel preview deployments.** `vercel-build` moved to
+  `scripts/vercel-build.sh`, which runs `prisma db push` + seed only
+  when `VERCEL_ENV=production`. Preview/development builds (which have
+  no provisioned database) now generate the client and build instead
+  of failing at `prisma db push` with `DATABASE_URL not found`. An
+  isolated Preview environment (mock adapter, fresh secrets,
+  placeholder DB, no waitlist-sync) backs it.
+
 ## [0.5.7] - 2026-05-26
 
 Closes the v0.5 line. Adds a CI safety net that would have caught

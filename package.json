@@ -15,7 +15,7 @@
     "db:push:pg": "prisma db push --schema=prisma/schema.postgres.prisma --accept-data-loss",
     "db:generate:pg": "prisma generate --schema=prisma/schema.postgres.prisma",
     "db:seed:pg": "PRISMA_SCHEMA=prisma/schema.postgres.prisma tsx prisma/seed.ts",
-    "vercel-build": "prisma generate --schema=prisma/schema.postgres.prisma && prisma db push --schema=prisma/schema.postgres.prisma --accept-data-loss && tsx scripts/seed-if-empty.ts && next build"
+    "vercel-build": "bash scripts/vercel-build.sh"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
